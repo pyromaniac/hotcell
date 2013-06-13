@@ -8,6 +8,6 @@ namespace :build do
 
   desc 'Build parser'
   task :parser do
-    `racc -o lib/puffer_markup/parser.rb lib/puffer_markup/parser.y`
+    `racc -d -o lib/puffer_markup/parser.rb -O lib/puffer_markup/parser.out lib/puffer_markup/parser.y`
   end
 end

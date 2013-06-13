@@ -4,6 +4,7 @@ require 'puffer_markup/errors'
 require 'puffer_markup/lexer'
 require 'puffer_markup/parser'
 require 'puffer_markup/node'
+require 'puffer_markup/context'
 
 module PufferMarkup
   # Your code goes here...

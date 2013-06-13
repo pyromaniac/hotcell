@@ -21,6 +21,7 @@ describe PufferMarkup::Lexer do
     specify { expression('* *').should == [[:MULTIPLY, '*'], [:MULTIPLY, '*']] }
     specify { expression('**').should == [[:POWER, '**']] }
     specify { expression('/').should == [[:DIVIDE, '/']] }
+    specify { expression('%').should == [[:MODULO, '%']] }
   end
 
   context 'logic' do
@@ -45,6 +46,9 @@ describe PufferMarkup::Lexer do
     specify { expression(',').should == [[:COMMA, ',']] }
     specify { expression('.').should == [[:PERIOD, '.']] }
     specify { expression(':').should == [[:COLON, ':']] }
+    specify { expression('?').should == [[:QUESTION, '?']] }
+    specify { expression('hello?').should == [[:IDENTIFER, 'hello?']] }
+    specify { expression('hello ?').should == [[:IDENTIFER, 'hello'], [:QUESTION, '?']] }
     specify { expression(';').should == [[:SEMICOLON, ';']] }
     specify { expression("\n").should == [[:NEWLINE, "\n"]] }
   end
@@ -54,8 +58,8 @@ describe PufferMarkup::Lexer do
     specify { expression(']').should == [[:ACLOSE, ']']] }
     specify { expression('{').should == [[:HOPEN, '{']] }
     specify { expression('}').should == [[:HCLOSE, '}']] }
-    specify { expression('(').should == [[:BOPEN, '(']] }
-    specify { expression(')').should == [[:BCLOSE, ')']] }
+    specify { expression('(').should == [[:POPEN, '(']] }
+    specify { expression(')').should == [[:PCLOSE, ')']] }
   end
 
   context 'numeric' do
@@ -174,7 +178,7 @@ describe PufferMarkup::Lexer do
         [:IDENTIFER, "hello"], [:DIVIDE, "/"], [:IDENTIFER, "regexp"], [:DIVIDE, "/"]
       ] }
       specify { expression('hello(/regexp/)').should == [
-        [:IDENTIFER, "hello"], [:BOPEN, "("], [:REGEXP, /regexp/], [:BCLOSE, ")"]
+        [:IDENTIFER, "hello"], [:POPEN, "("], [:REGEXP, /regexp/], [:PCLOSE, ")"]
       ] }
       specify { expression('[/regexp/]').should == [
         [:AOPEN, "["], [:REGEXP, /regexp/], [:ACLOSE, "]"]
@@ -238,18 +242,18 @@ describe PufferMarkup::Lexer do
     ] }
     specify { expression("foo.bar.baz('hello', 16)").should == [
       [:IDENTIFER, "foo"], [:PERIOD, "."], [:IDENTIFER, "bar"],
-      [:PERIOD, "."], [:IDENTIFER, "baz"], [:BOPEN, "("],
+      [:PERIOD, "."], [:IDENTIFER, "baz"], [:POPEN, "("],
       [:STRING, "hello"], [:COMMA, ","], [:INTEGER, 16],
-      [:BCLOSE, ")"]
+      [:PCLOSE, ")"]
     ] }
     specify { expression("foo(36.6);\n  a = \"привет\"").should == [
-      [:IDENTIFER, "foo"], [:BOPEN, "("], [:FLOAT, 36.6],
-      [:BCLOSE, ")"], [:SEMICOLON, ";"], [:NEWLINE, "\n"],
+      [:IDENTIFER, "foo"], [:POPEN, "("], [:FLOAT, 36.6],
+      [:PCLOSE, ")"], [:SEMICOLON, ";"], [:NEWLINE, "\n"],
       [:IDENTIFER, "a"], [:ASSIGN, "="], [:STRING, "привет"]
     ] }
     specify { expression("'foo'.match(\"^foo$\")").should == [
       [:STRING, "foo"], [:PERIOD, "."], [:IDENTIFER, "match"],
-      [:BOPEN, "("], [:STRING, "^foo$"], [:BCLOSE, ")"]
+      [:POPEN, "("], [:STRING, "^foo$"], [:PCLOSE, ")"]
     ] }
   end
 

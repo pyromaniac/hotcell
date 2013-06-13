@@ -11,7 +11,8 @@
   multiply = '*';
   power = '**';
   divide = '/';
-  arithmetic = plus | minus | multiply | power | divide;
+  modulo = '%';
+  arithmetic = plus | minus | multiply | power | divide | modulo;
 
   and = '&&';
   or = '||';
@@ -28,9 +29,10 @@
   comma = ',';
   period = '.';
   colon = ':';
+  question = '?';
   semicolon = ';';
   newline = '\n';
-  flow = assign | comma | period | colon | semicolon | newline;
+  flow = assign | comma | period | colon | question | semicolon | newline;
 
   array_open = '[';
   array_close = ']';
@@ -86,17 +88,21 @@
 
 module PufferMarkup
   class Lexer
-    OPERATORS = {
-      '+' => :PLUS, '-' => :MINUS, '*' => :MULTIPLY, '**' => :POWER, '/' => :DIVIDE,
+    OPERATIONS = {
+      '+' => :PLUS, '-' => :MINUS, '*' => :MULTIPLY, '**' => :POWER, '/' => :DIVIDE, '%' => :MODULO,
 
       '&&' => :AND, '||' => :OR, '!' => :NOT, '==' => :EQUAL, '!=' => :INEQUAL,
       '>' => :GT, '>=' => :GTE, '<' => :LT, '<=' => :LTE,
 
-      '=' => :ASSIGN, ',' => :COMMA, '.' => :PERIOD, ':' => :COLON, ';' => :SEMICOLON, "\n" => :NEWLINE,
-
-      '[' => :AOPEN, ']' => :ACLOSE, '{' => :HOPEN, '}' => :HCLOSE,
-      '(' => :BOPEN, ')' => :BCLOSE
+      '=' => :ASSIGN, ',' => :COMMA, '.' => :PERIOD, ':' => :COLON, '?' => :QUESTION,
+      ';' => :SEMICOLON
     }
+
+    BOPEN = { '[' => :AOPEN, '{' => :HOPEN, '(' => :POPEN }
+    BCLOSE = { ']' => :ACLOSE, '}' => :HCLOSE, ')' => :PCLOSE }
+    BRACKETS = BOPEN.merge(BCLOSE)
+
+    OPERATORS = OPERATIONS.merge(BRACKETS).merge("\n" => :NEWLINE)
 
     CONSTANTS = {
       'nil' => [:NIL, nil], 'null' => [:NIL, nil],
@@ -120,7 +126,7 @@ module PufferMarkup
     PREREGEXP = Set.new [
       :TOPEN, :NEWLINE, :SEMICOLON,
       :COLON, :COMMA, :PERIOD,
-      :BOPEN, :AOPEN, :HOPEN
+      :POPEN, :AOPEN, :HOPEN
     ]
 
     def initialize source
@@ -145,6 +151,12 @@ module PufferMarkup
     end
 
     def emit_numeric
+      # last = @token_array[-1]
+      # pre_last = @token_array[-2]
+      # # This need to give unary minus with numeric higher precedence then unari minus with
+      # last[0] = :NEGATIVE if last && last[0] == :MINUS &&
+      #   (!pre_last || pre_last[0].in?())
+
       value = current_value
       if value =~ /\./
         emit :FLOAT, Float(value)
