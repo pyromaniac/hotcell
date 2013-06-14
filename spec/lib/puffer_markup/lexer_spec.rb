@@ -201,6 +201,23 @@ describe PufferMarkup::Lexer do
     end
   end
 
+  context 'expression comments' do
+    specify { scan('{{ # }}').should == [[:TOPEN, '{{'], [:COMMENT, '# '], [:TCLOSE, '}}']] }
+    specify { scan('{{ #}}').should == [[:TOPEN, '{{'], [:COMMENT, '#'], [:TCLOSE, '}}']] }
+    specify { scan('{{ #hello }}').should == [[:TOPEN, '{{'], [:COMMENT, '#hello '], [:TCLOSE, '}}']] }
+    specify { scan('{{ #hello}}').should == [[:TOPEN, '{{'], [:COMMENT, '#hello'], [:TCLOSE, '}}']] }
+    specify { scan('{{ #hello}}}').should == [[:TOPEN, '{{'], [:COMMENT, '#hello'], [:TCLOSE, '}}'], [:TEMPLATE, '}']] }
+    specify { scan('{{ #hello} }}').should == [[:TOPEN, '{{'], [:COMMENT, '#hello} '], [:TCLOSE, '}}']] }
+    specify { scan('{{ #hello# }}').should == [[:TOPEN, '{{'], [:COMMENT, '#hello# '], [:TCLOSE, '}}']] }
+    specify { scan('{{ #hello#}}').should == [[:TOPEN, '{{'], [:COMMENT, '#hello#'], [:TCLOSE, '}}']] }
+    specify { scan('{{ #hel}lo#}}').should == [[:TOPEN, '{{'], [:COMMENT, '#hel}lo#'], [:TCLOSE, '}}']] }
+    specify { scan('{{ #hel{lo#}}').should == [[:TOPEN, '{{'], [:COMMENT, '#hel{lo#'], [:TCLOSE, '}}']] }
+    specify { scan("{{ #hel{\nlo#}}").should == [[:TOPEN, "{{"], [:COMMENT, "#hel{"], [:NEWLINE, "\n"],
+      [:IDENTIFER, "lo"], [:COMMENT, "#"], [:TCLOSE, "}}"]] }
+    specify { scan("{{ #hel{#\n#lo#}}").should == [[:TOPEN, "{{"], [:COMMENT, "#hel{#"], [:NEWLINE, "\n"],
+      [:COMMENT, "#lo#"], [:TCLOSE, "}}"]] }
+  end
+
   context 'errors' do
     describe PufferMarkup::Errors::UnexpectedSymbol do
       let(:error) { PufferMarkup::Errors::UnexpectedSymbol }
@@ -259,6 +276,10 @@ describe PufferMarkup::Lexer do
 
   context 'templates' do
     specify { scan(' ').should == [[:TEMPLATE, " "]] }
+    specify { scan('{').should == [[:TEMPLATE, "{"]] }
+    specify { scan('}').should == [[:TEMPLATE, "}"]] }
+    specify { scan('{{').should == [[:TOPEN, "{{"]] }
+    specify { scan('}}').should == [[:TEMPLATE, "}}"]] }
     specify { scan('hello').should == [[:TEMPLATE, "hello"]] }
     specify { scan('hel{lo').should == [[:TEMPLATE, "hel{lo"]] }
     specify { scan('hel{{lo').should == [
@@ -301,5 +322,19 @@ describe PufferMarkup::Lexer do
         [:TOPEN, "{{"], [:DIVIDE, "/"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]
       ] }
     end
+  end
+
+  context 'template comments' do
+    specify { scan('{{#').should == [[:COMMENT, "{{#"]] }
+    specify { scan('{{# }}').should == [[:COMMENT, "{{# }}"]] }
+    specify { scan('{{##}}').should == [[:COMMENT, "{{##}}"]] }
+    specify { scan('{{###}}').should == [[:COMMENT, "{{###}}"]] }
+    specify { scan('{{# {{# blabla').should == [[:COMMENT, "{{# {{# blabla"]] }
+    specify { scan('{{# {{# }} blabla').should == [[:COMMENT, "{{# {{# }} blabla"]] }
+    specify { scan('{{# {{ #}} blabla').should == [[:COMMENT, "{{# {{ #}}"], [:TEMPLATE, " blabla"]] }
+    specify { scan('{# {{}}{{# {{# blabla').should == [[:TEMPLATE, "{# "], [:TOPEN, "{{"], [:TCLOSE, "}}"],
+      [:COMMENT, "{{# {{# blabla"]] }
+    specify { scan('{{ } {{# blabla').should == [[:TOPEN, "{{"], [:HCLOSE, "}"], [:HOPEN, "{"],
+      [:HOPEN, "{"], [:COMMENT, "# blabla"]] }
   end
 end

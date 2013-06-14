@@ -1,7 +1,7 @@
 module PufferMarkup
   class Sequencer < PufferMarkup::Node
-    def render context
-      values(context).last
+    def process context, *values
+      values.last
     end
   end
 end

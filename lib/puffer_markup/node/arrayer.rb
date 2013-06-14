@@ -1,7 +1,7 @@
 module PufferMarkup
   class Arrayer < PufferMarkup::Node
-    def render context
-      values(context)
+    def process context, *values
+      values
     end
   end
 end

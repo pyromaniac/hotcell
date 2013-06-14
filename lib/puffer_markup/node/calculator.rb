@@ -26,10 +26,10 @@ module PufferMarkup
       reducible ? handler.call(*children) : super
     end
 
-    def render context
+    def process context, *values
       handler = HANDLERS[name]
       raise "Could not find handler for `#{name}`" unless handler
-      handler.call *values(context)
+      handler.call *values
     end
   end
 end

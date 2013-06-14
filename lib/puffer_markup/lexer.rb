@@ -1,7 +1,7 @@
 
 # line 1 "lib/puffer_markup/lexer.rl"
 
-# line 86 "lib/puffer_markup/lexer.rl"
+# line 97 "lib/puffer_markup/lexer.rl"
 
 #%
 
@@ -64,8 +64,9 @@ self._puffer_lexer_actions = [
 	10, 1, 11, 1, 12, 1, 13, 1, 
 	14, 1, 15, 1, 16, 1, 17, 1, 
 	18, 1, 19, 1, 20, 1, 21, 1, 
-	22, 1, 23, 2, 5, 2, 2, 5, 
-	6, 2, 5, 7
+	22, 1, 23, 1, 24, 1, 25, 1, 
+	26, 1, 27, 1, 28, 2, 5, 2, 
+	2, 5, 6, 2, 5, 7
 ]
 
 class << self
@@ -73,9 +74,10 @@ class << self
 	private :_puffer_lexer_key_offsets, :_puffer_lexer_key_offsets=
 end
 self._puffer_lexer_key_offsets = [
-	0, 0, 2, 2, 3, 5, 5, 7, 
-	7, 9, 10, 11, 12, 13, 15, 45, 
-	46, 47, 49, 51, 55, 58, 67
+	0, 0, 2, 2, 3, 4, 6, 6, 
+	8, 8, 10, 11, 12, 13, 14, 15, 
+	18, 49, 50, 52, 53, 55, 57, 61, 
+	64, 73, 74, 75, 76
 ]
 
 class << self
@@ -83,15 +85,16 @@ class << self
 	private :_puffer_lexer_trans_keys, :_puffer_lexer_trans_keys=
 end
 self._puffer_lexer_trans_keys = [
-	34, 92, 38, 39, 92, 47, 92, 48, 
-	57, 124, 123, 123, 123, 33, 47, 10, 
-	32, 33, 34, 38, 39, 42, 46, 47, 
-	63, 91, 93, 95, 123, 124, 125, 9, 
-	13, 37, 45, 48, 57, 58, 59, 60, 
-	62, 65, 90, 97, 122, 61, 42, 48, 
-	57, 47, 92, 65, 90, 97, 122, 46, 
-	48, 57, 33, 63, 95, 48, 57, 65, 
-	90, 97, 122, 125, 0
+	34, 92, 125, 38, 39, 92, 47, 92, 
+	48, 57, 124, 125, 123, 123, 123, 33, 
+	35, 47, 10, 32, 33, 34, 35, 38, 
+	39, 42, 46, 47, 63, 91, 93, 95, 
+	123, 124, 125, 9, 13, 37, 45, 48, 
+	57, 58, 59, 60, 62, 65, 90, 97, 
+	122, 61, 10, 125, 42, 48, 57, 47, 
+	92, 65, 90, 97, 122, 46, 48, 57, 
+	33, 63, 95, 48, 57, 65, 90, 97, 
+	122, 125, 35, 35, 125, 0
 ]
 
 class << self
@@ -99,9 +102,10 @@ class << self
 	private :_puffer_lexer_single_lengths, :_puffer_lexer_single_lengths=
 end
 self._puffer_lexer_single_lengths = [
-	0, 2, 0, 1, 2, 0, 2, 0, 
-	0, 1, 1, 1, 1, 2, 16, 1, 
-	1, 0, 2, 0, 1, 3, 1
+	0, 2, 0, 1, 1, 2, 0, 2, 
+	0, 0, 1, 1, 1, 1, 1, 3, 
+	17, 1, 2, 1, 0, 2, 0, 1, 
+	3, 1, 1, 1, 1
 ]
 
 class << self
@@ -110,8 +114,9 @@ class << self
 end
 self._puffer_lexer_range_lengths = [
 	0, 0, 0, 0, 0, 0, 0, 0, 
-	1, 0, 0, 0, 0, 0, 7, 0, 
-	0, 1, 0, 2, 1, 3, 0
+	0, 1, 0, 0, 0, 0, 0, 0, 
+	7, 0, 0, 0, 1, 0, 2, 1, 
+	3, 0, 0, 0, 0
 ]
 
 class << self
@@ -119,9 +124,10 @@ class << self
 	private :_puffer_lexer_index_offsets, :_puffer_lexer_index_offsets=
 end
 self._puffer_lexer_index_offsets = [
-	0, 0, 3, 4, 6, 9, 10, 13, 
-	14, 16, 18, 20, 22, 24, 27, 51, 
-	53, 55, 57, 60, 63, 66, 73
+	0, 0, 3, 4, 6, 8, 11, 12, 
+	15, 16, 18, 20, 22, 24, 26, 28, 
+	32, 57, 59, 62, 64, 66, 69, 72, 
+	75, 82, 84, 86, 88
 ]
 
 class << self
@@ -129,18 +135,20 @@ class << self
 	private :_puffer_lexer_trans_targs, :_puffer_lexer_trans_targs=
 end
 self._puffer_lexer_trans_targs = [
-	14, 2, 1, 1, 14, 0, 14, 5, 
-	4, 4, 19, 7, 6, 6, 17, 14, 
-	14, 0, 12, 11, 10, 11, 13, 10, 
-	10, 10, 10, 14, 14, 15, 1, 3, 
-	4, 16, 17, 18, 14, 14, 14, 21, 
-	14, 9, 22, 14, 14, 20, 14, 15, 
-	21, 21, 0, 14, 14, 14, 14, 17, 
-	14, 19, 7, 6, 19, 19, 14, 8, 
-	20, 14, 14, 14, 21, 21, 21, 21, 
-	14, 14, 14, 14, 14, 14, 10, 10, 
-	10, 14, 14, 14, 14, 14, 14, 14, 
-	14, 0
+	16, 2, 1, 1, 16, 18, 16, 0, 
+	16, 6, 5, 5, 22, 8, 7, 7, 
+	20, 16, 16, 0, 26, 26, 14, 13, 
+	12, 13, 15, 12, 12, 12, 12, 12, 
+	16, 16, 17, 1, 18, 4, 5, 19, 
+	20, 21, 16, 16, 16, 24, 16, 10, 
+	25, 16, 16, 23, 16, 17, 24, 24, 
+	0, 16, 16, 16, 3, 18, 16, 16, 
+	20, 16, 22, 8, 7, 22, 22, 16, 
+	9, 23, 16, 16, 16, 24, 24, 24, 
+	24, 16, 16, 16, 28, 27, 26, 27, 
+	11, 26, 16, 16, 16, 16, 26, 12, 
+	12, 12, 16, 16, 16, 16, 16, 16, 
+	16, 16, 16, 26, 26, 0
 ]
 
 class << self
@@ -148,18 +156,20 @@ class << self
 	private :_puffer_lexer_trans_actions, :_puffer_lexer_trans_actions=
 end
 self._puffer_lexer_trans_actions = [
-	19, 0, 0, 0, 13, 0, 17, 0, 
-	0, 0, 0, 0, 0, 0, 49, 33, 
-	13, 0, 0, 0, 41, 0, 0, 41, 
-	37, 37, 39, 13, 21, 0, 0, 0, 
-	0, 0, 46, 43, 13, 13, 13, 0, 
-	13, 0, 0, 21, 13, 9, 13, 0, 
-	0, 0, 0, 13, 23, 13, 23, 49, 
-	35, 0, 0, 0, 0, 0, 29, 0, 
-	9, 25, 15, 15, 0, 0, 0, 0, 
-	27, 11, 23, 31, 31, 33, 41, 41, 
-	39, 23, 23, 35, 23, 29, 25, 27, 
-	23, 0
+	19, 0, 0, 0, 37, 9, 13, 0, 
+	17, 0, 0, 0, 0, 0, 0, 0, 
+	59, 35, 13, 0, 41, 45, 0, 0, 
+	51, 0, 0, 51, 47, 47, 47, 49, 
+	13, 21, 0, 0, 9, 0, 0, 0, 
+	56, 53, 13, 13, 13, 0, 13, 0, 
+	0, 21, 13, 9, 13, 0, 0, 0, 
+	0, 13, 23, 31, 0, 9, 13, 23, 
+	59, 39, 0, 0, 0, 0, 0, 29, 
+	0, 9, 25, 15, 15, 0, 0, 0, 
+	0, 27, 11, 23, 9, 0, 43, 0, 
+	0, 43, 37, 33, 33, 35, 45, 51, 
+	51, 49, 23, 31, 23, 39, 23, 29, 
+	25, 27, 23, 43, 43, 0
 ]
 
 class << self
@@ -168,8 +178,9 @@ class << self
 end
 self._puffer_lexer_to_state_actions = [
 	0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 5, 0, 0, 0, 5, 0, 
-	0, 0, 0, 0, 0, 0, 0
+	0, 0, 0, 0, 5, 0, 0, 0, 
+	5, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 5, 0, 0
 ]
 
 class << self
@@ -178,8 +189,9 @@ class << self
 end
 self._puffer_lexer_from_state_actions = [
 	0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 7, 0, 0, 0, 7, 0, 
-	0, 0, 0, 0, 0, 0, 0
+	0, 0, 0, 0, 7, 0, 0, 0, 
+	7, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 7, 0, 0
 ]
 
 class << self
@@ -187,9 +199,10 @@ class << self
 	private :_puffer_lexer_eof_actions, :_puffer_lexer_eof_actions=
 end
 self._puffer_lexer_eof_actions = [
-	0, 3, 0, 0, 1, 0, 0, 0, 
+	0, 3, 0, 0, 0, 1, 0, 0, 
 	0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 0, 0, 0, 0
+	0, 0, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0
 ]
 
 class << self
@@ -197,19 +210,20 @@ class << self
 	private :_puffer_lexer_eof_trans, :_puffer_lexer_eof_trans=
 end
 self._puffer_lexer_eof_trans = [
-	0, 0, 0, 0, 0, 0, 77, 77, 
-	78, 0, 0, 80, 80, 81, 0, 89, 
-	89, 84, 89, 86, 87, 88, 89
+	0, 0, 0, 91, 0, 0, 0, 93, 
+	93, 94, 0, 95, 0, 97, 97, 98, 
+	0, 107, 100, 107, 102, 107, 104, 105, 
+	106, 107, 0, 109, 109
 ]
 
 class << self
 	attr_accessor :puffer_lexer_start
 end
-self.puffer_lexer_start = 10;
+self.puffer_lexer_start = 12;
 class << self
 	attr_accessor :puffer_lexer_first_final
 end
-self.puffer_lexer_first_final = 10;
+self.puffer_lexer_first_final = 12;
 class << self
 	attr_accessor :puffer_lexer_error
 end
@@ -218,14 +232,18 @@ self.puffer_lexer_error = 0;
 class << self
 	attr_accessor :puffer_lexer_en_expression
 end
-self.puffer_lexer_en_expression = 14;
+self.puffer_lexer_en_expression = 16;
+class << self
+	attr_accessor :puffer_lexer_en_template_comment
+end
+self.puffer_lexer_en_template_comment = 26;
 class << self
 	attr_accessor :puffer_lexer_en_main
 end
-self.puffer_lexer_en_main = 10;
+self.puffer_lexer_en_main = 12;
 
 
-# line 137 "lib/puffer_markup/lexer.rl"
+# line 148 "lib/puffer_markup/lexer.rl"
       #%
     end
 
@@ -304,16 +322,37 @@ self.puffer_lexer_en_main = 10;
 
     def emit_template
       # Hack this to glue templates going straight
-      if @token_array[-1] && @token_array[-1][0] == :TEMPLATE
-        @token_array[-1][1] += current_value
+      last = @token_array[-1]
+      if last && last[0] == :TEMPLATE
+        last[1] += current_value
       else
         emit :TEMPLATE, current_value
+      end
+    end
+
+    def emit_tag_or_comment if_tag, if_comment
+      value = current_value
+      if value == '{{#'
+        emit_comment
+        if_comment.call
+      else
+        emit_tag
+        if_tag.call
       end
     end
 
     def emit_tag
       value = current_value
       emit TAGS[value], value
+    end
+
+    def emit_comment
+      last = @token_array[-1]
+      if last && last[0] == :COMMENT
+        last[1] += current_value
+      else
+        emit :COMMENT, current_value
+      end
     end
 
     def current_position
@@ -343,7 +382,7 @@ self.puffer_lexer_en_main = 10;
       @token_array = []
 
       
-# line 347 "lib/puffer_markup/lexer.rb"
+# line 386 "lib/puffer_markup/lexer.rb"
 begin
 	p ||= 0
 	pe ||=  @data.length
@@ -354,14 +393,14 @@ begin
 	act = 0
 end
 
-# line 254 "lib/puffer_markup/lexer.rl"
+# line 286 "lib/puffer_markup/lexer.rl"
       #%
 
       eof = pe
       stack = []
 
       
-# line 365 "lib/puffer_markup/lexer.rb"
+# line 404 "lib/puffer_markup/lexer.rb"
 begin
 	_klen, _trans, _keys, _acts, _nacts = nil
 	_goto_level = 0
@@ -395,7 +434,7 @@ begin
 		begin
  @ts = p
 		end
-# line 399 "lib/puffer_markup/lexer.rb"
+# line 438 "lib/puffer_markup/lexer.rb"
 		end # from state action switch
 	end
 	if _trigger_goto
@@ -465,7 +504,7 @@ when 2 then
 # line 58 "lib/puffer_markup/lexer.rl"
 		begin
  regexp_ambiguity { 	begin
-		cs = 14
+		cs = 16
 		_trigger_goto = true
 		_goto_level = _again
 		break
@@ -477,15 +516,15 @@ when 5 then
  @te = p+1
 		end
 when 6 then
-# line 73 "lib/puffer_markup/lexer.rl"
+# line 78 "lib/puffer_markup/lexer.rl"
 		begin
 act = 2;		end
 when 7 then
-# line 74 "lib/puffer_markup/lexer.rl"
+# line 79 "lib/puffer_markup/lexer.rl"
 		begin
 act = 3;		end
 when 8 then
-# line 72 "lib/puffer_markup/lexer.rl"
+# line 77 "lib/puffer_markup/lexer.rl"
 		begin
  @te = p+1
  begin  emit_tag; 	begin
@@ -498,71 +537,83 @@ when 8 then
   end
 		end
 when 9 then
-# line 73 "lib/puffer_markup/lexer.rl"
+# line 78 "lib/puffer_markup/lexer.rl"
 		begin
  @te = p+1
  begin  emit_operator  end
 		end
 when 10 then
-# line 75 "lib/puffer_markup/lexer.rl"
+# line 80 "lib/puffer_markup/lexer.rl"
 		begin
  @te = p+1
  begin  emit_identifer  end
 		end
 when 11 then
-# line 76 "lib/puffer_markup/lexer.rl"
+# line 81 "lib/puffer_markup/lexer.rl"
 		begin
  @te = p+1
  begin  emit_sstring  end
 		end
 when 12 then
-# line 77 "lib/puffer_markup/lexer.rl"
+# line 82 "lib/puffer_markup/lexer.rl"
 		begin
  @te = p+1
  begin  emit_dstring  end
 		end
 when 13 then
-# line 79 "lib/puffer_markup/lexer.rl"
+# line 85 "lib/puffer_markup/lexer.rl"
 		begin
  @te = p+1
 		end
 when 14 then
-# line 73 "lib/puffer_markup/lexer.rl"
+# line 78 "lib/puffer_markup/lexer.rl"
 		begin
  @te = p
 p = p - 1; begin  emit_operator  end
 		end
 when 15 then
-# line 74 "lib/puffer_markup/lexer.rl"
+# line 79 "lib/puffer_markup/lexer.rl"
 		begin
  @te = p
 p = p - 1; begin  emit_numeric  end
 		end
 when 16 then
-# line 75 "lib/puffer_markup/lexer.rl"
+# line 80 "lib/puffer_markup/lexer.rl"
 		begin
  @te = p
 p = p - 1; begin  emit_identifer  end
 		end
 when 17 then
-# line 78 "lib/puffer_markup/lexer.rl"
+# line 83 "lib/puffer_markup/lexer.rl"
 		begin
  @te = p
 p = p - 1; begin  emit_regexp  end
 		end
 when 18 then
-# line 73 "lib/puffer_markup/lexer.rl"
+# line 84 "lib/puffer_markup/lexer.rl"
+		begin
+ @te = p
+p = p - 1; begin  emit_comment  end
+		end
+when 19 then
+# line 78 "lib/puffer_markup/lexer.rl"
 		begin
  begin p = (( @te))-1; end
  begin  emit_operator  end
 		end
-when 19 then
-# line 74 "lib/puffer_markup/lexer.rl"
+when 20 then
+# line 79 "lib/puffer_markup/lexer.rl"
 		begin
  begin p = (( @te))-1; end
  begin  emit_numeric  end
 		end
-when 20 then
+when 21 then
+# line 84 "lib/puffer_markup/lexer.rl"
+		begin
+ begin p = (( @te))-1; end
+ begin  emit_comment  end
+		end
+when 22 then
 # line 1 "NONE"
 		begin
 	case act
@@ -574,41 +625,82 @@ when 20 then
  emit_numeric end
 end 
 			end
-when 21 then
-# line 83 "lib/puffer_markup/lexer.rl"
+when 23 then
+# line 89 "lib/puffer_markup/lexer.rl"
 		begin
  @te = p+1
- begin  emit_tag; 	begin
-		stack[top] = cs
-		top+= 1
-		cs = 14
+ begin  emit_comment; 	begin
+		top -= 1
+		cs = stack[top]
 		_trigger_goto = true
 		_goto_level = _again
 		break
 	end
   end
 		end
-when 22 then
-# line 83 "lib/puffer_markup/lexer.rl"
+when 24 then
+# line 90 "lib/puffer_markup/lexer.rl"
 		begin
  @te = p
-p = p - 1; begin  emit_tag; 	begin
+p = p - 1; begin  emit_comment  end
+		end
+when 25 then
+# line 90 "lib/puffer_markup/lexer.rl"
+		begin
+ begin p = (( @te))-1; end
+ begin  emit_comment  end
+		end
+when 26 then
+# line 94 "lib/puffer_markup/lexer.rl"
+		begin
+ @te = p+1
+ begin  emit_tag_or_comment ->{ 	begin
 		stack[top] = cs
 		top+= 1
-		cs = 14
+		cs = 16
 		_trigger_goto = true
 		_goto_level = _again
 		break
 	end
-  end
+ }, ->{ 	begin
+		stack[top] = cs
+		top+= 1
+		cs = 26
+		_trigger_goto = true
+		_goto_level = _again
+		break
+	end
+ }  end
 		end
-when 23 then
-# line 84 "lib/puffer_markup/lexer.rl"
+when 27 then
+# line 94 "lib/puffer_markup/lexer.rl"
+		begin
+ @te = p
+p = p - 1; begin  emit_tag_or_comment ->{ 	begin
+		stack[top] = cs
+		top+= 1
+		cs = 16
+		_trigger_goto = true
+		_goto_level = _again
+		break
+	end
+ }, ->{ 	begin
+		stack[top] = cs
+		top+= 1
+		cs = 26
+		_trigger_goto = true
+		_goto_level = _again
+		break
+	end
+ }  end
+		end
+when 28 then
+# line 95 "lib/puffer_markup/lexer.rl"
 		begin
  @te = p
 p = p - 1; begin  emit_template  end
 		end
-# line 612 "lib/puffer_markup/lexer.rb"
+# line 704 "lib/puffer_markup/lexer.rb"
 			end # action switch
 		end
 	end
@@ -628,7 +720,7 @@ when 3 then
 # line 1 "NONE"
 		begin
  @ts = nil;		end
-# line 632 "lib/puffer_markup/lexer.rb"
+# line 724 "lib/puffer_markup/lexer.rb"
 		end # to state action switch
 	end
 	if _trigger_goto
@@ -666,7 +758,7 @@ when 1 then
 # line 54 "lib/puffer_markup/lexer.rl"
 		begin
  raise_unterminated_string 		end
-# line 670 "lib/puffer_markup/lexer.rb"
+# line 762 "lib/puffer_markup/lexer.rb"
 		end # eof action switch
 	end
 	if _trigger_goto
@@ -680,7 +772,7 @@ end
 	end
 	end
 
-# line 260 "lib/puffer_markup/lexer.rl"
+# line 292 "lib/puffer_markup/lexer.rl"
       #%
 
       raise_unexpected_symbol unless @ts.nil?

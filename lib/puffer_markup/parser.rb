@@ -14,6 +14,8 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 136)
   NEWLINE_PRED = Set.new(Lexer::BOPEN.values + Lexer::OPERATIONS.values)
   NEWLINE_NEXT = Set.new(Lexer::BCLOSE.values + [:NEWLINE])
 
+  TAG_MODES = { '{{' => :normal, '{{!' => :silence, '{{/' => :block_close }
+
   def initialize string
     @lexer = Lexer.new(string)
     @tokens = @lexer.tokens
@@ -30,10 +32,10 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 136)
 
   def next_token
     @position = @position + 1
-    if tcurr && tcurr[0] == :NEWLINE && (
+    if tcurr && (tcurr[0] == :COMMENT || tcurr[0] == :NEWLINE && (
       (tpred && NEWLINE_PRED.include?(tpred[0])) ||
       (tnext && NEWLINE_NEXT.include?(tnext[0]))
-    )
+    ))
       next_token
     else
       tcurr || [false, false]
@@ -556,14 +558,14 @@ module_eval(<<'.,.,', 'parser.y', 59)
 
 module_eval(<<'.,.,', 'parser.y', 60)
   def _reduce_6(val, _values, result)
-     result = Sequencer.build :TAG 
+     result = Tagger.build :TAG, mode: TAG_MODES[val[0]] 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.y', 61)
   def _reduce_7(val, _values, result)
-     result = Sequencer.build :TAG, *val[1].flatten 
+     result = Tagger.build :TAG, *val[1].flatten, mode: TAG_MODES[val[0]] 
     result
   end
 .,.,

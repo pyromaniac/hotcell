@@ -62,11 +62,16 @@
   numeric = digit* ('.' digit+)?;
   identifer = (alpha | '_') (alnum | '_')* [?!]?;
   operator = arithmetic | logic | flow | structure;
+  comment = '#' ([^\n}]+ | '}' [^}])*;
   blank = [\t\v\f\r ];
 
-  tag_open = '{{' [!/]?;
+  tag_open = '{{' [!/\#]?;
   tag_close = '}}';
   template = [^{]+ | '{';
+
+  template_comment_close = '#}}';
+  template_comment_body = [^\#]+ | '#';
+
 
   expression := |*
     tag_close => { emit_tag; fret; };
@@ -76,11 +81,17 @@
     sstring => { emit_sstring };
     dstring => { emit_dstring };
     regexp => { emit_regexp };
+    comment => { emit_comment };
     blank;
   *|;
 
+  template_comment := |*
+    template_comment_close => { emit_comment; fret; };
+    template_comment_body => { emit_comment };
+  *|;
+
   main := |*
-    tag_open => { emit_tag; fcall expression; };
+    tag_open => { emit_tag_or_comment ->{ fcall expression; }, ->{ fcall template_comment; } };
     template => { emit_template };
   *|;
 }%%
@@ -212,16 +223,37 @@ module PufferMarkup
 
     def emit_template
       # Hack this to glue templates going straight
-      if @token_array[-1] && @token_array[-1][0] == :TEMPLATE
-        @token_array[-1][1] += current_value
+      last = @token_array[-1]
+      if last && last[0] == :TEMPLATE
+        last[1] += current_value
       else
         emit :TEMPLATE, current_value
+      end
+    end
+
+    def emit_tag_or_comment if_tag, if_comment
+      value = current_value
+      if value == '{{#'
+        emit_comment
+        if_comment.call
+      else
+        emit_tag
+        if_tag.call
       end
     end
 
     def emit_tag
       value = current_value
       emit TAGS[value], value
+    end
+
+    def emit_comment
+      last = @token_array[-1]
+      if last && last[0] == :COMMENT
+        last[1] += current_value
+      else
+        emit :COMMENT, current_value
+      end
     end
 
     def current_position

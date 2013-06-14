@@ -58,8 +58,8 @@ rule
           | tag { result = Document.build :DOCUMENT, val[0] }
 
   template: TEMPLATE { result = val[0] }
-  tag: TOPEN TCLOSE { result = Sequencer.build :TAG }
-     | TOPEN sequence TCLOSE { result = Sequencer.build :TAG, *val[1].flatten }
+  tag: TOPEN TCLOSE { result = Tagger.build :TAG, mode: TAG_MODES[val[0]] }
+     | TOPEN sequence TCLOSE { result = Tagger.build :TAG, *val[1].flatten, mode: TAG_MODES[val[0]] }
 
   sequence: sequence SEMICOLON sequence { result = val[0].push(val[2]) }
           | sequence SEMICOLON
@@ -136,6 +136,8 @@ rule
   NEWLINE_PRED = Set.new(Lexer::BOPEN.values + Lexer::OPERATIONS.values)
   NEWLINE_NEXT = Set.new(Lexer::BCLOSE.values + [:NEWLINE])
 
+  TAG_MODES = { '{{' => :normal, '{{!' => :silence, '{{/' => :block_close }
+
   def initialize string
     @lexer = Lexer.new(string)
     @tokens = @lexer.tokens
@@ -152,10 +154,10 @@ rule
 
   def next_token
     @position = @position + 1
-    if tcurr && tcurr[0] == :NEWLINE && (
+    if tcurr && (tcurr[0] == :COMMENT || tcurr[0] == :NEWLINE && (
       (tpred && NEWLINE_PRED.include?(tpred[0])) ||
       (tnext && NEWLINE_NEXT.include?(tnext[0]))
-    )
+    ))
       next_token
     else
       tcurr || [false, false]

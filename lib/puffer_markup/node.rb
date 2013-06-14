@@ -17,6 +17,10 @@ module PufferMarkup
     end
 
     def render context
+      process context, *values(context)
+    end
+
+    def process context, *values
       raise NotImplementedError
     end
 
@@ -41,4 +45,5 @@ require 'puffer_markup/node/summoner'
 require 'puffer_markup/node/arrayer'
 require 'puffer_markup/node/hasher'
 require 'puffer_markup/node/sequencer'
+require 'puffer_markup/node/tagger'
 require 'puffer_markup/node/document'

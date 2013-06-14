@@ -1,8 +1,7 @@
 module PufferMarkup
   class Assigner < PufferMarkup::Node
-    def render context
-      values = values(context)
-      context[values.first] = values.second
+    def process context, name, value
+      context[name] = value
     end
   end
 end
