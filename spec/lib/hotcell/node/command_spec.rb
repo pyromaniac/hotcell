@@ -11,7 +11,7 @@ describe Hotcell::Command do
     let(:include_tag) do
       Class.new(described_class) do
         def validate!
-          raise Hotcell::Errors::ArgumentError.new('Template path is required') if children.count != 1
+          raise Hotcell::ArgumentError.new('Template path is required') if children.count != 1
         end
 
         def process context, path
@@ -27,7 +27,7 @@ describe Hotcell::Command do
     specify { parse("{{ include 'template/path' }}").render(context).should == 'included template/path' }
     specify { expect {
       parse("{{ include }}").syntax
-    }.to raise_error Hotcell::Errors::ArgumentError }
+    }.to raise_error Hotcell::ArgumentError }
   end
 
   describe '#render' do

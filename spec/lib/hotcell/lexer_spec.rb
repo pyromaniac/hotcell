@@ -219,8 +219,8 @@ describe Hotcell::Lexer do
   end
 
   context 'errors' do
-    describe Hotcell::Errors::UnexpectedSymbol do
-      let(:error) { Hotcell::Errors::UnexpectedSymbol }
+    describe Hotcell::UnexpectedSymbol do
+      let(:error) { Hotcell::UnexpectedSymbol }
 
       specify { expect { expression("hello @world") }.to raise_error(error, /`@`.*1:10/) }
       specify { expect { expression("@hello world") }.to raise_error(error, /`@`.*1:4/) }
@@ -233,8 +233,8 @@ describe Hotcell::Lexer do
       specify { expect { expression("'привет' @ 'мир'") }.to raise_error(error, /`@`.*1:13/) }
     end
 
-    describe Hotcell::Errors::UnterminatedString do
-      let(:error) { Hotcell::Errors::UnterminatedString }
+    describe Hotcell::UnterminatedString do
+      let(:error) { Hotcell::UnterminatedString }
 
       specify { expect { expression("hello 'world") }.to raise_error(error, /`'world }}`.*1:10/) }
       specify { expect { expression("hello\nwor'ld") }.to raise_error(error, /`'ld }}`.*2:4/) }

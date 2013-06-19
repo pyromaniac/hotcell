@@ -36,7 +36,7 @@ describe Hotcell::Block do
             names.any? && names.last.in?('elsif', 'else') &&
             names[0..-2].uniq.in?(['elsif'], [])
           )
-          raise Hotcell::Errors::BlockError.new 'Invalid if syntax' unless valid
+          raise Hotcell::BlockError.new 'Invalid if syntax' unless valid
         end
 
         def process context, subnodes, condition
@@ -91,7 +91,7 @@ describe Hotcell::Block do
     context do
       specify { expect {
         parse("{{ if value == 'hello' }}{{ else }}world{{ elsif }}{{ end if }}").syntax
-      }.to raise_error Hotcell::Errors::BlockError }
+      }.to raise_error Hotcell::BlockError }
     end
   end
 

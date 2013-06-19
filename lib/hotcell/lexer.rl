@@ -271,15 +271,15 @@ module Hotcell
     end
 
     def raise_unexpected_symbol
-      raise Hotcell::Errors::UnexpectedSymbol.new *current_error
+      raise Hotcell::UnexpectedSymbol.new *current_error
     end
 
     def raise_unterminated_string
-      raise Hotcell::Errors::UnterminatedString.new *current_error
+      raise Hotcell::UnterminatedString.new *current_error
     end
 
     def raise_unterminated_regexp
-      raise Hotcell::Errors::UnterminatedRegexp.new *current_error
+      raise Hotcell::UnterminatedRegexp.new *current_error
     end
 
     def tokens

@@ -231,6 +231,6 @@ rule
   end
 
   def on_error(token, value, vstack)
-    raise Hotcell::Errors::UnexpectedLexem.new("#{token_to_str(token) || '?'} `#{value}`",
+    raise Hotcell::UnexpectedLexem.new("#{token_to_str(token) || '?'} `#{value}`",
       value.hotcell_position[0], value.hotcell_position[1])
   end
