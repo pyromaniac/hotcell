@@ -65,7 +65,7 @@
   comment = '#' ([^\n}]+ | '}' [^}])*;
   blank = [\t\v\f\r ];
 
-  tag_open = '{{' [!/\#]?;
+  tag_open = '{{' [!\#]?;
   tag_close = '}}';
   template = [^{]+ | '{';
 
@@ -131,7 +131,7 @@ module PufferMarkup
 
     TAGS = {
       '{{' => :TOPEN, '{{!' => :TOPEN,
-      '{{/' => :TOPEN, '}}' => :TCLOSE
+      '}}' => :TCLOSE
     }
 
     PREREGEXP = Set.new [

@@ -16,17 +16,21 @@ module PufferMarkup
       self
     end
 
+    def [] key
+      children[key]
+    end
+
     def render context
-      process context, *values(context)
+      process context, *render_nodes(context, children)
     end
 
     def process context, *values
       raise NotImplementedError
     end
 
-    def values context
-      children.map do |child|
-        child.is_a?(PufferMarkup::Node) ? child.render(context) : child
+    def render_nodes context, *values
+      values.flatten.map do |node|
+        node.is_a?(PufferMarkup::Node) ? node.render(context) : node
       end
     end
 
@@ -45,5 +49,7 @@ require 'puffer_markup/node/summoner'
 require 'puffer_markup/node/arrayer'
 require 'puffer_markup/node/hasher'
 require 'puffer_markup/node/sequencer'
-require 'puffer_markup/node/tagger'
-require 'puffer_markup/node/document'
+require 'puffer_markup/node/joiner'
+require 'puffer_markup/node/tag'
+require 'puffer_markup/node/command'
+require 'puffer_markup/node/block'

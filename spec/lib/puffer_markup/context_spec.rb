@@ -5,8 +5,15 @@ describe PufferMarkup::Context do
     its('scope.scope') { should == [{}] }
 
     context do
-      subject { described_class.new(scope: { foo: 42, 'bar' => 'baz' }, variables: { baz: 'moo' }) }
-      its('scope.scope') { should == [{foo: 42, 'bar' => 'baz'}] }
+      subject { described_class.new(
+        scope: { foo: 42, 'bar' => 'baz' },
+        variables: { baz: 'moo' },
+        boo: 'goo',
+        'taz' => 'man',
+        rescuer: ->{},
+        reraise: true
+      ) }
+      its('scope.scope') { should == [{foo: 42, 'bar' => 'baz', 'baz' => 'moo', 'boo' => 'goo', 'taz' => 'man'}] }
     end
 
     context do

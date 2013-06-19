@@ -1,5 +1,5 @@
 module PufferMarkup
-  class Tagger < PufferMarkup::Node
+  class Tag < PufferMarkup::Node
     attr_reader :mode
 
     def initialize *_
@@ -8,17 +8,18 @@ module PufferMarkup
     end
 
     def process context, *values
-      case mode
-      when :normal
-        values.last
-      else
-        nil
-      end
+      values.last
     end
 
     def render context
       context.safe do
-        process context, *values(context)
+        values = render_nodes(context, children)
+        case mode
+        when :normal
+          process context, *values
+        else
+          ''
+        end
       end
     end
   end

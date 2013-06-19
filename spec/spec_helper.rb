@@ -9,7 +9,8 @@ AwesomePrint::Formatter.class_eval do
   end
 
   def awesome_puffer_markup_node(object)
-    "#{colorize(object.class.name, :class)} #{colorize(object.name.to_s, :method)} #{object.options.presence}" +
+    "#{colorize(object.class.name, :class)} #{colorize(object.name.to_s, :method)}" +
+      ((awesome_hash(object.options) + "\n") if object.options.present?).to_s +
       awesome_array(object.children)
   end
 

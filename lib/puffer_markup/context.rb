@@ -8,15 +8,16 @@ module PufferMarkup
     DEFAULT_RESCUER = ->(e){ "#{e.class}: #{e.message}" }
 
     def initialize options = {}
-      scope = options[:scope].presence
-      scope ||= begin
-        variables = (options[:variables] || {}).stringify_keys
-        environment = (options[:environment] || {}).symbolize_keys
-        variables.merge! environment
-      end
-      @scope = Scope.new scope
-      @rescuer = options[:rescuer] || DEFAULT_RESCUER
-      @reraise = !!options[:reraise]
+      options = options.dup
+
+      scope = options.delete(:scope) || {}
+      scope.merge! (options.delete(:variables) || {}).stringify_keys
+      scope.merge! (options.delete(:environment) || {}).symbolize_keys
+
+      @rescuer = options.delete(:rescuer) || DEFAULT_RESCUER
+      @reraise = !!options.delete(:reraise)
+
+      @scope = Scope.new scope.merge!(options.stringify_keys)
     end
 
     def safe *default

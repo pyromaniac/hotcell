@@ -52,14 +52,54 @@ prechigh
 preclow
 start document
 rule
-  document: document template { val[0].children.push(val[1]) }
-          | document tag { val[0].children.push(val[1]) }
-          | template { result = Document.build :DOCUMENT, val[0] }
-          | tag { result = Document.build :DOCUMENT, val[0] }
+  document: document document_unit { val[0].children.push(val[1]) }
+          | document_unit { result = Joiner.build :JOINER, val[0] }
+  document_unit: template | command_tag | block_tag | tag
 
   template: TEMPLATE { result = val[0] }
-  tag: TOPEN TCLOSE { result = Tagger.build :TAG, mode: TAG_MODES[val[0]] }
-     | TOPEN sequence TCLOSE { result = Tagger.build :TAG, *val[1].flatten, mode: TAG_MODES[val[0]] }
+  tag: TOPEN TCLOSE { result = Tag.build :TAG, mode: TAG_MODES[val[0]] }
+     | TOPEN sequence TCLOSE { result = Tag.build :TAG, *val[1].flatten, mode: TAG_MODES[val[0]] }
+
+  command_tag: TOPEN assigned_command TCLOSE {
+    command = val[1][:command]
+    assign = val[1][:assign]
+    command.options[:mode] = TAG_MODES[val[0]]
+    command.options[:assign] = assign if assign
+    command.validate!
+    result = command
+  }
+  block_open: TOPEN assigned_block TCLOSE {
+    block = val[1][:block]
+    assign = val[1][:assign]
+    block.options[:mode] = TAG_MODES[val[0]]
+    block.options[:assign] = assign if assign
+    result = block
+  }
+  block_close: TOPEN endblock TCLOSE
+  block_body: block_body document_unit {
+                val[0][-1].is_a?(Joiner) ?
+                  val[0][-1].children.push(val[1]) :
+                  val[0].push(Joiner.build(:JOINER, val[1]))
+              }
+            | block_body subcommand_tag { val[0].push(val[1]) }
+            | document_unit { result = [Joiner.build(:JOINER, val[0])] }
+            | subcommand_tag { result = [val[0]] }
+  block_tag: block_open block_close
+           | block_open block_body block_close { val[0].options[:subnodes] = val[1]; val[0].validate! }
+  subcommand_tag: TOPEN subcommand TCLOSE { result = val[1] }
+
+  command: COMMAND { result = Command.build val[0] }
+         | COMMAND arguments { result = Command.build val[0], *val[1] }
+  assigned_command: command { result = { command: val[0] } }
+                  | IDENTIFER ASSIGN command { result = { command: val[2], assign: val[0] } }
+  block: BLOCK { result = Block.build val[0] }
+       | BLOCK arguments { result = Block.build val[0], *val[1] }
+  assigned_block: block { result = { block: val[0] } }
+                | IDENTIFER ASSIGN block { result = { block: val[2], assign: val[0] } }
+  endblock: ENDBLOCK
+          | END BLOCK
+  subcommand: SUBCOMMAND { result = { name: val[0] } }
+            | SUBCOMMAND arguments { result = { name: val[0], args: Arrayer.build(:ARRAY, *val[1]) } }
 
   sequence: sequence SEMICOLON sequence { result = val[0].push(val[2]) }
           | sequence SEMICOLON
@@ -88,9 +128,9 @@ rule
       | expr EQUAL expr { result = Calculator.build :EQUAL, val[0], val[2] }
       | expr INEQUAL expr { result = Calculator.build :INEQUAL, val[0], val[2] }
       | NOT expr { result = Calculator.build :NOT, val[1] }
-      | IDENTIFER ASSIGN expr { result = Assigner.build :ASSIGN, val[0], val[2] }
+      | IDENTIFER ASSIGN expr { result = Assigner.build val[0], val[2] }
       | expr PERIOD method { val[2].children[0] = val[0]; result = val[2] }
-      | expr AOPEN arguments ACLOSE { result = Summoner.build :METHOD, val[0], '[]', *val[2] }
+      | expr AOPEN arguments ACLOSE { result = Summoner.build val[0], '[]', *val[2] }
       | POPEN PCLOSE { result = nil }
       | POPEN sequence PCLOSE {
         result = case val[1].size
@@ -126,9 +166,9 @@ rule
   arguments: params COMMA pairs { result = [*val[0], Hasher.build(:HASH, *val[2])] }
            | params
            | pairs { result = Hasher.build(:HASH, *val[0]) }
-  method: IDENTIFER { result = Summoner.build :METHOD, nil, val[0] }
-        | IDENTIFER POPEN PCLOSE { result = Summoner.build :METHOD, nil, val[0] }
-        | IDENTIFER POPEN arguments PCLOSE { result = Summoner.build :METHOD, nil, val[0], *val[2] }
+  method: IDENTIFER { result = Summoner.build nil, val[0] }
+        | IDENTIFER POPEN PCLOSE { result = Summoner.build nil, val[0] }
+        | IDENTIFER POPEN arguments PCLOSE { result = Summoner.build nil, val[0], *val[2] }
 
 ---- header
   require 'puffer_markup/lexer'
@@ -136,17 +176,22 @@ rule
   NEWLINE_PRED = Set.new(Lexer::BOPEN.values + Lexer::OPERATIONS.values)
   NEWLINE_NEXT = Set.new(Lexer::BCLOSE.values + [:NEWLINE])
 
-  TAG_MODES = { '{{' => :normal, '{{!' => :silence, '{{/' => :block_close }
+  TAG_MODES = { '{{' => :normal, '{{!' => :silence }
 
-  def initialize string
+  def initialize string, options = {}
     @lexer = Lexer.new(string)
     @tokens = @lexer.tokens
     @position = -1
+
+    @commands = Set.new(Array.wrap(options[:commands]).map(&:to_s))
+    @blocks = Set.new(Array.wrap(options[:blocks]).map(&:to_s))
+    @endblocks = Set.new(Array.wrap(options[:blocks]).map { |identifer| "end#{identifer}" })
+    @subcommands = Set.new(Array.wrap(options[:subcommands]).map(&:to_s))
   end
 
   def parse
     if @tokens.size == 0
-      Document.build :DOCUMENT
+      Joiner.build :JOINER
     else
       do_parse
     end
@@ -154,24 +199,33 @@ rule
 
   def next_token
     @position = @position + 1
+
+    tcurr = @tokens[@position]
+    tnext = @tokens[@position.next]
+    tpred = @tokens[@position.pred]
+
     if tcurr && (tcurr[0] == :COMMENT || tcurr[0] == :NEWLINE && (
       (tpred && NEWLINE_PRED.include?(tpred[0])) ||
       (tnext && NEWLINE_NEXT.include?(tnext[0]))
     ))
       next_token
     else
-      tcurr || [false, false]
+      if tcurr && tcurr[0] == :IDENTIFER
+        if @commands.include?(tcurr[1])
+          [:COMMAND, tcurr[1]]
+        elsif @blocks.include?(tcurr[1])
+          [:BLOCK, tcurr[1]]
+        elsif @endblocks.include?(tcurr[1])
+          [:ENDBLOCK, tcurr[1]]
+        elsif @subcommands.include?(tcurr[1])
+          [:SUBCOMMAND, tcurr[1]]
+        elsif tcurr[1] == 'end'
+          [:END, tcurr[1]]
+        else
+          tcurr
+        end
+      else
+        tcurr || [false, false]
+      end
     end
-  end
-
-  def tcurr
-    @tokens[@position]
-  end
-
-  def tnext
-    @tokens[@position.next]
-  end
-
-  def tpred
-    @tokens[@position.pred]
   end

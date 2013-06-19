@@ -1,5 +1,5 @@
 module PufferMarkup
-  class Document < PufferMarkup::Node
+  class Joiner < PufferMarkup::Node
     def process context, *values
       values.join
     end

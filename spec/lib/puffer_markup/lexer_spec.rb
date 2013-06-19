@@ -222,29 +222,29 @@ describe PufferMarkup::Lexer do
     describe PufferMarkup::Errors::UnexpectedSymbol do
       let(:error) { PufferMarkup::Errors::UnexpectedSymbol }
 
-      specify { expect { expression("hello @world") }.to raise_error(error, /line 1, column 10/) }
-      specify { expect { expression("@hello world") }.to raise_error(error, /line 1, column 4/) }
-      specify { expect { expression("hello world@") }.to raise_error(error, /line 1, column 15/) }
-      specify { expect { expression("hello\n@ world") }.to raise_error(error, /line 2, column 1/) }
-      specify { expect { expression("hello\n @world") }.to raise_error(error, /line 2, column 2/) }
-      specify { expect { expression("hello\n world@") }.to raise_error(error, /line 2, column 7/) }
-      specify { expect { expression("hello@\n world") }.to raise_error(error, /line 1, column 9/) }
-      specify { expect { expression("@hello\n world") }.to raise_error(error, /line 1, column 4/) }
-      specify { expect { expression("'привет' @ 'мир'") }.to raise_error(error, /line 1, column 13/) }
+      specify { expect { expression("hello @world") }.to raise_error(error, /1:10/) }
+      specify { expect { expression("@hello world") }.to raise_error(error, /1:4/) }
+      specify { expect { expression("hello world@") }.to raise_error(error, /1:15/) }
+      specify { expect { expression("hello\n@ world") }.to raise_error(error, /2:1/) }
+      specify { expect { expression("hello\n @world") }.to raise_error(error, /2:2/) }
+      specify { expect { expression("hello\n world@") }.to raise_error(error, /2:7/) }
+      specify { expect { expression("hello@\n world") }.to raise_error(error, /1:9/) }
+      specify { expect { expression("@hello\n world") }.to raise_error(error, /1:4/) }
+      specify { expect { expression("'привет' @ 'мир'") }.to raise_error(error, /1:13/) }
     end
 
     describe PufferMarkup::Errors::UnterminatedString do
       let(:error) { PufferMarkup::Errors::UnterminatedString }
 
-      specify { expect { expression("hello 'world") }.to raise_error(error, /line 1, column 10/) }
-      specify { expect { expression("hello\nwor'ld") }.to raise_error(error, /line 2, column 4/) }
-      specify { expect { expression("hello 'world\\'") }.to raise_error(error, /line 1, column 10/) }
-      specify { expect { expression("hello 'wor\\'ld") }.to raise_error(error, /line 1, column 10/) }
-      specify { expect { expression("\"hello world") }.to raise_error(error, /line 1, column 4/) }
-      specify { expect { expression("he\"llo\\\" world") }.to raise_error(error, /line 1, column 6/) }
-      specify { expect { expression("he\"llo\\\" \nworld") }.to raise_error(error, /line 1, column 6/) }
-      specify { expect { expression("\"hello\\\"\n world") }.to raise_error(error, /line 1, column 4/) }
-      specify { expect { expression("'привет' 'мир") }.to raise_error(error, /line 1, column 13/) }
+      specify { expect { expression("hello 'world") }.to raise_error(error, /1:10/) }
+      specify { expect { expression("hello\nwor'ld") }.to raise_error(error, /2:4/) }
+      specify { expect { expression("hello 'world\\'") }.to raise_error(error, /1:10/) }
+      specify { expect { expression("hello 'wor\\'ld") }.to raise_error(error, /1:10/) }
+      specify { expect { expression("\"hello world") }.to raise_error(error, /1:4/) }
+      specify { expect { expression("he\"llo\\\" world") }.to raise_error(error, /1:6/) }
+      specify { expect { expression("he\"llo\\\" \nworld") }.to raise_error(error, /1:6/) }
+      specify { expect { expression("\"hello\\\"\n world") }.to raise_error(error, /1:4/) }
+      specify { expect { expression("'привет' 'мир") }.to raise_error(error, /1:13/) }
     end
   end
 
@@ -316,7 +316,7 @@ describe PufferMarkup::Lexer do
         [:TOPEN, "{{"], [:NOT, "!"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]
       ] }
       specify { scan('{{/ hello}}').should == [
-        [:TOPEN, "{{/"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]
+        [:TOPEN, "{{"], [:DIVIDE, "/"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]
       ] }
       specify { scan('{{ /hello}}').should == [
         [:TOPEN, "{{"], [:DIVIDE, "/"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]

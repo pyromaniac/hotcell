@@ -1,10 +1,23 @@
 require 'spec_helper'
 
 describe PufferMarkup::Template do
+  describe '.parse' do
+    before do
+      PufferMarkup.stub(:commands) { { 'include' => Class.new } }
+      PufferMarkup.stub(:blocks) { { 'for' => Class.new } }
+      PufferMarkup.stub(:subcommands) { { 'else' => Class.new } }
+    end
+
+    specify { described_class.parse('').should be_a described_class }
+    specify { described_class.parse('').options.should == {
+      commands: ['include'], blocks: ['for'], subcommands: ['else']
+    } }
+  end
+
   describe '#syntax' do
-    specify { described_class.new('').syntax.should be_a PufferMarkup::Document }
-    specify { described_class.new('hello').syntax.should be_a PufferMarkup::Document }
-    specify { described_class.new('hello {{ tag }}').syntax.should be_a PufferMarkup::Document }
+    specify { described_class.new('').syntax.should be_a PufferMarkup::Joiner }
+    specify { described_class.new('hello').syntax.should be_a PufferMarkup::Joiner }
+    specify { described_class.new('hello {{ tag }}').syntax.should be_a PufferMarkup::Joiner }
   end
 
   describe '#render' do
