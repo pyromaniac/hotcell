@@ -11,7 +11,7 @@ require 'hotcell/extensions'
 require 'hotcell/template'
 
 module Hotcell
-  [:commands, :blocks, :subcommands, :register_command].each do |method|
+  [:commands, :blocks, :subcommands, :helpers, :register_command, :register_helpers].each do |method|
     define_singleton_method method do
       Config.instance.send(method)
     end

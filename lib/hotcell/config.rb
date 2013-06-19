@@ -4,12 +4,13 @@ module Hotcell
   class Config
     include Singleton
 
-    attr_reader :commands, :blocks, :subcommands
+    attr_reader :commands, :blocks, :subcommands, :helpers
 
     def initialize
       @commands = {}
       @blocks = {}
       @subcommands = {}
+      @helpers = []
     end
 
     def register_command name, klass
@@ -26,6 +27,10 @@ module Hotcell
       else
         raise "Cannot register command `#{name}` because handler is not a Hotcell::Command or Hotcell::Block"
       end
+    end
+
+    def register_helpers *helpers
+      @helpers |= helpers.flatten
     end
   end
 end

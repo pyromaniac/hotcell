@@ -37,5 +37,23 @@ describe Hotcell::Template do
       subject { described_class.new('Hello, {{! name }}!') }
       specify { subject.render(variables: { name: 'Friend' }).should == 'Hello, !' }
     end
+
+    context do
+      let(:helper) do
+        Module.new do
+          def name string
+            string.capitalize
+          end
+        end
+      end
+      subject { described_class.new("Hello, {{ name('pyra') }}!") }
+      specify { subject.render(helpers: helper).should == 'Hello, Pyra!' }
+
+      context do
+        before { Hotcell.stub(:helpers) { [helper] } }
+        specify { subject.render.should == 'Hello, Pyra!' }
+        specify { subject.render(helpers: []).should == 'Hello, !' }
+      end
+    end
   end
 end

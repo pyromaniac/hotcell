@@ -22,7 +22,8 @@ module Hotcell
       if context.is_a?(Context)
         syntax.render(context)
       else
-        syntax.render(Context.new(context))
+        default_context = { helpers: Hotcell.helpers }
+        syntax.render(Context.new(default_context.merge!(context)))
       end
     end
   end

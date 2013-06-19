@@ -46,8 +46,24 @@ describe Hotcell::Context do
   end
 
   describe '#manipulator_invoke' do
-    subject { described_class.new(variables: { foo: 42, 'bar' => 'baz' }, environment: { 'baz' => 'moo' }) }
+    subject { described_class.new(
+      variables: { foo: 42, 'bar' => 'baz' }, environment: { 'baz' => 'moo' },
+      helpers: Module.new do
+        def strip string
+          string.strip
+        end
+
+        def bar
+          'bazzzzz'
+        end
+      end
+    ) }
     specify { subject.manipulator_invoke('foo').should == 42 }
     specify { subject.manipulator_invoke('moo').should be_nil }
+    specify { subject.manipulator_invoke('baz').should be_nil }
+    specify { subject.manipulator_invoke('bar').should == 'baz' }
+    specify { expect { subject.manipulator_invoke('bar', 42) }.to raise_error ArgumentError }
+    specify { expect { subject.manipulator_invoke('strip') }.to raise_error ArgumentError }
+    specify { subject.manipulator_invoke('strip', '  hello  ').should == 'hello' }
   end
 end

@@ -16,6 +16,9 @@ module Hotcell
 
       @rescuer = options.delete(:rescuer) || DEFAULT_RESCUER
       @reraise = !!options.delete(:reraise)
+      Array.wrap(options.delete(:helpers)).each do |helper|
+        helpers_class.send(:include, helper)
+      end
 
       @scope = Scope.new scope.merge!(options.stringify_keys)
     end
@@ -30,7 +33,21 @@ module Hotcell
     end
 
     def manipulator_invoke method, *arguments
-      scope[method]
+      if arguments.any?
+        helpers.manipulator_invoke(method, *arguments)
+      else
+        scope.key?(method) ? scope[method] : helpers.manipulator_invoke(method)
+      end
+    end
+
+  private
+
+    def helpers
+      @helpers ||= helpers_class.new
+    end
+
+    def helpers_class
+      @helpers_class ||= Class.new(Hotcell::Manipulator)
     end
   end
 end

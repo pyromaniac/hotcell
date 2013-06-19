@@ -14,6 +14,7 @@ describe Hotcell::Config do
   specify { subject.blocks.should == {} }
   specify { subject.subcommands.should == {} }
   specify { subject.commands.should == {} }
+  specify { subject.helpers.should == [] }
 
   describe '#register_command' do
     context do
@@ -52,6 +53,19 @@ describe Hotcell::Config do
         before { subject.register_command :for, command_class }
         specify { expect { subject.register_command 'for', block_class }.to raise_error }
       end
+    end
+  end
+
+  describe '#register_helpers' do
+    context do
+      3.times do |i|
+        let("helper#{i+1}") { Module.new }
+      end
+      before { subject.register_helpers helper1, helper2 }
+      before { subject.register_helpers helper1 }
+      before { subject.register_helpers [helper3] }
+
+      specify { subject.helpers.should == [helper1, helper2, helper3] }
     end
   end
 end
