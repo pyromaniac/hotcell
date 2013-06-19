@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in puffer_markup.gemspec
+# Specify your gem's dependencies in hotcell.gemspec
 gemspec
 
 gem 'awesome_print'

@@ -1,20 +1,20 @@
-require 'puffer_markup'
+require 'hotcell'
 require 'awesome_print'
 
 AwesomePrint::Formatter.class_eval do
-  def cast_with_puffer_markup_node(object, type)
-    cast = cast_without_puffer_markup_node(object, type)
-    cast = :puffer_markup_node if object.is_a?(PufferMarkup::Node)
+  def cast_with_hotcell_node(object, type)
+    cast = cast_without_hotcell_node(object, type)
+    cast = :hotcell_node if object.is_a?(Hotcell::Node)
     cast
   end
 
-  def awesome_puffer_markup_node(object)
+  def awesome_hotcell_node(object)
     "#{colorize(object.class.name, :class)} #{colorize(object.name.to_s, :method)}" +
       ((awesome_hash(object.options) + "\n") if object.options.present?).to_s +
       awesome_array(object.children)
   end
 
-  alias_method_chain :cast, :puffer_markup_node
+  alias_method_chain :cast, :hotcell_node
 end
 
 RSpec::Matchers.define :be_equal_node_to do |expected|

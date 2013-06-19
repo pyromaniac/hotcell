@@ -1,1 +1,1 @@
-rvm use 1.9.3@puffer_markup --create
+rvm use 1.9.3@hotcell --create

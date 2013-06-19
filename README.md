@@ -1,4 +1,4 @@
-# PufferMarkup
+# Hotcell
 
 TODO: Write a gem description
 
@@ -6,7 +6,7 @@ TODO: Write a gem description
 
 Add this line to your application's Gemfile:
 
-    gem 'puffer_markup'
+    gem 'hotcell'
 
 And then execute:
 
@@ -14,7 +14,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install puffer_markup
+    $ gem install hotcell
 
 ## Usage
 
