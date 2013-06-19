@@ -1,7 +1,7 @@
 
 # line 1 "lib/hotcell/lexer.rl"
 
-# line 97 "lib/hotcell/lexer.rl"
+# line 98 "lib/hotcell/lexer.rl"
 
 #%
 
@@ -243,7 +243,7 @@ end
 self.puffer_lexer_en_main = 12;
 
 
-# line 148 "lib/hotcell/lexer.rl"
+# line 149 "lib/hotcell/lexer.rl"
       #%
     end
 
@@ -362,16 +362,21 @@ self.puffer_lexer_en_main = 12;
       [line, column]
     end
 
+    def current_error
+      value = @data[@ts..@p].pack('c*').force_encoding('UTF-8')
+      [value, *current_position]
+    end
+
     def raise_unexpected_symbol
-      raise Hotcell::Errors::UnexpectedSymbol.new *current_position
+      raise Hotcell::Errors::UnexpectedSymbol.new *current_error
     end
 
     def raise_unterminated_string
-      raise Hotcell::Errors::UnterminatedString.new *current_position
+      raise Hotcell::Errors::UnterminatedString.new *current_error
     end
 
     def raise_unterminated_regexp
-      raise Hotcell::Errors::UnterminatedRegexp.new *current_position
+      raise Hotcell::Errors::UnterminatedRegexp.new *current_error
     end
 
     def tokens
@@ -382,9 +387,9 @@ self.puffer_lexer_en_main = 12;
       @token_array = []
 
       
-# line 386 "lib/hotcell/lexer.rb"
+# line 391 "lib/hotcell/lexer.rb"
 begin
-	p ||= 0
+	 @p ||= 0
 	pe ||=  @data.length
 	cs = puffer_lexer_start
 	top = 0
@@ -393,14 +398,14 @@ begin
 	act = 0
 end
 
-# line 286 "lib/hotcell/lexer.rl"
+# line 292 "lib/hotcell/lexer.rl"
       #%
 
       eof = pe
       stack = []
 
       
-# line 404 "lib/hotcell/lexer.rb"
+# line 409 "lib/hotcell/lexer.rb"
 begin
 	_klen, _trans, _keys, _acts, _nacts = nil
 	_goto_level = 0
@@ -412,7 +417,7 @@ begin
 	while true
 	_trigger_goto = false
 	if _goto_level <= 0
-	if p == pe
+	if  @p == pe
 		_goto_level = _test_eof
 		next
 	end
@@ -432,9 +437,9 @@ begin
 			when 4 then
 # line 1 "NONE"
 		begin
- @ts = p
+ @ts =  @p
 		end
-# line 438 "lib/hotcell/lexer.rb"
+# line 443 "lib/hotcell/lexer.rb"
 		end # from state action switch
 	end
 	if _trigger_goto
@@ -454,9 +459,9 @@ begin
 	        break if _upper < _lower
 	        _mid = _lower + ( (_upper - _lower) >> 1 )
 
-	        if  @data[p].ord < _puffer_lexer_trans_keys[_mid]
+	        if  @data[ @p].ord < _puffer_lexer_trans_keys[_mid]
 	           _upper = _mid - 1
-	        elsif  @data[p].ord > _puffer_lexer_trans_keys[_mid]
+	        elsif  @data[ @p].ord > _puffer_lexer_trans_keys[_mid]
 	           _lower = _mid + 1
 	        else
 	           _trans += (_mid - _keys)
@@ -475,9 +480,9 @@ begin
 	     loop do
 	        break if _upper < _lower
 	        _mid = _lower + (((_upper-_lower) >> 1) & ~1)
-	        if  @data[p].ord < _puffer_lexer_trans_keys[_mid]
+	        if  @data[ @p].ord < _puffer_lexer_trans_keys[_mid]
 	          _upper = _mid - 2
-	        elsif  @data[p].ord > _puffer_lexer_trans_keys[_mid+1]
+	        elsif  @data[ @p].ord > _puffer_lexer_trans_keys[_mid+1]
 	          _lower = _mid + 2
 	        else
 	          _trans += ((_mid - _keys) >> 1)
@@ -501,7 +506,7 @@ begin
 			_acts += 1
 			case _puffer_lexer_actions[_acts - 1]
 when 2 then
-# line 58 "lib/hotcell/lexer.rl"
+# line 59 "lib/hotcell/lexer.rl"
 		begin
  regexp_ambiguity { 	begin
 		cs = 16
@@ -513,20 +518,20 @@ when 2 then
 when 5 then
 # line 1 "NONE"
 		begin
- @te = p+1
+ @te =  @p+1
 		end
 when 6 then
-# line 78 "lib/hotcell/lexer.rl"
+# line 79 "lib/hotcell/lexer.rl"
 		begin
 act = 2;		end
 when 7 then
-# line 79 "lib/hotcell/lexer.rl"
+# line 80 "lib/hotcell/lexer.rl"
 		begin
 act = 3;		end
 when 8 then
-# line 77 "lib/hotcell/lexer.rl"
+# line 78 "lib/hotcell/lexer.rl"
 		begin
- @te = p+1
+ @te =  @p+1
  begin  emit_tag; 	begin
 		top -= 1
 		cs = stack[top]
@@ -537,80 +542,80 @@ when 8 then
   end
 		end
 when 9 then
-# line 78 "lib/hotcell/lexer.rl"
+# line 79 "lib/hotcell/lexer.rl"
 		begin
- @te = p+1
+ @te =  @p+1
  begin  emit_operator  end
 		end
 when 10 then
-# line 80 "lib/hotcell/lexer.rl"
+# line 81 "lib/hotcell/lexer.rl"
 		begin
- @te = p+1
+ @te =  @p+1
  begin  emit_identifer  end
 		end
 when 11 then
-# line 81 "lib/hotcell/lexer.rl"
+# line 82 "lib/hotcell/lexer.rl"
 		begin
- @te = p+1
+ @te =  @p+1
  begin  emit_sstring  end
 		end
 when 12 then
-# line 82 "lib/hotcell/lexer.rl"
+# line 83 "lib/hotcell/lexer.rl"
 		begin
- @te = p+1
+ @te =  @p+1
  begin  emit_dstring  end
 		end
 when 13 then
-# line 85 "lib/hotcell/lexer.rl"
+# line 86 "lib/hotcell/lexer.rl"
 		begin
- @te = p+1
+ @te =  @p+1
 		end
 when 14 then
-# line 78 "lib/hotcell/lexer.rl"
-		begin
- @te = p
-p = p - 1; begin  emit_operator  end
-		end
-when 15 then
 # line 79 "lib/hotcell/lexer.rl"
 		begin
- @te = p
-p = p - 1; begin  emit_numeric  end
+ @te =  @p
+ @p =  @p - 1; begin  emit_operator  end
 		end
-when 16 then
+when 15 then
 # line 80 "lib/hotcell/lexer.rl"
 		begin
- @te = p
-p = p - 1; begin  emit_identifer  end
+ @te =  @p
+ @p =  @p - 1; begin  emit_numeric  end
+		end
+when 16 then
+# line 81 "lib/hotcell/lexer.rl"
+		begin
+ @te =  @p
+ @p =  @p - 1; begin  emit_identifer  end
 		end
 when 17 then
-# line 83 "lib/hotcell/lexer.rl"
-		begin
- @te = p
-p = p - 1; begin  emit_regexp  end
-		end
-when 18 then
 # line 84 "lib/hotcell/lexer.rl"
 		begin
- @te = p
-p = p - 1; begin  emit_comment  end
+ @te =  @p
+ @p =  @p - 1; begin  emit_regexp  end
+		end
+when 18 then
+# line 85 "lib/hotcell/lexer.rl"
+		begin
+ @te =  @p
+ @p =  @p - 1; begin  emit_comment  end
 		end
 when 19 then
-# line 78 "lib/hotcell/lexer.rl"
+# line 79 "lib/hotcell/lexer.rl"
 		begin
- begin p = (( @te))-1; end
+ begin  @p = (( @te))-1; end
  begin  emit_operator  end
 		end
 when 20 then
-# line 79 "lib/hotcell/lexer.rl"
+# line 80 "lib/hotcell/lexer.rl"
 		begin
- begin p = (( @te))-1; end
+ begin  @p = (( @te))-1; end
  begin  emit_numeric  end
 		end
 when 21 then
-# line 84 "lib/hotcell/lexer.rl"
+# line 85 "lib/hotcell/lexer.rl"
 		begin
- begin p = (( @te))-1; end
+ begin  @p = (( @te))-1; end
  begin  emit_comment  end
 		end
 when 22 then
@@ -618,17 +623,17 @@ when 22 then
 		begin
 	case act
 	when 2 then
-	begin begin p = (( @te))-1; end
+	begin begin  @p = (( @te))-1; end
  emit_operator end
 	when 3 then
-	begin begin p = (( @te))-1; end
+	begin begin  @p = (( @te))-1; end
  emit_numeric end
 end 
 			end
 when 23 then
-# line 89 "lib/hotcell/lexer.rl"
+# line 90 "lib/hotcell/lexer.rl"
 		begin
- @te = p+1
+ @te =  @p+1
  begin  emit_comment; 	begin
 		top -= 1
 		cs = stack[top]
@@ -639,21 +644,21 @@ when 23 then
   end
 		end
 when 24 then
-# line 90 "lib/hotcell/lexer.rl"
+# line 91 "lib/hotcell/lexer.rl"
 		begin
- @te = p
-p = p - 1; begin  emit_comment  end
+ @te =  @p
+ @p =  @p - 1; begin  emit_comment  end
 		end
 when 25 then
-# line 90 "lib/hotcell/lexer.rl"
+# line 91 "lib/hotcell/lexer.rl"
 		begin
- begin p = (( @te))-1; end
+ begin  @p = (( @te))-1; end
  begin  emit_comment  end
 		end
 when 26 then
-# line 94 "lib/hotcell/lexer.rl"
+# line 95 "lib/hotcell/lexer.rl"
 		begin
- @te = p+1
+ @te =  @p+1
  begin  emit_tag_or_comment ->{ 	begin
 		stack[top] = cs
 		top+= 1
@@ -673,10 +678,10 @@ when 26 then
  }  end
 		end
 when 27 then
-# line 94 "lib/hotcell/lexer.rl"
+# line 95 "lib/hotcell/lexer.rl"
 		begin
- @te = p
-p = p - 1; begin  emit_tag_or_comment ->{ 	begin
+ @te =  @p
+ @p =  @p - 1; begin  emit_tag_or_comment ->{ 	begin
 		stack[top] = cs
 		top+= 1
 		cs = 16
@@ -695,12 +700,12 @@ p = p - 1; begin  emit_tag_or_comment ->{ 	begin
  }  end
 		end
 when 28 then
-# line 95 "lib/hotcell/lexer.rl"
+# line 96 "lib/hotcell/lexer.rl"
 		begin
- @te = p
-p = p - 1; begin  emit_template  end
+ @te =  @p
+ @p =  @p - 1; begin  emit_template  end
 		end
-# line 704 "lib/hotcell/lexer.rb"
+# line 709 "lib/hotcell/lexer.rb"
 			end # action switch
 		end
 	end
@@ -720,7 +725,7 @@ when 3 then
 # line 1 "NONE"
 		begin
  @ts = nil;		end
-# line 724 "lib/hotcell/lexer.rb"
+# line 729 "lib/hotcell/lexer.rb"
 		end # to state action switch
 	end
 	if _trigger_goto
@@ -730,14 +735,14 @@ when 3 then
 		_goto_level = _out
 		next
 	end
-	p += 1
-	if p != pe
+	 @p += 1
+	if  @p != pe
 		_goto_level = _resume
 		next
 	end
 	end
 	if _goto_level <= _test_eof
-	if p == eof
+	if  @p == eof
 	if _puffer_lexer_eof_trans[cs] > 0
 		_trans = _puffer_lexer_eof_trans[cs] - 1;
 		_goto_level = _eof_trans
@@ -751,14 +756,14 @@ when 3 then
 		__acts += 1
 		case _puffer_lexer_actions[__acts - 1]
 when 0 then
-# line 50 "lib/hotcell/lexer.rl"
+# line 51 "lib/hotcell/lexer.rl"
 		begin
  raise_unterminated_string 		end
 when 1 then
-# line 54 "lib/hotcell/lexer.rl"
+# line 55 "lib/hotcell/lexer.rl"
 		begin
  raise_unterminated_string 		end
-# line 762 "lib/hotcell/lexer.rb"
+# line 767 "lib/hotcell/lexer.rb"
 		end # eof action switch
 	end
 	if _trigger_goto
@@ -772,7 +777,7 @@ end
 	end
 	end
 
-# line 292 "lib/hotcell/lexer.rl"
+# line 298 "lib/hotcell/lexer.rl"
       #%
 
       raise_unexpected_symbol unless @ts.nil?

@@ -5,6 +5,7 @@
   variable data @data;
   variable te @te;
   variable ts @ts;
+  variable p @p;
 
   plus = '+';
   minus = '-';
@@ -263,16 +264,21 @@ module Hotcell
       [line, column]
     end
 
+    def current_error
+      value = @data[@ts..@p].pack('c*').force_encoding('UTF-8')
+      [value, *current_position]
+    end
+
     def raise_unexpected_symbol
-      raise Hotcell::Errors::UnexpectedSymbol.new *current_position
+      raise Hotcell::Errors::UnexpectedSymbol.new *current_error
     end
 
     def raise_unterminated_string
-      raise Hotcell::Errors::UnterminatedString.new *current_position
+      raise Hotcell::Errors::UnterminatedString.new *current_error
     end
 
     def raise_unterminated_regexp
-      raise Hotcell::Errors::UnterminatedRegexp.new *current_position
+      raise Hotcell::Errors::UnterminatedRegexp.new *current_error
     end
 
     def tokens

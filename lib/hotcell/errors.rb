@@ -1,26 +1,26 @@
 module Hotcell
   class Errors
     class ParseError < StandardError
-      def initialize line, column
-        @line, @column = line, column
+      def initialize value, line, column
+        @value, @line, @column = value, line, column
       end
     end
 
     class UnexpectedSymbol < ParseError
       def message
-        "Unexpected symbol at #{@line}:#{@column}"
+        "Unexpected symbol `#{@value}` at #{@line}:#{@column}"
       end
     end
 
     class UnterminatedString < ParseError
       def message
-        "Unterminated string starting at #{@line}:#{@column}"
+        "Unterminated string `#{@value}` starting at #{@line}:#{@column}"
       end
     end
 
     # class UnterminatedRegexp < ParseError
     #   def message
-    #     "Unterminated regexp starting at: line #{@line}, column #{@column}"
+    #     "Unterminated regexp `#{@value}` starting at #{@line}:#{@column}"
     #   end
     # end
 
