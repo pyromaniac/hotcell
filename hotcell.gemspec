@@ -8,8 +8,8 @@ Gem::Specification.new do |gem|
   gem.version       = Hotcell::VERSION
   gem.authors       = ["pyromaniac"]
   gem.email         = ["kinwizard@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{Sandboxed ruby template processor}
+  gem.summary       = %q{Sandboxed ruby template processor}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($/)
