@@ -379,4 +379,10 @@ describe Hotcell::Parser do
         )
       ) }
   end
+
+  context 'errors' do
+    let(:error) { Hotcell::Errors::UnexpectedLexem }
+
+    specify { expect { parse("{{ var = 3 * 5; hello(, 3) }}") }.to raise_error error, 'Unexpected COMMA `,` at 1:23' }
+  end
 end

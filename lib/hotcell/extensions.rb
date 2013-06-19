@@ -1,25 +1,31 @@
 NilClass.class_eval do
   include Hotcell::Manipulator::Mixin
+  attr_accessor :hotcell_position
 end
 
 TrueClass.class_eval do
   include Hotcell::Manipulator::Mixin
+  attr_accessor :hotcell_position
 end
 
 FalseClass.class_eval do
   include Hotcell::Manipulator::Mixin
+  attr_accessor :hotcell_position
 end
 
 Numeric.class_eval do
   include Hotcell::Manipulator::Mixin
+  attr_accessor :hotcell_position
 end
 
 String.class_eval do
   include Hotcell::Manipulator::Mixin
+  attr_accessor :hotcell_position
 end
 
 Regexp.class_eval do
   include Hotcell::Manipulator::Mixin
+  attr_accessor :hotcell_position
 end
 
 Time.class_eval do

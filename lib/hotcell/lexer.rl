@@ -150,6 +150,7 @@ module Hotcell
     end
 
     def emit symbol, value
+      value.hotcell_position = current_position
       @token_array << [symbol, value]
     end
 

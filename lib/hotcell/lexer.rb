@@ -248,6 +248,7 @@ self.puffer_lexer_en_main = 12;
     end
 
     def emit symbol, value
+      value.hotcell_position = current_position
       @token_array << [symbol, value]
     end
 
@@ -387,7 +388,7 @@ self.puffer_lexer_en_main = 12;
       @token_array = []
 
       
-# line 391 "lib/hotcell/lexer.rb"
+# line 392 "lib/hotcell/lexer.rb"
 begin
 	 @p ||= 0
 	pe ||=  @data.length
@@ -398,14 +399,14 @@ begin
 	act = 0
 end
 
-# line 292 "lib/hotcell/lexer.rl"
+# line 293 "lib/hotcell/lexer.rl"
       #%
 
       eof = pe
       stack = []
 
       
-# line 409 "lib/hotcell/lexer.rb"
+# line 410 "lib/hotcell/lexer.rb"
 begin
 	_klen, _trans, _keys, _acts, _nacts = nil
 	_goto_level = 0
@@ -439,7 +440,7 @@ begin
 		begin
  @ts =  @p
 		end
-# line 443 "lib/hotcell/lexer.rb"
+# line 444 "lib/hotcell/lexer.rb"
 		end # from state action switch
 	end
 	if _trigger_goto
@@ -705,7 +706,7 @@ when 28 then
  @te =  @p
  @p =  @p - 1; begin  emit_template  end
 		end
-# line 709 "lib/hotcell/lexer.rb"
+# line 710 "lib/hotcell/lexer.rb"
 			end # action switch
 		end
 	end
@@ -725,7 +726,7 @@ when 3 then
 # line 1 "NONE"
 		begin
  @ts = nil;		end
-# line 729 "lib/hotcell/lexer.rb"
+# line 730 "lib/hotcell/lexer.rb"
 		end # to state action switch
 	end
 	if _trigger_goto
@@ -763,7 +764,7 @@ when 1 then
 # line 55 "lib/hotcell/lexer.rl"
 		begin
  raise_unterminated_string 		end
-# line 767 "lib/hotcell/lexer.rb"
+# line 768 "lib/hotcell/lexer.rb"
 		end # eof action switch
 	end
 	if _trigger_goto
@@ -777,7 +778,7 @@ end
 	end
 	end
 
-# line 298 "lib/hotcell/lexer.rl"
+# line 299 "lib/hotcell/lexer.rl"
       #%
 
       raise_unexpected_symbol unless @ts.nil?

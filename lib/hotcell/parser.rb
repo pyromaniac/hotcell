@@ -67,6 +67,11 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 176)
       end
     end
   end
+
+  def on_error(token, value, vstack)
+    raise Hotcell::Errors::UnexpectedLexem.new("#{token_to_str(token) || '?'} `#{value}`",
+      value.hotcell_position[0], value.hotcell_position[1])
+  end
 ...end parser.y/module_eval...
 ##### State transition tables begin ###
 

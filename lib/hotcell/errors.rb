@@ -25,12 +25,18 @@ module Hotcell
     # end
 
     class SyntaxError < StandardError
-      def initialize message, line = nil, column = nil
-        @message, @line, @column = message, line, column
+      def initialize value, line = nil, column = nil
+        @value, @line, @column = value, line, column
       end
 
       def message
-        "#{@message} at #{@line}:#{@column}"
+        "#{@value} at #{@line}:#{@column}"
+      end
+    end
+
+    class UnexpectedLexem < ParseError
+      def message
+        "Unexpected #{@value} at #{@line}:#{@column}"
       end
     end
 
