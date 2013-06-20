@@ -1033,7 +1033,7 @@ module_eval(<<'.,.,', 'parser.y', 131)
 
 module_eval(<<'.,.,', 'parser.y', 132)
   def _reduce_60(val, _values, result)
-     result = Summoner.build val[0], '[]', *val[2] 
+     result = Summoner.build val[0], 'manipulator_brackets', *val[2] 
     result
   end
 .,.,

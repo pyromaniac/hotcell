@@ -5,3 +5,4 @@ module Hotcell
 end
 
 require 'hotcell/commands/if'
+require 'hotcell/commands/for'

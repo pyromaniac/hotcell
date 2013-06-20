@@ -32,9 +32,9 @@ module Hotcell
         end
       end
 
-      def process context, subnodes, condition
+      def process context, condition
         conditions = [[condition]]
-        subnodes.each do |subnode|
+        render_subnodes(context).each do |subnode|
           if subnode.is_a?(Hash)
             conditions.last[1] = '' if conditions.last[1] == nil
             conditions << (subnode[:name] == 'elsif' ? [subnode[:args].first] : [true])

@@ -42,6 +42,10 @@ end
 
 Hash.class_eval do
   include Hotcell::Manipulator::Mixin
+
+  def manipulator_invoke method, *arguments
+    arguments.size == 0 && key?(method) ? self[method] : super
+  end
 end
 
 

@@ -11,11 +11,11 @@ module Hotcell
   end
 end
 
+require 'hotcell/manipulator'
+require 'hotcell/extensions'
 require 'hotcell/lexer'
 require 'hotcell/parser'
 require 'hotcell/node'
 require 'hotcell/commands'
 require 'hotcell/context'
-require 'hotcell/manipulator'
-require 'hotcell/extensions'
 require 'hotcell/template'

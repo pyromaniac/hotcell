@@ -39,9 +39,9 @@ describe Hotcell::Block do
           raise Hotcell::BlockError.new 'Invalid if syntax', *name.hotcell_position unless valid
         end
 
-        def process context, subnodes, condition
+        def process context, condition
           conditions = [[condition]]
-          subnodes.each do |subnode|
+          render_subnodes(context).each do |subnode|
             if subnode.is_a?(Hash)
               conditions.last[1] = '' if conditions.last[1] == nil
               conditions << (subnode[:name] == 'elsif' ? [subnode[:args].first] : [true])
@@ -129,7 +129,7 @@ describe Hotcell::Block do
   describe '#render' do
     let(:block) do
       Class.new(described_class) do
-        def process context, subnodes, condition
+        def process context, condition
           "condition #{condition}"
         end
       end

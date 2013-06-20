@@ -1,6 +1,6 @@
 module Hotcell
   class Hasher < Hotcell::Node
-    def render context, *values
+    def process context, *values
       Hash[values]
     end
   end

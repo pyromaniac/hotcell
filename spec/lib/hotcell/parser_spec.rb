@@ -195,7 +195,7 @@ describe Hotcell::Parser do
               METHOD(
                 nil, 'foo', 'hello'
               ), 'bar'
-            ), '[]', 2
+            ), 'manipulator_brackets', 2
           ), 'baz', -42
         ),
       mode: :normal)) }
@@ -206,7 +206,7 @@ describe Hotcell::Parser do
     specify { parse('{{ [] }}').should be_equal_node_to JOINER(TAG(ARRAY(), mode: :normal)) }
     specify { parse('{{ [ 2 ] }}').should be_equal_node_to JOINER(TAG(ARRAY(2), mode: :normal)) }
     specify { parse('{{ [ 2, 3 ] }}').should be_equal_node_to JOINER(TAG(ARRAY(2, 3), mode: :normal)) }
-    specify { parse('{{ [2, 3][42] }}').should be_equal_node_to JOINER(TAG(METHOD(ARRAY(2, 3), '[]', 42), mode: :normal)) }
+    specify { parse('{{ [2, 3][42] }}').should be_equal_node_to JOINER(TAG(METHOD(ARRAY(2, 3), 'manipulator_brackets', 42), mode: :normal)) }
     specify { parse('{{ [2 + foo, (2 * bar)] }}').should be_equal_node_to JOINER(TAG(ARRAY(PLUS(2, METHOD(nil, 'foo')), MULTIPLY(2, METHOD(nil, 'bar'))), mode: :normal)) }
     specify { parse('{{ [[2, 3], 42] }}').should be_equal_node_to JOINER(TAG(ARRAY(ARRAY(2, 3), 42), mode: :normal)) }
   end
@@ -217,7 +217,7 @@ describe Hotcell::Parser do
       JOINER(TAG(HASH(PAIR('hello', 'world')), mode: :normal))
     ) }
     specify { parse('{{ {hello: \'world\'}[\'hello\'] }}').should be_equal_node_to(
-      JOINER(TAG(METHOD(HASH(PAIR('hello', 'world')), '[]', 'hello'), mode: :normal))
+      JOINER(TAG(METHOD(HASH(PAIR('hello', 'world')), 'manipulator_brackets', 'hello'), mode: :normal))
     ) }
     specify { parse('{{ { hello: 3, world: 6 * foo } }}').should be_equal_node_to(
       JOINER(TAG(HASH(
@@ -228,11 +228,11 @@ describe Hotcell::Parser do
   end
 
   context '[]' do
-    specify { parse('{{ hello[3] }}').should be_equal_node_to JOINER(TAG(METHOD(METHOD(nil, 'hello'), '[]', 3), mode: :normal)) }
-    specify { parse('{{ \'boom\'[3] }}').should be_equal_node_to JOINER(TAG(METHOD('boom', '[]', 3), mode: :normal)) }
-    specify { parse('{{ 7[3] }}').should be_equal_node_to JOINER(TAG(METHOD(7, '[]', 3), mode: :normal)) }
-    specify { parse('{{ 3 + 5[7] }}').should be_equal_node_to JOINER(TAG(PLUS(3, METHOD(5, '[]', 7)), mode: :normal)) }
-    specify { parse('{{ (3 + 5)[7] }}').should be_equal_node_to JOINER(TAG(METHOD(8, '[]', 7), mode: :normal)) }
+    specify { parse('{{ hello[3] }}').should be_equal_node_to JOINER(TAG(METHOD(METHOD(nil, 'hello'), 'manipulator_brackets', 3), mode: :normal)) }
+    specify { parse('{{ \'boom\'[3] }}').should be_equal_node_to JOINER(TAG(METHOD('boom', 'manipulator_brackets', 3), mode: :normal)) }
+    specify { parse('{{ 7[3] }}').should be_equal_node_to JOINER(TAG(METHOD(7, 'manipulator_brackets', 3), mode: :normal)) }
+    specify { parse('{{ 3 + 5[7] }}').should be_equal_node_to JOINER(TAG(PLUS(3, METHOD(5, 'manipulator_brackets', 7)), mode: :normal)) }
+    specify { parse('{{ (3 + 5)[7] }}').should be_equal_node_to JOINER(TAG(METHOD(8, 'manipulator_brackets', 7), mode: :normal)) }
   end
 
   context 'function arguments' do
@@ -322,17 +322,17 @@ describe Hotcell::Parser do
 
   context 'blocks' do
     specify { parse("{{ scoped var: 'hello' }}{{ endscoped }}",
-      blocks: [:scoped, :for]).should be_equal_node_to JOINER(
+      blocks: [:scoped, :each]).should be_equal_node_to JOINER(
         BLOCK('scoped', HASH(PAIR('var', 'hello')), mode: :normal)
       ) }
     specify { parse("{{ scoped }}{{ end scoped }}",
-      blocks: [:scoped, :for]).should be_equal_node_to JOINER(
+      blocks: [:scoped, :each]).should be_equal_node_to JOINER(
         BLOCK('scoped', mode: :normal)
       ) }
-    specify { parse("<article>\n{{ for post, in: posts }}\n<h1>{{ post.title }}</h1>\n{{ end for }}\n</article>",
-      blocks: [:scoped, :for]).should be_equal_node_to JOINER(
+    specify { parse("<article>\n{{ each post, in: posts }}\n<h1>{{ post.title }}</h1>\n{{ end each }}\n</article>",
+      blocks: [:scoped, :each]).should be_equal_node_to JOINER(
         "<article>\n",
-        BLOCK('for',
+        BLOCK('each',
           METHOD(nil, 'post'),
           HASH(PAIR('in', METHOD(nil, 'posts'))),
           mode: :normal,
@@ -344,13 +344,13 @@ describe Hotcell::Parser do
         ),
         "\n</article>"
       ) }
-    specify { parse("{{! posts = for post, in: posts }}\n<h1>{{ post.title }}</h1>\n{{ end for }}",
-      blocks: [:scoped, :for]).should be_equal_node_to JOINER(
-        BLOCK('for',
+    specify { parse("{{! iter = each post, in: posts }}\n<h1>{{ post.title }}</h1>\n{{ end each }}",
+      blocks: [:scoped, :each]).should be_equal_node_to JOINER(
+        BLOCK('each',
           METHOD(nil, 'post'),
           HASH(PAIR('in', METHOD(nil, 'posts'))),
           mode: :silence,
-          assign: 'posts',
+          assign: 'iter',
           subnodes: [JOINER(
             "\n<h1>",
             TAG(METHOD(METHOD(nil, 'post'), 'title'), mode: :normal),
@@ -358,14 +358,14 @@ describe Hotcell::Parser do
           )]
         ),
       ) }
-    specify { parse("{{ capture = scoped }} hello {{ for post, in: posts }} {{ loop }} {{ end for }}{{ endscoped }}",
-      blocks: [:scoped, :for]).should be_equal_node_to JOINER(
+    specify { parse("{{ capture = scoped }} hello {{ each post, in: posts }} {{ loop }} {{ end each }}{{ endscoped }}",
+      blocks: [:scoped, :each]).should be_equal_node_to JOINER(
         BLOCK('scoped',
           mode: :normal,
           assign: 'capture',
           subnodes: [JOINER(
             ' hello ',
-            BLOCK('for',
+            BLOCK('each',
               METHOD(nil, 'post'),
               HASH(PAIR('in', METHOD(nil, 'posts'))),
               mode: :normal,

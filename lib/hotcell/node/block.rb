@@ -19,28 +19,17 @@ module Hotcell
       end
     end
 
+    def validate!
+      valid = subcommands.map { |subcommand| subcommand[:name] } - _subcommands == []
+      raise Hotcell::BlockError.new 'Invalid block syntax', *name.hotcell_position unless valid
+    end
+
     def subnodes
       options[:subnodes] || []
     end
 
     def subcommands
       subnodes.select { |node| node.is_a?(Hash) }
-    end
-
-    def validate!
-      valid = subcommands.map { |subcommand| subcommand[:name] } - _subcommands == []
-      raise Hotcell::BlockError.new 'Invalid block syntax', *name.hotcell_position unless valid
-    end
-
-    def process context, subnodes, *args
-    end
-
-    def render context
-      context.safe do
-        subnodes = render_subnodes(context)
-        values = render_nodes(context, children)
-        concat context, process(context, subnodes, *values)
-      end
     end
 
     def render_subnodes context
