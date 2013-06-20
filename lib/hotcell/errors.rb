@@ -24,7 +24,7 @@ module Hotcell
   # end
 
   class SyntaxError < StandardError
-    def initialize value, line = nil, column = nil
+    def initialize value, line, column
       @value, @line, @column = value, line, column
     end
 

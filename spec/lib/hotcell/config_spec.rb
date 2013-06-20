@@ -39,6 +39,12 @@ describe Hotcell::Config do
       specify { subject.commands.should == { 'include' => command_class } }
     end
 
+    context do
+      before { subject.register_command 'for' => block_class, forloop: block_class, include: command_class }
+      specify { subject.blocks.should == { 'for' => block_class, 'forloop' => block_class } }
+      specify { subject.commands.should == { 'include' => command_class } }
+    end
+
     context 'errors' do
       context do
         specify { expect { subject.register_command :for, misc_class }.to raise_error }

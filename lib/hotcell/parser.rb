@@ -70,7 +70,7 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 176)
 
   def on_error(token, value, vstack)
     raise Hotcell::UnexpectedLexem.new("#{token_to_str(token) || '?'} `#{value}`",
-      value.hotcell_position[0], value.hotcell_position[1])
+      *value.hotcell_position)
   end
 ...end parser.y/module_eval...
 ##### State transition tables begin ###
@@ -411,7 +411,7 @@ racc_reduce_table = [
   2, 62, :_reduce_14,
   1, 62, :_reduce_15,
   1, 62, :_reduce_16,
-  2, 54, :_reduce_none,
+  2, 54, :_reduce_17,
   3, 54, :_reduce_18,
   3, 63, :_reduce_19,
   1, 65, :_reduce_20,
@@ -750,7 +750,12 @@ module_eval(<<'.,.,', 'parser.y', 85)
   end
 .,.,
 
-# reduce 17 omitted
+module_eval(<<'.,.,', 'parser.y', 86)
+  def _reduce_17(val, _values, result)
+     val[0].validate! 
+    result
+  end
+.,.,
 
 module_eval(<<'.,.,', 'parser.y', 87)
   def _reduce_18(val, _values, result)

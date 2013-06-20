@@ -84,7 +84,7 @@ rule
             | block_body subcommand_tag { val[0].push(val[1]) }
             | document_unit { result = [Joiner.build(:JOINER, val[0])] }
             | subcommand_tag { result = [val[0]] }
-  block_tag: block_open block_close
+  block_tag: block_open block_close { val[0].validate! }
            | block_open block_body block_close { val[0].options[:subnodes] = val[1]; val[0].validate! }
   subcommand_tag: TOPEN subcommand TCLOSE { result = val[1] }
 
@@ -232,5 +232,5 @@ rule
 
   def on_error(token, value, vstack)
     raise Hotcell::UnexpectedLexem.new("#{token_to_str(token) || '?'} `#{value}`",
-      value.hotcell_position[0], value.hotcell_position[1])
+      *value.hotcell_position)
   end

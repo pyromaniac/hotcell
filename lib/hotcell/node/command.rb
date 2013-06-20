@@ -1,11 +1,11 @@
 module Hotcell
   class Command < Hotcell::Node
-    attr_reader :mode, :assign
+    def mode
+      options[:mode] || :normal
+    end
 
-    def initialize *_
-      super
-      @mode = options[:mode] || :normal
-      @assign = options[:assign]
+    def assign
+      options[:assign]
     end
 
     def optimize

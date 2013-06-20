@@ -36,7 +36,7 @@ describe Hotcell::Block do
             names.any? && names.last.in?('elsif', 'else') &&
             names[0..-2].uniq.in?(['elsif'], [])
           )
-          raise Hotcell::BlockError.new 'Invalid if syntax' unless valid
+          raise Hotcell::BlockError.new 'Invalid if syntax', *name.hotcell_position unless valid
         end
 
         def process context, subnodes, condition
@@ -58,6 +58,11 @@ describe Hotcell::Block do
     before { Hotcell.stub(:commands) { {} } }
     before { Hotcell.stub(:blocks) { { 'if' => if_tag } } }
     before { Hotcell.stub(:subcommands) { { 'elsif' => if_tag, 'else' => if_tag } } }
+
+    specify { parse('{{ if true }}Hello{{ end if }}').render.should == 'Hello' }
+    specify { parse('{{! if true }}Hello{{ end if }}').render.should == '' }
+    specify { parse('{{ res = if true }}Hello{{ end if }} {{ res }}').render.should == 'Hello Hello' }
+    specify { parse('{{! res = if true }}Hello{{ end if }} {{ res }}').render.should == ' Hello' }
 
     context do
       subject(:template) { parse(<<-SOURCE

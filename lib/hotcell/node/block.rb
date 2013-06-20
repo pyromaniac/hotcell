@@ -29,7 +29,7 @@ module Hotcell
 
     def validate!
       valid = subcommands.map { |subcommand| subcommand[:name] } - _subcommands == []
-      raise Hotcell::BlockError.new 'Invalid block syntax' unless valid
+      raise Hotcell::BlockError.new 'Invalid block syntax', *name.hotcell_position unless valid
     end
 
     def process context, subnodes, *args

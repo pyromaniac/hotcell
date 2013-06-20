@@ -13,7 +13,14 @@ module Hotcell
       @helpers = []
     end
 
-    def register_command name, klass
+    def register_command name, klass = nil
+      if name.is_a? Hash
+        name.each do |(name, klass)|
+          register_command name, klass
+        end
+        return
+      end
+
       name = name.to_s
       if klass < ::Hotcell::Block
         raise "Command `#{name}` already defined, you can not define block with the same name" if commands.key?(name)
