@@ -20,8 +20,12 @@ module Hotcell
     end
 
     def validate!
-      valid = subcommands.map { |subcommand| subcommand[:name] } - _subcommands == []
-      raise Hotcell::BlockError.new 'Invalid block syntax', *name.hotcell_position unless valid
+      subcommands.each do |subcommand|
+        raise Hotcell::BlockError.new(
+          "Unexpected subcommand `#{subcommand[:name]}` for `#{name}` command",
+          *subcommand[:name].hotcell_position
+        ) unless _subcommands.include?(subcommand[:name])
+      end
     end
 
     def subnodes

@@ -4,15 +4,15 @@ module Hotcell
       class Forloop < Hotcell::Manipulator
 
         def initialize object, index
-          @object, @index0 = object, index
+          @object, @index = object, index
         end
 
         def prev
-          @next ||= @object[index0 - 1] if index0 - 1 >= 0
+          @next ||= @object[index - 1] if index - 1 >= 0
         end
 
         def next
-          @next ||= @object[index0 + 1]
+          @next ||= @object[index + 1]
         end
 
         def length
@@ -21,27 +21,19 @@ module Hotcell
         alias_method :size, :length
         alias_method :count, :length
 
-        def index
-          @index ||= index0 + 1
-        end
-
-        attr_reader :index0
+        attr_reader :index
 
         def rindex
-          @rindex ||= length - index0
-        end
-
-        def rindex0
-          @rindex ||= length - index
+          @rindex ||= length - index - 1
         end
 
         def first
-          @first ||= index0 == 0
+          @first ||= index == 0
         end
         alias_method :first?, :first
 
         def last
-          @last ||= index == length
+          @last ||= index == length - 1
         end
         alias_method :last?, :last
       end

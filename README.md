@@ -182,8 +182,20 @@ Conditional command. Like in most programming languages
 {{ elsif !cool }}
   bar
 {{ else }}
+  baz
+{{ end if }}
+```
+
+##### Unless
+
+Reversed conditional command. Sumilar to rubys. Only `else` subcommand is supported
+
+```
+{{ unless var == 3 }}
+  foo
+{{ else }}
   bar
-{{ if end }}
+{{ end unless }}
 ```
 
 ##### For
@@ -213,11 +225,28 @@ Full list of loop object methods:
 * `prev` - previous element of the array (nil if current is the first)
 * `next` - previous element of the array (nil if current is the last)
 * `length` or `size` or `count` - number, array length
-* `index` - current array value index, counting from 1
-* `index0` - current array value index, counting from 0
-* `rindex` and `rindex0` - the same, but starting from the array tail
+* `index` - current array value index, counting from 0
+* `rindex` - the same, but starting from the array tail
 * `first` or `first?` - boolean value, detect whether the current element is the first
 * `last` or `last?` - boolean value, detect whether the current element is the last
+
+##### Scope
+
+Block with encapsulated variables. Used for variables environment changing:
+
+```
+{{ block count: 50, foo: some_value }}
+  {{ count }}
+  {{ foo }}
+{{ end block }}
+```
+
+Or for template capturing:
+
+```
+{{! title = block }}<h1>Hello</h1>{{ end block }}
+{{ title }}
+```
 
 ## Usage
 

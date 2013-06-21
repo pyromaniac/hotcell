@@ -16,6 +16,8 @@ describe Hotcell::Commands::If do
       }.to raise_error Hotcell::BlockError, 'Unexpected subcommand `else` for `if` command at 1:17' }
     specify { expect { parse('{{ if true }}{{ else true }}{{ elsif true }}{{ end if }}').syntax
       }.to raise_error Hotcell::BlockError, 'Unexpected subcommand `else` for `if` command at 1:17' }
+    specify { expect { parse('{{ if true }}{{ else }}{{ else }}{{ end if }}').syntax
+      }.to raise_error Hotcell::BlockError, 'Unexpected subcommand `else` for `if` command at 1:17' }
   end
 
   describe '#render' do
