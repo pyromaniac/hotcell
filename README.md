@@ -235,16 +235,16 @@ Full list of loop object methods:
 Block with encapsulated variables. Used for variables environment changing:
 
 ```
-{{ block count: 50, foo: some_value }}
+{{ scope count: 50, foo: some_value }}
   {{ count }}
   {{ foo }}
-{{ end block }}
+{{ end scope }}
 ```
 
 Or for template capturing:
 
 ```
-{{! title = block }}<h1>Hello</h1>{{ end block }}
+{{! title = scope }}<h1>Hello</h1>{{ end scope }}
 {{ title }}
 ```
 
