@@ -293,6 +293,7 @@ describe Hotcell::Parser do
     specify { parse('hello {{ # world}}').should be_equal_node_to JOINER('hello ', TAG(mode: :normal)) }
     specify { parse('hello {{ # world; foo}}').should be_equal_node_to JOINER('hello ', TAG(mode: :normal)) }
     specify { parse("hello {{ # world\n foo}}").should be_equal_node_to JOINER('hello ', TAG(METHOD(nil, 'foo'), mode: :normal)) }
+    specify { parse("hello {{ world# foo}}").should be_equal_node_to JOINER('hello ', TAG(METHOD(nil, 'world'), mode: :normal)) }
   end
 
   context 'commands' do

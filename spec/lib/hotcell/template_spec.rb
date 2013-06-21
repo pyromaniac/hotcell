@@ -56,4 +56,24 @@ describe Hotcell::Template do
       end
     end
   end
+
+  context 'complex tags test' do
+    specify { described_class.parse(<<-SOURCE
+        {{ for i, in: [1, 2, 3, 4] }}
+          {{ if i % 2 == 1 }}
+            {{ i }}
+          {{ end if }}
+        {{ end for }}
+      SOURCE
+    ).render.gsub(/[\s\n]+/, ' ').strip.should == '1 3' }
+
+    specify { described_class.parse(<<-SOURCE
+        {{ for i, in: [1, 2, 3, 4] }}
+          {{ for j, in: [4, 3, 2, 1] }}
+            {{ i * j }}
+          {{ end for }}
+        {{ end for }}
+      SOURCE
+    ).render.gsub(/[\s\n]+/, ' ').strip.should == '4 3 2 1 8 6 4 2 12 9 6 3 16 12 8 4' }
+  end
 end
