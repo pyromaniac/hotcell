@@ -717,7 +717,7 @@ module_eval(<<'.,.,', 'parser.y', 65)
 
 module_eval(<<'.,.,', 'parser.y', 67)
   def _reduce_14(val, _values, result)
-                     command = val[1].is_a?(Command) ? val[1] : val[1].children[1]
+                     command = val[1].is_a?(Command) ? val[1] : val[1].children[0]
                  command.validate!
                  result = Tag.build :TAG, val[1], mode: TAG_MODES[val[0]]
                
@@ -816,7 +816,7 @@ module_eval(<<'.,.,', 'parser.y', 91)
 module_eval(<<'.,.,', 'parser.y', 93)
   def _reduce_30(val, _values, result)
                block = val[0].children[0].is_a?(Block) ?
-             val[0].children[0] : val[0].children[0].children[1]
+             val[0].children[0] : val[0].children[0].children[0]
            block.validate!
          
     result
@@ -826,7 +826,7 @@ module_eval(<<'.,.,', 'parser.y', 93)
 module_eval(<<'.,.,', 'parser.y', 99)
   def _reduce_31(val, _values, result)
                block = val[0].children[0].is_a?(Block) ?
-             val[0].children[0] : val[0].children[0].children[1]
+             val[0].children[0] : val[0].children[0].children[0]
            block.options[:subnodes] = val[1]
            block.validate!
          

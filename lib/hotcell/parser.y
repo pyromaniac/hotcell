@@ -65,7 +65,7 @@ rule
   command: command_body
          | IDENTIFER ASSIGN command_body { result = Assigner.build val[0], val[2] }
   command_tag: TOPEN command TCLOSE {
-                 command = val[1].is_a?(Command) ? val[1] : val[1].children[1]
+                 command = val[1].is_a?(Command) ? val[1] : val[1].children[0]
                  command.validate!
                  result = Tag.build :TAG, val[1], mode: TAG_MODES[val[0]]
                }
@@ -92,13 +92,13 @@ rule
                 | subcommand_tag { result = [val[0]] }
   block_tag: block_open_tag block_close_tag {
            block = val[0].children[0].is_a?(Block) ?
-             val[0].children[0] : val[0].children[0].children[1]
+             val[0].children[0] : val[0].children[0].children[0]
            block.validate!
          }
        | block_open_tag block_subnodes block_close_tag
          {
            block = val[0].children[0].is_a?(Block) ?
-             val[0].children[0] : val[0].children[0].children[1]
+             val[0].children[0] : val[0].children[0].children[0]
            block.options[:subnodes] = val[1]
            block.validate!
          }
