@@ -299,85 +299,79 @@ describe Hotcell::Parser do
   context 'commands' do
     specify { parse("{{ include 'some/partial' }}",
       commands: [:include, :snippet]).should be_equal_node_to JOINER(
-        COMMAND('include', 'some/partial', mode: :normal)
+        TAG(COMMAND('include', 'some/partial'), mode: :normal)
       ) }
     specify { parse("{{ include }}",
       commands: [:include, :snippet]).should be_equal_node_to JOINER(
-        COMMAND('include', mode: :normal)
+        TAG(COMMAND('include'), mode: :normal)
       ) }
     specify { parse("{{! include 'some/partial' }}\n{{ snippet 'sidebar' }}",
       commands: [:include, :snippet]).should be_equal_node_to JOINER(
-        COMMAND('include', 'some/partial', mode: :silence),
+        TAG(COMMAND('include', 'some/partial'), mode: :silence),
         "\n",
-        COMMAND('snippet', 'sidebar', mode: :normal),
+        TAG(COMMAND('snippet', 'sidebar'), mode: :normal),
       ) }
     specify { parse("{{! variable = include }}",
       commands: [:include, :snippet]).should be_equal_node_to JOINER(
-        COMMAND('include', mode: :silence, assign: 'variable')
+        TAG(ASSIGN('variable', COMMAND('include')), mode: :silence)
       ) }
     specify { parse("{{ variable = include 'some/partial' }}",
       commands: [:include, :snippet]).should be_equal_node_to JOINER(
-        COMMAND('include', 'some/partial', mode: :normal, assign: 'variable')
+        TAG(ASSIGN('variable', COMMAND('include', 'some/partial')), mode: :normal)
       ) }
   end
 
   context 'blocks' do
-    specify { parse("{{ scoped var: 'hello' }}{{ endscoped }}",
-      blocks: [:scoped, :each]).should be_equal_node_to JOINER(
-        BLOCK('scoped', HASH(PAIR('var', 'hello')), mode: :normal)
-      ) }
     specify { parse("{{ scoped }}{{ end scoped }}",
       blocks: [:scoped, :each]).should be_equal_node_to JOINER(
-        BLOCK('scoped', mode: :normal)
+        TAG(BLOCK('scoped'), mode: :normal)
+      ) }
+    specify { parse("{{ scoped var: 'hello' }}{{ endscoped }}",
+      blocks: [:scoped, :each]).should be_equal_node_to JOINER(
+        TAG(BLOCK('scoped', HASH(PAIR('var', 'hello'))), mode: :normal)
       ) }
     specify { parse("<article>\n{{ each post, in: posts }}\n<h1>{{ post.title }}</h1>\n{{ end each }}\n</article>",
       blocks: [:scoped, :each]).should be_equal_node_to JOINER(
         "<article>\n",
-        BLOCK('each',
+        TAG(BLOCK('each',
           METHOD(nil, 'post'),
           HASH(PAIR('in', METHOD(nil, 'posts'))),
-          mode: :normal,
           subnodes: [JOINER(
             "\n<h1>",
             TAG(METHOD(METHOD(nil, 'post'), 'title'), mode: :normal),
             "</h1>\n"
           )]
-        ),
+        ), mode: :normal),
         "\n</article>"
       ) }
     specify { parse("{{! iter = each post, in: posts }}\n<h1>{{ post.title }}</h1>\n{{ end each }}",
       blocks: [:scoped, :each]).should be_equal_node_to JOINER(
-        BLOCK('each',
+        TAG(ASSIGN('iter', BLOCK('each',
           METHOD(nil, 'post'),
           HASH(PAIR('in', METHOD(nil, 'posts'))),
-          mode: :silence,
-          assign: 'iter',
           subnodes: [JOINER(
             "\n<h1>",
             TAG(METHOD(METHOD(nil, 'post'), 'title'), mode: :normal),
             "</h1>\n"
           )]
-        ),
+        )), mode: :silence),
       ) }
     specify { parse("{{ capture = scoped }} hello {{ each post, in: posts }} {{ loop }} {{ end each }}{{ endscoped }}",
       blocks: [:scoped, :each]).should be_equal_node_to JOINER(
-        BLOCK('scoped',
-          mode: :normal,
-          assign: 'capture',
+        TAG(ASSIGN('capture', BLOCK('scoped',
           subnodes: [JOINER(
             ' hello ',
-            BLOCK('each',
+            TAG(BLOCK('each',
               METHOD(nil, 'post'),
               HASH(PAIR('in', METHOD(nil, 'posts'))),
-              mode: :normal,
               subnodes: [JOINER(
                 ' ',
                 TAG(METHOD(nil, 'loop'), mode: :normal),
                 ' '
               )]
-            )
+            ), mode: :normal)
           )]
-        )
+        )), mode: :normal)
       ) }
   end
 

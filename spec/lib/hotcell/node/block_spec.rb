@@ -21,7 +21,7 @@ describe Hotcell::Block do
 
   let(:context) { Hotcell::Context.new }
 
-  describe 'complex parsing and rendering' do
+  context 'complex parsing and rendering' do
     def parse source
       Hotcell::Template.parse(source)
     end
@@ -136,33 +136,7 @@ describe Hotcell::Block do
     end
 
     specify { block.new('if').render(context).should =~ /ArgumentError/ }
-    specify { block.new('if', mode: :silence).render(context).should =~ /ArgumentError/ }
     specify { block.new('if', true).render(context).should == "condition true" }
-    specify { block.new('if', true, mode: :silence).render(context).should == '' }
-
-    context 'assigning' do
-      before { subject.render(context) }
-
-      context do
-        subject { block.new('if', assign: 'result') }
-        specify { context.key?('result').should be_false }
-      end
-
-      context do
-        subject { block.new('if', mode: :silence, assign: 'result') }
-        specify { context.key?('result').should be_false }
-      end
-
-      context do
-        subject { block.new('if', true, assign: 'result') }
-        specify { context['result'].should == "condition true" }
-      end
-
-      context do
-        subject { block.new('if', 42, mode: :silence, assign: 'result') }
-        specify { context['result'].should == "condition 42" }
-      end
-    end
   end
 
   context '#validate!' do

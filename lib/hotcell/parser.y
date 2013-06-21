@@ -54,52 +54,55 @@ start document
 rule
   document: document document_unit { val[0].children.push(val[1]) }
           | document_unit { result = Joiner.build :JOINER, val[0] }
-  document_unit: template | command_tag | block_tag | tag
+  document_unit: template | tag | block_tag | command_tag
 
   template: TEMPLATE { result = val[0] }
   tag: TOPEN TCLOSE { result = Tag.build :TAG, mode: TAG_MODES[val[0]] }
-     | TOPEN sequence TCLOSE { result = Tag.build :TAG, *val[1].flatten, mode: TAG_MODES[val[0]] }
+     | TOPEN sequence TCLOSE { result = Tag.build :TAG, *Array.wrap(val[1]).flatten, mode: TAG_MODES[val[0]] }
 
-  command_tag: TOPEN assigned_command TCLOSE {
-    command = val[1][:command]
-    assign = val[1][:assign]
-    command.options[:mode] = TAG_MODES[val[0]]
-    command.options[:assign] = assign if assign
-    command.validate!
-    result = command
-  }
-  block_open: TOPEN assigned_block TCLOSE {
-    block = val[1][:block]
-    assign = val[1][:assign]
-    block.options[:mode] = TAG_MODES[val[0]]
-    block.options[:assign] = assign if assign
-    result = block
-  }
-  block_close: TOPEN endblock TCLOSE
-  block_body: block_body document_unit {
-                val[0][-1].is_a?(Joiner) ?
-                  val[0][-1].children.push(val[1]) :
-                  val[0].push(Joiner.build(:JOINER, val[1]))
-              }
-            | block_body subcommand_tag { val[0].push(val[1]) }
-            | document_unit { result = [Joiner.build(:JOINER, val[0])] }
-            | subcommand_tag { result = [val[0]] }
-  block_tag: block_open block_close { val[0].validate! }
-           | block_open block_body block_close { val[0].options[:subnodes] = val[1]; val[0].validate! }
-  subcommand_tag: TOPEN subcommand TCLOSE { result = val[1] }
+  command_body: COMMAND { result = Command.build val[0] }
+              | COMMAND arguments { result = Command.build val[0], *val[1] }
+  command: command_body
+         | IDENTIFER ASSIGN command_body { result = Assigner.build val[0], val[2] }
+  command_tag: TOPEN command TCLOSE {
+                 command = val[1].is_a?(Command) ? val[1] : val[1].children[1]
+                 command.validate!
+                 result = Tag.build :TAG, val[1], mode: TAG_MODES[val[0]]
+               }
 
-  command: COMMAND { result = Command.build val[0] }
-         | COMMAND arguments { result = Command.build val[0], *val[1] }
-  assigned_command: command { result = { command: val[0] } }
-                  | IDENTIFER ASSIGN command { result = { command: val[2], assign: val[0] } }
-  block: BLOCK { result = Block.build val[0] }
-       | BLOCK arguments { result = Block.build val[0], *val[1] }
-  assigned_block: block { result = { block: val[0] } }
-                | IDENTIFER ASSIGN block { result = { block: val[2], assign: val[0] } }
-  endblock: ENDBLOCK
-          | END BLOCK
   subcommand: SUBCOMMAND { result = { name: val[0] } }
             | SUBCOMMAND arguments { result = { name: val[0], args: Arrayer.build(:ARRAY, *val[1]) } }
+  subcommand_tag: TOPEN subcommand TCLOSE { result = val[1] }
+
+  block_body: BLOCK { result = Block.build val[0] }
+            | BLOCK arguments { result = Block.build val[0], *val[1] }
+  block_open: block_body
+            | IDENTIFER ASSIGN block_body { result = Assigner.build val[0], val[2] }
+  block_close: ENDBLOCK
+             | END BLOCK
+  block_open_tag: TOPEN block_open TCLOSE { result = Tag.build :TAG, val[1], mode: TAG_MODES[val[0]] }
+  block_close_tag: TOPEN block_close TCLOSE
+  block_subnodes: block_subnodes document_unit {
+                    val[0][-1].is_a?(Joiner) ?
+                      val[0][-1].children.push(val[1]) :
+                      val[0].push(Joiner.build(:JOINER, val[1]))
+                  }
+                | block_subnodes subcommand_tag { val[0].push(val[1]) }
+                | document_unit { result = [Joiner.build(:JOINER, val[0])] }
+                | subcommand_tag { result = [val[0]] }
+  block_tag: block_open_tag block_close_tag {
+           block = val[0].children[0].is_a?(Block) ?
+             val[0].children[0] : val[0].children[0].children[1]
+           block.validate!
+         }
+       | block_open_tag block_subnodes block_close_tag
+         {
+           block = val[0].children[0].is_a?(Block) ?
+             val[0].children[0] : val[0].children[0].children[1]
+           block.options[:subnodes] = val[1]
+           block.validate!
+         }
+
 
   sequence: sequence SEMICOLON sequence { result = val[0].push(val[2]) }
           | sequence SEMICOLON

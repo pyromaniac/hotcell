@@ -13,13 +13,16 @@ module Hotcell
 
     def render context
       context.safe do
-        values = render_nodes(context, children)
-        case mode
-        when :normal
-          process context, *values
-        else
-          ''
-        end
+        concat context, process(context, *render_nodes(context, children))
+      end
+    end
+
+    def concat context, result
+      case mode
+      when :normal
+        result
+      else
+        ''
       end
     end
   end

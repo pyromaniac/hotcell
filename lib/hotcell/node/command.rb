@@ -1,13 +1,5 @@
 module Hotcell
   class Command < Hotcell::Node
-    def mode
-      options[:mode] || :normal
-    end
-
-    def assign
-      options[:assign]
-    end
-
     def optimize
       if klass = Hotcell.commands[name]
         klass.new name, *children, options
@@ -24,17 +16,7 @@ module Hotcell
 
     def render context
       context.safe do
-        concat context, process(context, *render_nodes(context, children))
-      end
-    end
-
-    def concat context, result
-      context[assign] = result if assign
-      case mode
-      when :normal
-        result
-      else
-        ''
+        process(context, *render_nodes(context, children))
       end
     end
   end

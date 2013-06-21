@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Hotcell::Command do
   let(:context) { Hotcell::Context.new }
 
-  describe 'complex parsing and rendering' do
+  context 'complex parsing and rendering' do
     def parse source
       Hotcell::Template.parse(source)
     end
@@ -24,10 +24,12 @@ describe Hotcell::Command do
     before { Hotcell.stub(:blocks) { {} } }
     before { Hotcell.stub(:subcommands) { {} } }
 
+    specify { expect { parse("{{ include }}").syntax }.to raise_error Hotcell::ArgumentError }
     specify { parse("{{ include 'template/path' }}").render(context).should == 'included template/path' }
-    specify { expect {
-      parse("{{ include }}").syntax
-    }.to raise_error Hotcell::ArgumentError }
+    specify { parse("{{ include 'template/path' }}").render.should == 'included template/path' }
+    specify { parse("{{! include 'template/path' }}").render.should == '' }
+    specify { parse("{{ res = include 'template/path' }} {{ res }}").render.should == 'included template/path included template/path' }
+    specify { parse("{{! res = include 'template/path' }} {{ res }}").render.should == ' included template/path' }
   end
 
   describe '#render' do
@@ -40,32 +42,6 @@ describe Hotcell::Command do
     end
 
     specify { command.new('include').render(context).should =~ /ArgumentError/ }
-    specify { command.new('include', mode: :silence).render(context).should =~ /ArgumentError/ }
     specify { command.new('include', 'path').render(context).should == "rendered path" }
-    specify { command.new('include', 'path', mode: :silence).render(context).should == '' }
-
-    context 'assigning' do
-      before { subject.render(context) }
-
-      context do
-        subject { command.new('include', assign: 'inclusion') }
-        specify { context.key?('inclusion').should be_false }
-      end
-
-      context do
-        subject { command.new('include', mode: :silence, assign: 'inclusion') }
-        specify { context.key?('inclusion').should be_false }
-      end
-
-      context do
-        subject { command.new('include', 'path', assign: 'inclusion') }
-        specify { context['inclusion'].should == "rendered path" }
-      end
-
-      context do
-        subject { command.new('include', 'path', mode: :silence, assign: 'inclusion') }
-        specify { context['inclusion'].should == "rendered path" }
-      end
-    end
   end
 end
