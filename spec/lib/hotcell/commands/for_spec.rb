@@ -19,7 +19,7 @@ describe Hotcell::Commands::For do
     specify { parse('{{ for item, in: [1, 2, 3] }}{{ item }}{{ end for }}').render.should == '123' }
     specify { parse(
       '{{ for item, in: [1, 2, 3] }}{{ item }} * 3 = {{ item * 3 }}; {{ end for }}'
-    ).render.should == '1 * 3 = 3; 2 * 3 = 6; 3 * 3 = 9; ' }
+    ).render(reraise: true).should == '1 * 3 = 3; 2 * 3 = 6; 3 * 3 = 9; ' }
     specify { parse('{{ for item, in: [5, 6, 7], loop: true }}{{ loop.index }}{{ end for }}').render.should == '123' }
   end
 end

@@ -1022,7 +1022,7 @@ module_eval(<<'.,.,', 'parser.y', 134)
 
 module_eval(<<'.,.,', 'parser.y', 135)
   def _reduce_60(val, _values, result)
-     result = Summoner.build val[0], 'manipulator_brackets', *val[2] 
+     result = Summoner.build 'manipulator_brackets', val[0], *val[2] 
     result
   end
 .,.,
@@ -1158,21 +1158,21 @@ module_eval(<<'.,.,', 'parser.y', 170)
 
 module_eval(<<'.,.,', 'parser.y', 171)
   def _reduce_89(val, _values, result)
-     result = Summoner.build nil, val[0] 
+     result = Summoner.build val[0] 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.y', 172)
   def _reduce_90(val, _values, result)
-     result = Summoner.build nil, val[0] 
+     result = Summoner.build val[0] 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.y', 173)
   def _reduce_91(val, _values, result)
-     result = Summoner.build nil, val[0], *val[2] 
+     result = Summoner.build val[0], nil, *val[2] 
     result
   end
 .,.,

@@ -133,7 +133,7 @@ rule
       | NOT expr { result = Calculator.build :NOT, val[1] }
       | IDENTIFER ASSIGN expr { result = Assigner.build val[0], val[2] }
       | expr PERIOD method { val[2].children[0] = val[0]; result = val[2] }
-      | expr AOPEN arguments ACLOSE { result = Summoner.build val[0], 'manipulator_brackets', *val[2] }
+      | expr AOPEN arguments ACLOSE { result = Summoner.build 'manipulator_brackets', val[0], *val[2] }
       | POPEN PCLOSE { result = nil }
       | POPEN sequence PCLOSE {
         result = case val[1].size
@@ -169,9 +169,9 @@ rule
   arguments: params COMMA pairs { result = [*val[0], Hasher.build(:HASH, *val[2])] }
            | params
            | pairs { result = Hasher.build(:HASH, *val[0]) }
-  method: IDENTIFER { result = Summoner.build nil, val[0] }
-        | IDENTIFER POPEN PCLOSE { result = Summoner.build nil, val[0] }
-        | IDENTIFER POPEN arguments PCLOSE { result = Summoner.build nil, val[0], *val[2] }
+  method: IDENTIFER { result = Summoner.build val[0] }
+        | IDENTIFER POPEN PCLOSE { result = Summoner.build val[0] }
+        | IDENTIFER POPEN arguments PCLOSE { result = Summoner.build val[0], nil, *val[2] }
 
 ---- header
   require 'hotcell/lexer'

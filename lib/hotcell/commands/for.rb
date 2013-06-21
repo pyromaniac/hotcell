@@ -55,7 +55,7 @@ module Hotcell
           "Expected IDENTIFER as first argument in `#{name}` command", *name.hotcell_position
         ) unless children[0].is_a?(Hotcell::Summoner)
 
-        children[0] = children[0].children[1]
+        children[0] = children[0].name
       end
 
       def process context, variable, options
@@ -70,7 +70,7 @@ module Hotcell
           context.scoped scope do
             render_subnodes(context)
           end
-        end.join
+        end
       end
     end
   end
