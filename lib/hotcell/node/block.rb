@@ -1,15 +1,13 @@
 module Hotcell
   class Block < Hotcell::Command
-    class_attribute :_subcommands, instance_writter: false
-    self._subcommands = {}
+    class_attribute :subcommands, instance_writter: false, instance_reader: false
+    self.subcommands = {}
 
-    def self.subcommands values = nil, &block
-      if values.is_a? Hash
-        self._subcommands = _subcommands.merge(values.stringify_keys)
-      elsif values && block
-        subcommands values.to_s => Class.new(Hotcell::Command, &block)
+    def self.subcommand name_or_hash, &block
+      if name_or_hash.is_a? Hash
+        self.subcommands = subcommands.merge(name_or_hash.stringify_keys)
       else
-        _subcommands
+        subcommand name_or_hash => Class.new(Hotcell::Command, &block)
       end
     end
 
@@ -26,7 +24,7 @@ module Hotcell
         raise Hotcell::BlockError.new(
           "Unexpected subcommand `#{subcommand.name}` for `#{name}` command",
           *subcommand.name.hotcell_position
-        ) unless _subcommands.key?(subcommand.name)
+        ) unless self.class.subcommands.key?(subcommand.name)
       end
     end
 

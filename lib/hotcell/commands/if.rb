@@ -7,7 +7,7 @@ module Hotcell
       class Elsif < Hotcell::Command
       end
 
-      subcommands else: Else, elsif: Elsif
+      subcommand else: Else, elsif: Elsif
 
       def subcommand_error subcommand, *allowed_names
         raise Hotcell::BlockError.new(

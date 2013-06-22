@@ -1,7 +1,7 @@
 module Hotcell
   module Commands
     class Unless < Hotcell::Block
-      subcommands else: Hotcell::Commands::If::Else
+      subcommand else: Hotcell::Commands::If::Else
 
       def subcommand_argument_error subcommand, allowed_args_counts
         proper_args_count = allowed_args_counts[subcommand.name] or return

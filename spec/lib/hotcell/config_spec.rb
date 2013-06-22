@@ -6,11 +6,8 @@ describe Hotcell::Config do
   let(:command_class) { Class.new(Hotcell::Command) }
   let(:block_class) do
     Class.new(Hotcell::Block) do
-      subcommands :else do
-      end
-
-      subcommands :elsif do
-      end
+      subcommand :else
+      subcommand :elsif
     end
   end
   let(:misc_class) { Class.new }

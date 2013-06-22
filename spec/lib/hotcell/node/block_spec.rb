@@ -28,11 +28,8 @@ describe Hotcell::Block do
 
     let(:if_tag) do
       Class.new(described_class) do
-        subcommands :else do
-        end
-
-        subcommands :elsif do
-        end
+        subcommand :else
+        subcommand :elsif
 
         def validate!
           names = subcommands.map { |subcommand| subcommand.name }
@@ -106,11 +103,11 @@ describe Hotcell::Block do
   describe '.subcommands' do
     subject { Class.new(described_class) }
 
-    before { subject.subcommands elsif: Class.new(Hotcell::Command), else: Class.new(Hotcell::Command) }
+    before { subject.subcommand elsif: Class.new(Hotcell::Command), else: Class.new(Hotcell::Command) }
     its('subcommands.keys') { should == %w(elsif else) }
 
     context do
-      before { subject.subcommands(:when) {} }
+      before { subject.subcommand :when }
       its('subcommands.keys') { should == %w(elsif else when) }
     end
   end
@@ -138,7 +135,7 @@ describe Hotcell::Block do
   context '#validate!' do
     let(:block) do
       Class.new(described_class) do
-        subcommands(:else) {}
+        subcommand :else
         def process context, subnodes, condition
           "condition #{condition}"
         end
