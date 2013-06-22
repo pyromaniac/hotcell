@@ -5,13 +5,10 @@ describe Hotcell::Template do
     before do
       Hotcell.stub(:commands) { { 'include' => Class.new } }
       Hotcell.stub(:blocks) { { 'for' => Class.new } }
-      Hotcell.stub(:subcommands) { { 'else' => Class.new } }
     end
 
     specify { described_class.parse('').should be_a described_class }
-    specify { described_class.parse('').options.should == {
-      commands: ['include'], blocks: ['for'], subcommands: ['else']
-    } }
+    specify { described_class.parse('').options.values.map(&:keys).should == [['include'], ['for']] }
   end
 
   describe '#syntax' do

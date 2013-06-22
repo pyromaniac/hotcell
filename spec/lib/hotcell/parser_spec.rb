@@ -295,41 +295,54 @@ describe Hotcell::Parser do
   end
 
   context 'commands' do
+    let(:commands) do
+      {
+        include: Class.new(Hotcell::Command),
+        snippet: Class.new(Hotcell::Command)
+      }.stringify_keys
+    end
     specify { parse("{{ include 'some/partial' }}",
-      commands: [:include, :snippet]).should be_equal_node_to JOINER(
+      commands: commands).should be_equal_node_to JOINER(
         TAG(COMMAND('include', 'some/partial'), mode: :normal)
       ) }
     specify { parse("{{ include }}",
-      commands: [:include, :snippet]).should be_equal_node_to JOINER(
+      commands: commands).should be_equal_node_to JOINER(
         TAG(COMMAND('include'), mode: :normal)
       ) }
     specify { parse("{{! include 'some/partial' }}\n{{ snippet 'sidebar' }}",
-      commands: [:include, :snippet]).should be_equal_node_to JOINER(
+      commands: commands).should be_equal_node_to JOINER(
         TAG(COMMAND('include', 'some/partial'), mode: :silence),
         "\n",
         TAG(COMMAND('snippet', 'sidebar'), mode: :normal),
       ) }
     specify { parse("{{! variable = include }}",
-      commands: [:include, :snippet]).should be_equal_node_to JOINER(
+      commands: commands).should be_equal_node_to JOINER(
         TAG(ASSIGN('variable', COMMAND('include')), mode: :silence)
       ) }
     specify { parse("{{ variable = include 'some/partial' }}",
-      commands: [:include, :snippet]).should be_equal_node_to JOINER(
+      commands: commands).should be_equal_node_to JOINER(
         TAG(ASSIGN('variable', COMMAND('include', 'some/partial')), mode: :normal)
       ) }
   end
 
   context 'blocks' do
+    let(:blocks) do
+      {
+        scoped: Class.new(Hotcell::Block),
+        each: Class.new(Hotcell::Block)
+      }.stringify_keys
+    end
+
     specify { parse("{{ scoped }}{{ end scoped }}",
-      blocks: [:scoped, :each]).should be_equal_node_to JOINER(
+      blocks: blocks).should be_equal_node_to JOINER(
         TAG(BLOCK('scoped'), mode: :normal)
       ) }
     specify { parse("{{ scoped var: 'hello' }}{{ endscoped }}",
-      blocks: [:scoped, :each]).should be_equal_node_to JOINER(
+      blocks: blocks).should be_equal_node_to JOINER(
         TAG(BLOCK('scoped', HASH(PAIR('var', 'hello'))), mode: :normal)
       ) }
     specify { parse("<article>\n{{ each post, in: posts }}\n<h1>{{ post.title }}</h1>\n{{ end each }}\n</article>",
-      blocks: [:scoped, :each]).should be_equal_node_to JOINER(
+      blocks: blocks).should be_equal_node_to JOINER(
         "<article>\n",
         TAG(BLOCK('each',
           METHOD('post'),
@@ -343,7 +356,7 @@ describe Hotcell::Parser do
         "\n</article>"
       ) }
     specify { parse("{{! iter = each post, in: posts }}\n<h1>{{ post.title }}</h1>\n{{ end each }}",
-      blocks: [:scoped, :each]).should be_equal_node_to JOINER(
+      blocks: blocks).should be_equal_node_to JOINER(
         TAG(ASSIGN('iter', BLOCK('each',
           METHOD('post'),
           HASH(PAIR('in', METHOD('posts'))),
@@ -355,7 +368,7 @@ describe Hotcell::Parser do
         )), mode: :silence),
       ) }
     specify { parse("{{ capture = scoped }} hello {{ each post, in: posts }} {{ loop }} {{ end each }}{{ endscoped }}",
-      blocks: [:scoped, :each]).should be_equal_node_to JOINER(
+      blocks: blocks).should be_equal_node_to JOINER(
         TAG(ASSIGN('capture', BLOCK('scoped',
           subnodes: [JOINER(
             ' hello ',

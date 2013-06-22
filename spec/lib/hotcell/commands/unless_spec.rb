@@ -12,8 +12,6 @@ describe Hotcell::Commands::Unless do
       }.to raise_error Hotcell::ArgumentError, 'Wrond number of arguments for `else` (1 for 0) at 1:21' }
     specify { expect { parse('{{ unless true }}{{ else }}{{ else }}{{ end unless }}').syntax
       }.to raise_error Hotcell::BlockError, 'Unexpected subcommand `else` for `unless` command at 1:31' }
-    specify { expect { parse('{{ unless true }}{{ elsif }}{{ end unless }}').syntax
-      }.to raise_error Hotcell::BlockError, 'Unexpected subcommand `elsif` for `unless` command at 1:21' }
   end
 
   describe '#render' do

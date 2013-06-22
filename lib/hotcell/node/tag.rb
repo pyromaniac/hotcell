@@ -13,7 +13,7 @@ module Hotcell
 
     def render context
       context.safe do
-        concat context, process(context, *render_nodes(context, children))
+        concat context, process(context, *render_children(context))
       end
     end
 

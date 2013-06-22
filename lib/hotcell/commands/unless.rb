@@ -1,15 +1,15 @@
 module Hotcell
   module Commands
     class Unless < Hotcell::Block
-      subcommands :else
+      subcommands else: Hotcell::Commands::If::Else
 
       def subcommand_argument_error subcommand, allowed_args_counts
-        proper_args_count = allowed_args_counts[subcommand[:name]] or return
-        args_count = subcommand[:args] ? subcommand[:args].children.size : 0
+        proper_args_count = allowed_args_counts[subcommand.name] or return
+        args_count = subcommand.children.size
 
         raise Hotcell::ArgumentError.new(
-          "Wrond number of arguments for `#{subcommand[:name]}` (#{args_count} for #{proper_args_count})",
-          *subcommand[:name].hotcell_position
+          "Wrond number of arguments for `#{subcommand.name}` (#{args_count} for #{proper_args_count})",
+          *subcommand.name.hotcell_position
         ) if args_count != proper_args_count
       end
 
@@ -25,14 +25,13 @@ module Hotcell
         super
 
         raise Hotcell::BlockError.new(
-          "Unexpected subcommand `#{subcommands[1][:name]}` for `#{name}` command",
-          *subcommands[1][:name].hotcell_position
+          "Unexpected subcommand `#{subcommands[1].name}` for `#{name}` command",
+          *subcommands[1].name.hotcell_position
         ) if subcommands[1]
       end
 
       def process context, condition
-        subnodes = render_subnodes(context)
-        condition ? subnodes[2] : subnodes[0]
+        condition ? subnodes[2].try(:render, context) : subnodes[0].try(:render, context)
       end
     end
   end

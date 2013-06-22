@@ -4,12 +4,11 @@ module Hotcell
   class Config
     include Singleton
 
-    attr_reader :commands, :blocks, :subcommands, :helpers
+    attr_reader :commands, :blocks, :helpers
 
     def initialize
       @commands = {}
       @blocks = {}
-      @subcommands = {}
       @helpers = []
     end
 
@@ -25,9 +24,6 @@ module Hotcell
       if klass < ::Hotcell::Block
         raise "Command `#{name}` already defined, you can not define block with the same name" if commands.key?(name)
         blocks[name] = klass
-        klass.subcommands.each do |subcommand|
-          subcommands[subcommand] = klass
-        end
       elsif klass < ::Hotcell::Command
         raise "Block `#{name}` already defined, you can not define command with the same name" if blocks.key?(name)
         commands[name] = klass

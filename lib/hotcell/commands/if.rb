@@ -1,22 +1,28 @@
 module Hotcell
   module Commands
     class If < Hotcell::Block
-      subcommands :else, :elsif
+      class Else < Hotcell::Command
+      end
+
+      class Elsif < Hotcell::Command
+      end
+
+      subcommands else: Else, elsif: Elsif
 
       def subcommand_error subcommand, *allowed_names
         raise Hotcell::BlockError.new(
-          "Unexpected subcommand `#{subcommand[:name]}` for `#{name}` command",
-          *subcommand[:name].hotcell_position
-        ) unless allowed_names.flatten.include?(subcommand[:name])
+          "Unexpected subcommand `#{subcommand.name}` for `#{name}` command",
+          *subcommand.name.hotcell_position
+        ) unless allowed_names.flatten.include?(subcommand.name)
       end
 
       def subcommand_argument_error subcommand, allowed_args_counts
-        proper_args_count = allowed_args_counts[subcommand[:name]]
-        args_count = subcommand[:args] ? subcommand[:args].children.size : 0
+        proper_args_count = allowed_args_counts[subcommand.name]
+        args_count = subcommand.children.size
 
         raise Hotcell::ArgumentError.new(
-          "Wrond number of arguments for `#{subcommand[:name]}` (#{args_count} for #{proper_args_count})",
-          *subcommand[:name].hotcell_position
+          "Wrond number of arguments for `#{subcommand.name}` (#{args_count} for #{proper_args_count})",
+          *subcommand.name.hotcell_position
         ) if args_count != proper_args_count
       end
 
@@ -34,12 +40,12 @@ module Hotcell
 
       def process context, condition
         conditions = [[condition]]
-        render_subnodes(context).each do |subnode|
-          if subnode.is_a?(Hash)
+        subnodes.each do |subnode|
+          if subnode.is_a?(Hotcell::Command)
             conditions.last[1] = '' if conditions.last[1] == nil
-            conditions << (subnode[:name] == 'elsif' ? [subnode[:args].first] : [true])
+            conditions << (subnode.name == 'elsif' ? [subnode.render_children(context).first] : [true])
           else
-            conditions.last[1] = subnode
+            conditions.last[1] = subnode.render(context)
           end
         end
         condition = conditions.detect { |condition| !!condition[0] }

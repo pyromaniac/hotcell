@@ -21,7 +21,7 @@ module Hotcell
     end
 
     def render context
-      process context, *render_nodes(context, children)
+      process context, *render_children(context)
     end
 
     def process context, *values
@@ -32,6 +32,10 @@ module Hotcell
       values.flatten.map do |node|
         node.is_a?(Hotcell::Node) ? node.render(context) : node
       end
+    end
+
+    def render_children context
+      render_nodes context, children
     end
 
     def == other

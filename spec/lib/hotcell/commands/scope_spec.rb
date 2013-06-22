@@ -8,8 +8,6 @@ describe Hotcell::Commands::Scope do
   describe '#validate!' do
     specify { expect { parse('{{ scope \'hello\' }}{{ end scope }}').syntax
       }.to raise_error Hotcell::SyntaxError, 'Expected first argument to be a HASH in `scope` at 1:4' }
-    specify { expect { parse('{{ scope }}{{ else }}{{ end scope }}').syntax
-      }.to raise_error Hotcell::BlockError, 'Unexpected subcommand `else` for `scope` command at 1:15' }
   end
 
   describe '#render' do

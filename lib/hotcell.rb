@@ -4,7 +4,7 @@ require 'hotcell/config'
 require 'hotcell/errors'
 
 module Hotcell
-  [:commands, :blocks, :subcommands, :helpers, :register_command, :register_helpers].each do |method|
+  [:commands, :blocks, :helpers, :register_command, :register_helpers].each do |method|
     define_singleton_method method do |*args|
       Config.instance.send(method, *args)
     end

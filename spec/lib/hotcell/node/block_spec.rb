@@ -28,10 +28,14 @@ describe Hotcell::Block do
 
     let(:if_tag) do
       Class.new(described_class) do
-        subcommands :else, :elsif
+        subcommands :else do
+        end
+
+        subcommands :elsif do
+        end
 
         def validate!
-          names = subcommands.map { |subcommand| subcommand[:name] }
+          names = subcommands.map { |subcommand| subcommand.name }
           valid = names.empty? || (
             names.any? && names.last.in?('elsif', 'else') &&
             names[0..-2].uniq.in?(['elsif'], [])
@@ -41,12 +45,12 @@ describe Hotcell::Block do
 
         def process context, condition
           conditions = [[condition]]
-          render_subnodes(context).each do |subnode|
-            if subnode.is_a?(Hash)
+          subnodes.each do |subnode|
+            if subnode.is_a?(Hotcell::Command)
               conditions.last[1] = '' if conditions.last[1] == nil
-              conditions << (subnode[:name] == 'elsif' ? [subnode[:args].first] : [true])
+              conditions << (subnode.name == 'elsif' ? [subnode.render_children(context).first] : [true])
             else
-              conditions.last[1] = subnode
+              conditions.last[1] = subnode.render(context)
             end
           end
           condition = conditions.detect { |condition| !!condition[0] }
@@ -57,7 +61,6 @@ describe Hotcell::Block do
 
     before { Hotcell.stub(:commands) { {} } }
     before { Hotcell.stub(:blocks) { { 'if' => if_tag } } }
-    before { Hotcell.stub(:subcommands) { { 'elsif' => if_tag, 'else' => if_tag } } }
 
     specify { parse('{{ if true }}Hello{{ end if }}').render.should == 'Hello' }
     specify { parse('{{! if true }}Hello{{ end if }}').render.should == '' }
@@ -103,27 +106,20 @@ describe Hotcell::Block do
   describe '.subcommands' do
     subject { Class.new(described_class) }
 
-    before { subject.subcommands :elsif, :else }
-    its(:subcommands) { should == %w(elsif else) }
+    before { subject.subcommands elsif: Class.new(Hotcell::Command), else: Class.new(Hotcell::Command) }
+    its('subcommands.keys') { should == %w(elsif else) }
 
     context do
-      before { subject.subcommands :when }
-      its(:subcommands) { should == %w(elsif else when) }
+      before { subject.subcommands(:when) {} }
+      its('subcommands.keys') { should == %w(elsif else when) }
     end
   end
 
   describe '#subcommands' do
     specify { described_class.new('if',
-      subnodes: [{name: 'elsif'}, JOINER(), {name: 'else'}, JOINER()]).subcommands.should == [
-        {name: 'elsif'}, {name: 'else'}] }
-  end
-
-  describe '#render_subnodes' do
-    specify { described_class.new('if',
-      subnodes: [{name: 'elsif', args: ARRAY(3, 5)}, JOINER(42), {name: 'else'}, JOINER(43)]
-    ).render_subnodes(context).should == [
-      {name: 'elsif', args: [3, 5]}, '42', {name: 'else'}, '43'
-    ] }
+      subnodes: [COMMAND('elsif'), JOINER(), COMMAND('else'), JOINER()]).subcommands.should == [
+        COMMAND('elsif'), COMMAND('else')
+      ] }
   end
 
   describe '#render' do
@@ -142,7 +138,7 @@ describe Hotcell::Block do
   context '#validate!' do
     let(:block) do
       Class.new(described_class) do
-        subcommands :else
+        subcommands(:else) {}
         def process context, subnodes, condition
           "condition #{condition}"
         end
@@ -155,12 +151,12 @@ describe Hotcell::Block do
     end
 
     context do
-      subject { block.new('if', true, subnodes: [{ name: 'else' }] ) }
+      subject { block.new('if', true, subnodes: [COMMAND('else')] ) }
       specify { expect { subject.validate! }.not_to raise_error }
     end
 
     context do
-      subject { block.new('if', true, subnodes: [{ name: 'case' }] ) }
+      subject { block.new('if', true, subnodes: [COMMAND('case')] ) }
       specify { expect { subject.validate! }.to raise_error }
     end
   end

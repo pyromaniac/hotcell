@@ -1,43 +1,6 @@
 module Hotcell
   module Commands
     class For < Hotcell::Block
-      class Forloop < Hotcell::Manipulator
-
-        def initialize object, index
-          @object, @index = object, index
-        end
-
-        def prev
-          @next ||= @object[index - 1] if index - 1 >= 0
-        end
-
-        def next
-          @next ||= @object[index + 1]
-        end
-
-        def length
-          @length ||= @object.size
-        end
-        alias_method :size, :length
-        alias_method :count, :length
-
-        attr_reader :index
-
-        def rindex
-          @rindex ||= length - index - 1
-        end
-
-        def first
-          @first ||= index == 0
-        end
-        alias_method :first?, :first
-
-        def last
-          @last ||= index == length - 1
-        end
-        alias_method :last?, :last
-      end
-
       def validate!
         raise Hotcell::ArgumentError.new(
           "Wrond number of arguments for `#{name}` (#{children.count} for 2)", *name.hotcell_position
@@ -60,9 +23,45 @@ module Hotcell
           scope.merge!(forloop => Forloop.new(item, index)) if forloop
 
           context.scoped scope do
-            render_subnodes(context)
+            subnodes.first.try(:render, context)
           end
         end
+      end
+
+      class Forloop < Hotcell::Manipulator
+        attr_reader :index
+
+        def initialize object, index
+          @object, @index = object, index
+        end
+
+        def prev
+          @next ||= @object[index - 1] if index - 1 >= 0
+        end
+
+        def next
+          @next ||= @object[index + 1]
+        end
+
+        def length
+          @length ||= @object.size
+        end
+        alias_method :size, :length
+        alias_method :count, :length
+
+        def rindex
+          @rindex ||= length - index - 1
+        end
+
+        def first
+          @first ||= index == 0
+        end
+        alias_method :first?, :first
+
+        def last
+          @last ||= index == length - 1
+        end
+        alias_method :last?, :last
       end
     end
   end

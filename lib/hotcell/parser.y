@@ -70,8 +70,8 @@ rule
                  result = Tag.build :TAG, val[1], mode: TAG_MODES[val[0]]
                }
 
-  subcommand: SUBCOMMAND { result = { name: val[0] } }
-            | SUBCOMMAND arguments { result = { name: val[0], args: Arrayer.build(:ARRAY, *val[1]) } }
+  subcommand: SUBCOMMAND { result = @substack.last[val[0]].build val[0] }
+            | SUBCOMMAND arguments { result = @substack.last[val[0]].build val[0], *val[1] }
   subcommand_tag: TOPEN subcommand TCLOSE { result = val[1] }
 
   block_body: BLOCK { result = Block.build val[0] }
@@ -80,6 +80,7 @@ rule
             | IDENTIFER ASSIGN block_body { result = Assigner.build val[0], val[2] }
   block_close: ENDBLOCK
              | END BLOCK
+             | END
   block_open_tag: TOPEN block_open TCLOSE { result = Tag.build :TAG, val[1], mode: TAG_MODES[val[0]] }
   block_close_tag: TOPEN block_close TCLOSE
   block_subnodes: block_subnodes document_unit {
@@ -186,10 +187,11 @@ rule
     @tokens = @lexer.tokens
     @position = -1
 
-    @commands = Set.new(Array.wrap(options[:commands]).map(&:to_s))
-    @blocks = Set.new(Array.wrap(options[:blocks]).map(&:to_s))
-    @endblocks = Set.new(Array.wrap(options[:blocks]).map { |identifer| "end#{identifer}" })
-    @subcommands = Set.new(Array.wrap(options[:subcommands]).map(&:to_s))
+    @commands = options[:commands] || {}
+    @blocks = options[:blocks] || {}
+    @endblocks = Set.new(@blocks.keys.map { |identifer| "end#{identifer}" })
+
+    @substack = []
   end
 
   def parse
@@ -214,15 +216,18 @@ rule
       next_token
     else
       if tcurr && tcurr[0] == :IDENTIFER
-        if @commands.include?(tcurr[1])
+        if @commands.key?(tcurr[1])
           [:COMMAND, tcurr[1]]
-        elsif @blocks.include?(tcurr[1])
+        elsif @blocks.key?(tcurr[1])
+          @substack.push(@blocks[tcurr[1]].subcommands)
           [:BLOCK, tcurr[1]]
-        elsif @endblocks.include?(tcurr[1])
-          [:ENDBLOCK, tcurr[1]]
-        elsif @subcommands.include?(tcurr[1])
+        elsif @substack.last && @substack.last.key?(tcurr[1])
           [:SUBCOMMAND, tcurr[1]]
+        elsif @endblocks.include?(tcurr[1])
+          @substack.pop
+          [:ENDBLOCK, tcurr[1]]
         elsif tcurr[1] == 'end'
+          @substack.pop
           [:END, tcurr[1]]
         else
           tcurr

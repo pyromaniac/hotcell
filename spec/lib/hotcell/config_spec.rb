@@ -6,13 +6,16 @@ describe Hotcell::Config do
   let(:command_class) { Class.new(Hotcell::Command) }
   let(:block_class) do
     Class.new(Hotcell::Block) do
-      subcommands :else, :elsif
+      subcommands :else do
+      end
+
+      subcommands :elsif do
+      end
     end
   end
   let(:misc_class) { Class.new }
 
   specify { subject.blocks.should == {} }
-  specify { subject.subcommands.should == {} }
   specify { subject.commands.should == {} }
   specify { subject.helpers.should == [] }
 
@@ -20,14 +23,12 @@ describe Hotcell::Config do
     context do
       before { subject.register_command :for, command_class }
       specify { subject.blocks.should == {} }
-      specify { subject.subcommands.should == {} }
       specify { subject.commands.should == { 'for' => command_class } }
     end
 
     context do
       before { subject.register_command 'for', block_class }
       specify { subject.blocks.should == { 'for' => block_class } }
-      specify { subject.subcommands.should == { 'else' => block_class, 'elsif' => block_class } }
       specify { subject.commands.should == {} }
     end
 

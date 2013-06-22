@@ -11,7 +11,7 @@ module Hotcell
 
       def process context, scope = {}
         context.scoped scope do
-          render_subnodes(context)
+          subnodes.first.try(:render, context)
         end
       end
     end

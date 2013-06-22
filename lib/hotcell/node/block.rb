@@ -1,11 +1,13 @@
 module Hotcell
   class Block < Hotcell::Command
     class_attribute :_subcommands, instance_writter: false
-    self._subcommands = []
+    self._subcommands = {}
 
-    def self.subcommands *names
-      if names.any?
-        self._subcommands = _subcommands + names.flatten.map(&:to_s)
+    def self.subcommands values = nil, &block
+      if values.is_a? Hash
+        self._subcommands = _subcommands.merge(values.stringify_keys)
+      elsif values && block
+        subcommands values.to_s => Class.new(Hotcell::Command, &block)
       else
         _subcommands
       end
@@ -22,9 +24,9 @@ module Hotcell
     def validate!
       subcommands.each do |subcommand|
         raise Hotcell::BlockError.new(
-          "Unexpected subcommand `#{subcommand[:name]}` for `#{name}` command",
-          *subcommand[:name].hotcell_position
-        ) unless _subcommands.include?(subcommand[:name])
+          "Unexpected subcommand `#{subcommand.name}` for `#{name}` command",
+          *subcommand.name.hotcell_position
+        ) unless _subcommands.key?(subcommand.name)
       end
     end
 
@@ -33,19 +35,7 @@ module Hotcell
     end
 
     def subcommands
-      subnodes.select { |node| node.is_a?(Hash) }
-    end
-
-    def render_subnodes context
-      subnodes.map do |node|
-        if node.is_a?(Hash)
-          subcommand = { name: node[:name] }
-          subcommand.merge!(args: node[:args].render(context)) if node[:args]
-          subcommand
-        else
-          node.render(context)
-        end
-      end
+      subnodes.select { |node| node.is_a?(Hotcell::Command) }
     end
   end
 end
