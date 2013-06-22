@@ -15,3 +15,9 @@ namespace :build do
     `racc -d -o lib/hotcell/parser.rb -O lib/hotcell/parser.out lib/hotcell/parser.y`
   end
 end
+
+require 'rspec/core/rake_task'
+
+RSpec::Core::RakeTask.new(:spec)
+
+task :default => :spec

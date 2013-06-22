@@ -17,6 +17,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ["lib"]
 
-  gem.add_runtime_dependency "activesupport"
+  gem.add_runtime_dependency "rake"
   gem.add_runtime_dependency "racc"
+  gem.add_runtime_dependency "activesupport"
 end
