@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/pyromaniac/hotcell.png)](https://travis-ci.org/pyromaniac/hotcell)
+
 # Hotcell
 
 Hotcell is a sanboxed template processor.
