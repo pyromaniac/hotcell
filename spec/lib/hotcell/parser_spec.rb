@@ -295,56 +295,61 @@ describe Hotcell::Parser do
   end
 
   context 'commands' do
+    let(:include_tag) { Class.new(Hotcell::Command) }
+    let(:snippet_tag) { Class.new(Hotcell::Command) }
     let(:commands) do
       {
-        include: Class.new(Hotcell::Command),
-        snippet: Class.new(Hotcell::Command)
+        include: include_tag,
+        snippet: snippet_tag
       }.stringify_keys
     end
+
     specify { parse("{{ include 'some/partial' }}",
       commands: commands).should be_equal_node_to JOINER(
-        TAG(COMMAND('include', 'some/partial'), mode: :normal)
+        TAG(include_tag.build('include', 'some/partial'), mode: :normal)
       ) }
     specify { parse("{{ include }}",
       commands: commands).should be_equal_node_to JOINER(
-        TAG(COMMAND('include'), mode: :normal)
+        TAG(include_tag.build('include'), mode: :normal)
       ) }
     specify { parse("{{! include 'some/partial' }}\n{{ snippet 'sidebar' }}",
       commands: commands).should be_equal_node_to JOINER(
-        TAG(COMMAND('include', 'some/partial'), mode: :silence),
+        TAG(include_tag.build('include', 'some/partial'), mode: :silence),
         "\n",
-        TAG(COMMAND('snippet', 'sidebar'), mode: :normal),
+        TAG(snippet_tag.build('snippet', 'sidebar'), mode: :normal),
       ) }
     specify { parse("{{! variable = include }}",
       commands: commands).should be_equal_node_to JOINER(
-        TAG(ASSIGN('variable', COMMAND('include')), mode: :silence)
+        TAG(ASSIGN('variable', include_tag.build('include')), mode: :silence)
       ) }
     specify { parse("{{ variable = include 'some/partial' }}",
       commands: commands).should be_equal_node_to JOINER(
-        TAG(ASSIGN('variable', COMMAND('include', 'some/partial')), mode: :normal)
+        TAG(ASSIGN('variable', include_tag.build('include', 'some/partial')), mode: :normal)
       ) }
   end
 
   context 'blocks' do
+    let(:scoped_tag) { Class.new(Hotcell::Block) }
+    let(:each_tag) { Class.new(Hotcell::Block) }
     let(:blocks) do
       {
-        scoped: Class.new(Hotcell::Block),
-        each: Class.new(Hotcell::Block)
+        scoped: scoped_tag,
+        each: each_tag
       }.stringify_keys
     end
 
     specify { parse("{{ scoped }}{{ end scoped }}",
       blocks: blocks).should be_equal_node_to JOINER(
-        TAG(BLOCK('scoped'), mode: :normal)
+        TAG(scoped_tag.build('scoped'), mode: :normal)
       ) }
     specify { parse("{{ scoped var: 'hello' }}{{ endscoped }}",
       blocks: blocks).should be_equal_node_to JOINER(
-        TAG(BLOCK('scoped', HASH(PAIR('var', 'hello'))), mode: :normal)
+        TAG(scoped_tag.build('scoped', HASH(PAIR('var', 'hello'))), mode: :normal)
       ) }
     specify { parse("<article>\n{{ each post, in: posts }}\n<h1>{{ post.title }}</h1>\n{{ end each }}\n</article>",
       blocks: blocks).should be_equal_node_to JOINER(
         "<article>\n",
-        TAG(BLOCK('each',
+        TAG(each_tag.build('each',
           METHOD('post'),
           HASH(PAIR('in', METHOD('posts'))),
           subnodes: [JOINER(
@@ -357,7 +362,7 @@ describe Hotcell::Parser do
       ) }
     specify { parse("{{! iter = each post, in: posts }}\n<h1>{{ post.title }}</h1>\n{{ end each }}",
       blocks: blocks).should be_equal_node_to JOINER(
-        TAG(ASSIGN('iter', BLOCK('each',
+        TAG(ASSIGN('iter', each_tag.build('each',
           METHOD('post'),
           HASH(PAIR('in', METHOD('posts'))),
           subnodes: [JOINER(
@@ -369,10 +374,10 @@ describe Hotcell::Parser do
       ) }
     specify { parse("{{ capture = scoped }} hello {{ each post, in: posts }} {{ loop }} {{ end each }}{{ endscoped }}",
       blocks: blocks).should be_equal_node_to JOINER(
-        TAG(ASSIGN('capture', BLOCK('scoped',
+        TAG(ASSIGN('capture', scoped_tag.build('scoped',
           subnodes: [JOINER(
             ' hello ',
-            TAG(BLOCK('each',
+            TAG(each_tag.build('each',
               METHOD('post'),
               HASH(PAIR('in', METHOD('posts'))),
               subnodes: [JOINER(

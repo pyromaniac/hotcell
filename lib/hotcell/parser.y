@@ -52,127 +52,144 @@ prechigh
 preclow
 start document
 rule
-  document: document document_unit { val[0].children.push(val[1]) }
-          | document_unit { result = Joiner.build :JOINER, val[0] }
+  document: document document_unit { pospoppush(2); val[0].children.push(val[1]) }
+          | document_unit { result = build Joiner, :JOINER, val[0], position: pospoppush(1) }
   document_unit: template | tag | block_tag | command_tag
 
   template: TEMPLATE { result = val[0] }
-  tag: TOPEN TCLOSE { result = Tag.build :TAG, mode: TAG_MODES[val[0]] }
-     | TOPEN sequence TCLOSE { result = Tag.build :TAG, *Array.wrap(val[1]).flatten, mode: TAG_MODES[val[0]] }
+  tag: TOPEN TCLOSE { result = build Tag, :TAG, mode: TAG_MODES[val[0]], position: pospoppush(2) }
+     | TOPEN sequence TCLOSE {
+         result = build Tag, :TAG, *Array.wrap(val[1]).flatten, mode: TAG_MODES[val[0]], position: pospoppush(3)
+       }
 
-  command_body: COMMAND { result = Command.build val[0] }
-              | COMMAND arguments { result = Command.build val[0], *val[1] }
+  command_body: COMMAND { result = build @commands[val[0]] || Command, val[0], position: pospoppush(1) }
+              | COMMAND arguments {
+                  result = build @commands[val[0]] || Command, val[0], *val[1], position: pospoppush(2)
+                }
   command: command_body
-         | IDENTIFER ASSIGN command_body { result = Assigner.build val[0], val[2] }
+         | IDENTIFER ASSIGN command_body {
+             result = build Assigner, val[0], val[2], position: pospoppush(3)
+           }
   command_tag: TOPEN command TCLOSE {
                  command = val[1].is_a?(Command) ? val[1] : val[1].children[0]
                  command.validate!
-                 result = Tag.build :TAG, val[1], mode: TAG_MODES[val[0]]
+                 result = build Tag, :TAG, val[1], mode: TAG_MODES[val[0]], position: pospoppush(3)
                }
 
-  subcommand: SUBCOMMAND { result = @substack.last[val[0]].build val[0] }
-            | SUBCOMMAND arguments { result = @substack.last[val[0]].build val[0], *val[1] }
-  subcommand_tag: TOPEN subcommand TCLOSE { result = val[1] }
+  subcommand: SUBCOMMAND { result = build @substack.last[val[0]], val[0], position: pospoppush(1) }
+            | SUBCOMMAND arguments {
+                result = build @substack.last[val[0]], val[0], *val[1], position: pospoppush(2)
+              }
+  subcommand_tag: TOPEN subcommand TCLOSE { pospoppush(3); result = val[1] }
 
-  block_body: BLOCK { result = Block.build val[0] }
-            | BLOCK arguments { result = Block.build val[0], *val[1] }
+  block_body: BLOCK { result = build @blocks[val[0]] || Block, val[0], position: pospoppush(1) }
+            | BLOCK arguments {
+                result = build @blocks[val[0]] || Block, val[0], *val[1], position: pospoppush(2)
+              }
   block_open: block_body
-            | IDENTIFER ASSIGN block_body { result = Assigner.build val[0], val[2] }
+            | IDENTIFER ASSIGN block_body {
+                result = build Assigner, val[0], val[2], position: pospoppush(3)
+              }
   block_close: ENDBLOCK
-             | END BLOCK
+             | END BLOCK { pospoppush(2) }
              | END
-  block_open_tag: TOPEN block_open TCLOSE { result = Tag.build :TAG, val[1], mode: TAG_MODES[val[0]] }
-  block_close_tag: TOPEN block_close TCLOSE
+  block_open_tag: TOPEN block_open TCLOSE {
+                    result = build Tag, :TAG, val[1], mode: TAG_MODES[val[0]], position: pospoppush(3)
+                  }
+  block_close_tag: TOPEN block_close TCLOSE { pospoppush(3) }
   block_subnodes: block_subnodes document_unit {
+                    pospoppush(2)
                     val[0][-1].is_a?(Joiner) ?
                       val[0][-1].children.push(val[1]) :
-                      val[0].push(Joiner.build(:JOINER, val[1]))
+                      val[0].push(build(Joiner, :JOINER, val[1]))
                   }
-                | block_subnodes subcommand_tag { val[0].push(val[1]) }
-                | document_unit { result = [Joiner.build(:JOINER, val[0])] }
+                | block_subnodes subcommand_tag { pospoppush(2); val[0].push(val[1]) }
+                | document_unit { result = [build(Joiner, :JOINER, val[0], position: pospoppush(1))] }
                 | subcommand_tag { result = [val[0]] }
   block_tag: block_open_tag block_close_tag {
-           block = val[0].children[0].is_a?(Block) ?
-             val[0].children[0] : val[0].children[0].children[0]
-           block.validate!
-         }
-       | block_open_tag block_subnodes block_close_tag
-         {
-           block = val[0].children[0].is_a?(Block) ?
-             val[0].children[0] : val[0].children[0].children[0]
-           block.options[:subnodes] = val[1]
-           block.validate!
-         }
+               pospoppush(2)
+               block = val[0].children[0].is_a?(Block) ?
+                 val[0].children[0] : val[0].children[0].children[0]
+               block.validate!
+             }
+           | block_open_tag block_subnodes block_close_tag {
+               pospoppush(3)
+               block = val[0].children[0].is_a?(Block) ?
+                 val[0].children[0] : val[0].children[0].children[0]
+               block.options[:subnodes] = val[1]
+               block.validate!
+             }
 
 
-  sequence: sequence SEMICOLON sequence { result = val[0].push(val[2]) }
-          | sequence SEMICOLON
-          | SEMICOLON sequence { result = val[1] }
+  sequence: sequence SEMICOLON sequence { pospoppush(2); result = val[0].push(val[2]) }
+          | sequence SEMICOLON { pospoppush(2) }
+          | SEMICOLON sequence { pospoppush(2, 1); result = val[1] }
           | SEMICOLON { result = [] }
-          | sequence NEWLINE sequence { result = val[0].push(val[2]) }
-          | sequence NEWLINE
-          | NEWLINE sequence { result = val[1] }
+          | sequence NEWLINE sequence { pospoppush(2); result = val[0].push(val[2]) }
+          | sequence NEWLINE { pospoppush(2) }
+          | NEWLINE sequence { pospoppush(2, 1); result = val[1] }
           | NEWLINE { result = [] }
           | expr { result = [val[0]] }
 
-  expr: expr MULTIPLY expr { result = Calculator.build :MULTIPLY, val[0], val[2] }
-      | expr POWER expr { result = Calculator.build :POWER, val[0], val[2] }
-      | expr DIVIDE expr { result = Calculator.build :DIVIDE, val[0], val[2] }
-      | expr PLUS expr { result = Calculator.build :PLUS, val[0], val[2] }
-      | expr MINUS expr { result = Calculator.build :MINUS, val[0], val[2] }
-      | expr MODULO expr { result = Calculator.build :MODULO, val[0], val[2] }
-      | MINUS expr =UMINUS { result = Calculator.build :UMINUS, val[1] }
-      | PLUS expr =UPLUS { result = Calculator.build :UPLUS, val[1] }
-      | expr AND expr { result = Calculator.build :AND, val[0], val[2] }
-      | expr OR expr { result = Calculator.build :OR, val[0], val[2] }
-      | expr GT expr { result = Calculator.build :GT, val[0], val[2] }
-      | expr GTE expr { result = Calculator.build :GTE, val[0], val[2] }
-      | expr LT expr { result = Calculator.build :LT, val[0], val[2] }
-      | expr LTE expr { result = Calculator.build :LTE, val[0], val[2] }
-      | expr EQUAL expr { result = Calculator.build :EQUAL, val[0], val[2] }
-      | expr INEQUAL expr { result = Calculator.build :INEQUAL, val[0], val[2] }
-      | NOT expr { result = Calculator.build :NOT, val[1] }
-      | IDENTIFER ASSIGN expr { result = Assigner.build val[0], val[2] }
-      | expr PERIOD method { val[2].children[0] = val[0]; result = val[2] }
-      | expr AOPEN arguments ACLOSE { result = Summoner.build 'manipulator_brackets', val[0], *val[2] }
-      | POPEN PCLOSE { result = nil }
+  expr: expr MULTIPLY expr { result = build Calculator, :MULTIPLY, val[0], val[2], position: pospoppush(3) }
+      | expr POWER expr { result = build Calculator, :POWER, val[0], val[2], position: pospoppush(3) }
+      | expr DIVIDE expr { result = build Calculator, :DIVIDE, val[0], val[2], position: pospoppush(3) }
+      | expr PLUS expr { result = build Calculator, :PLUS, val[0], val[2], position: pospoppush(3) }
+      | expr MINUS expr { result = build Calculator, :MINUS, val[0], val[2], position: pospoppush(3) }
+      | expr MODULO expr { result = build Calculator, :MODULO, val[0], val[2], position: pospoppush(3) }
+      | MINUS expr =UMINUS { result = build Calculator, :UMINUS, val[1], position: pospoppush(2) }
+      | PLUS expr =UPLUS { result = build Calculator, :UPLUS, val[1], position: pospoppush(2) }
+      | expr AND expr { result = build Calculator, :AND, val[0], val[2], position: pospoppush(3) }
+      | expr OR expr { result = build Calculator, :OR, val[0], val[2], position: pospoppush(3) }
+      | expr GT expr { result = build Calculator, :GT, val[0], val[2], position: pospoppush(3) }
+      | expr GTE expr { result = build Calculator, :GTE, val[0], val[2], position: pospoppush(3) }
+      | expr LT expr { result = build Calculator, :LT, val[0], val[2], position: pospoppush(3) }
+      | expr LTE expr { result = build Calculator, :LTE, val[0], val[2], position: pospoppush(3) }
+      | expr EQUAL expr { result = build Calculator, :EQUAL, val[0], val[2], position: pospoppush(3) }
+      | expr INEQUAL expr { result = build Calculator, :INEQUAL, val[0], val[2], position: pospoppush(3) }
+      | NOT expr { result = build Calculator, :NOT, val[1], position: pospoppush(2) }
+      | IDENTIFER ASSIGN expr { result = build Assigner, val[0], val[2], position: pospoppush(3) }
+      | expr PERIOD method { pospoppush(3); val[2].children[0] = val[0]; result = val[2] }
+      | expr AOPEN arguments ACLOSE {
+          result = build Summoner, 'manipulator_brackets', val[0], *val[2], position: pospoppush(4)
+        }
+      | POPEN PCLOSE { pospoppush(2); result = nil }
       | POPEN sequence PCLOSE {
-        result = case val[1].size
-        when 0
-          nil
-        when 1
-          val[1][0]
-        else
-          Sequencer.build :SEQUENCE, *val[1].flatten
-        end
-      }
+          position = pospoppush(3)
+          result = case val[1].size
+          when 1
+            val[1][0]
+          else
+            build Sequencer, :SEQUENCE, *val[1].flatten, position: position
+          end
+        }
       | value
 
-  value: const | number | string | array | hash | method# | ternary
+  value: const | number | string | array | hash | method
 
   const: NIL | TRUE | FALSE
   number: INTEGER | FLOAT
   string: STRING | REGEXP
 
-  # ternary: expr QUESTION expr COLON expr =TERNARY { result = Node.build :TERNARY, val[0], val[2], val[4] }
-
-  array: AOPEN ACLOSE { result = Arrayer.build :ARRAY }
-       | AOPEN params ACLOSE { result = Arrayer.build :ARRAY, *val[1] }
-  params: params COMMA expr { val[0].push(val[2]) }
+  array: AOPEN ACLOSE { result = build Arrayer, :ARRAY, position: pospoppush(2) }
+       | AOPEN params ACLOSE { result = build Arrayer, :ARRAY, *val[1], position: pospoppush(3) }
+  params: params COMMA expr { pospoppush(3); val[0].push(val[2]) }
         | expr { result = [val[0]] }
 
-  hash: HOPEN HCLOSE { result = Hasher.build :HASH }
-      | HOPEN pairs HCLOSE { result = Hasher.build :HASH, *val[1] }
-  pairs: pairs COMMA pair { val[0].push(val[2]) }
+  hash: HOPEN HCLOSE { result = build Hasher, :HASH, position: pospoppush(2) }
+      | HOPEN pairs HCLOSE { result = build Hasher, :HASH, *val[1], position: pospoppush(3) }
+  pairs: pairs COMMA pair { pospoppush(3); val[0].push(val[2]) }
        | pair { result = [val[0]] }
-  pair: IDENTIFER COLON expr { result = Arrayer.build :PAIR, val[0], val[2] }
+  pair: IDENTIFER COLON expr { result = build Arrayer, :PAIR, val[0], val[2], position: pospoppush(3) }
 
-  arguments: params COMMA pairs { result = [*val[0], Hasher.build(:HASH, *val[2])] }
+  arguments: params COMMA pairs { result = [*val[0], build(Hasher, :HASH, *val[2], position: pospoppush(3))] }
            | params
-           | pairs { result = Hasher.build(:HASH, *val[0]) }
-  method: IDENTIFER { result = Summoner.build val[0] }
-        | IDENTIFER POPEN PCLOSE { result = Summoner.build val[0] }
-        | IDENTIFER POPEN arguments PCLOSE { result = Summoner.build val[0], nil, *val[2] }
+           | pairs { result = build Hasher, :HASH, *val[0], position: pospoppush(1) }
+  method: IDENTIFER { result = build Summoner, val[0], position: pospoppush(1) }
+        | IDENTIFER POPEN PCLOSE { result = build Summoner, val[0], position: pospoppush(3) }
+        | IDENTIFER POPEN arguments PCLOSE {
+            result = build Summoner, val[0], nil, *val[2], position: pospoppush(4)
+          }
 
 ---- header
   require 'hotcell/lexer'
@@ -182,8 +199,9 @@ rule
 
   TAG_MODES = { '{{' => :normal, '{{!' => :silence }
 
-  def initialize string, options = {}
-    @lexer = Lexer.new(string)
+  def initialize source, options = {}
+    @source = Source.wrap(source)
+    @lexer = Lexer.new(source)
     @tokens = @lexer.tokens
     @position = -1
 
@@ -192,11 +210,26 @@ rule
     @endblocks = Set.new(@blocks.keys.map { |identifer| "end#{identifer}" })
 
     @substack = []
+    @posstack = []
+  end
+
+  def build klass, *args
+    options = args.extract_options!
+    options[:source] = @source
+    klass.build *args.push(options)
+  end
+
+  def pospoppush pop, push = 0
+    # because fuck the brains, that's why!
+    last = @posstack.pop
+    reduced = @posstack.push(@posstack.pop(pop)[push])[-1]
+    @posstack.push last
+    reduced
   end
 
   def parse
     if @tokens.size == 0
-      Joiner.build :JOINER
+      build Joiner, :JOINER, position: 0
     else
       do_parse
     end
@@ -204,17 +237,19 @@ rule
 
   def next_token
     @position = @position + 1
-
     tcurr = @tokens[@position]
-    tnext = @tokens[@position.next]
-    tpred = @tokens[@position.pred]
 
     if tcurr && (tcurr[0] == :COMMENT || tcurr[0] == :NEWLINE && (
-      (tpred && NEWLINE_PRED.include?(tpred[0])) ||
-      (tnext && NEWLINE_NEXT.include?(tnext[0]))
+      ((tpred = @tokens[@position.pred]) && NEWLINE_PRED.include?(tpred[0])) ||
+      ((tnext = @tokens[@position.next]) && NEWLINE_NEXT.include?(tnext[0]))
     ))
       next_token
     else
+      if tcurr
+        @posstack << tcurr[1][1]
+        tcurr = [tcurr[0], tcurr[1][0]]
+      end
+
       if tcurr && tcurr[0] == :IDENTIFER
         if @commands.key?(tcurr[1])
           [:COMMAND, tcurr[1]]
@@ -240,5 +275,5 @@ rule
 
   def on_error(token, value, vstack)
     raise Hotcell::UnexpectedLexem.new("#{token_to_str(token) || '?'} `#{value}`",
-      *value.hotcell_position)
+      *@source.info(@posstack.last).values_at(:line, :column))
   end

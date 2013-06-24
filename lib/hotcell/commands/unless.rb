@@ -9,13 +9,13 @@ module Hotcell
 
         raise Hotcell::ArgumentError.new(
           "Wrond number of arguments for `#{subcommand.name}` (#{args_count} for #{proper_args_count})",
-          *subcommand.name.hotcell_position
+          *subcommand.position_info
         ) if args_count != proper_args_count
       end
 
       def validate!
         raise Hotcell::ArgumentError.new(
-          "Wrond number of arguments for `#{name}` (#{children.count} for 1)", *name.hotcell_position
+          "Wrond number of arguments for `#{name}` (#{children.count} for 1)", *position_info
         ) if children.count != 1
 
         subcommands.each do |subcommand|
@@ -26,7 +26,7 @@ module Hotcell
 
         raise Hotcell::BlockError.new(
           "Unexpected subcommand `#{subcommands[1].name}` for `#{name}` command",
-          *subcommands[1].name.hotcell_position
+          *subcommands[1].position_info
         ) if subcommands[1]
       end
 

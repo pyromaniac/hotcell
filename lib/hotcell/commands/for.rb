@@ -3,11 +3,11 @@ module Hotcell
     class For < Hotcell::Block
       def validate!
         raise Hotcell::ArgumentError.new(
-          "Wrond number of arguments for `#{name}` (#{children.count} for 2)", *name.hotcell_position
+          "Wrond number of arguments for `#{name}` (#{children.count} for 2)", *position_info
         ) if children.count != 2
 
         raise Hotcell::SyntaxError.new(
-          "Expected IDENTIFER as first argument in `#{name}` command", *name.hotcell_position
+          "Expected IDENTIFER as first argument in `#{name}` command", *position_info
         ) unless children[0].is_a?(Hotcell::Summoner)
 
         children[0] = children[0].name

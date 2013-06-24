@@ -1,13 +1,5 @@
 module Hotcell
   class Command < Hotcell::Node
-    def optimize
-      if klass = Hotcell.commands[name]
-        klass.new name, *children, options
-      else
-        self
-      end
-    end
-
     def validate!
     end
 

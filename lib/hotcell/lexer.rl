@@ -142,20 +142,21 @@ module Hotcell
     ]
 
     def initialize source
-      @source = source
-      @data = @source.unpack 'c*'
+      @source = Source.wrap(source)
+      @data = @source.data
+      @encoding = Source::ENCODING
+      @pack_mode = Source::PACK_MODE
 
       %% write data;
       #%
     end
 
     def emit symbol, value
-      value.hotcell_position = current_position
-      @token_array << [symbol, value]
+      @token_array << [symbol, [value, @ts]]
     end
 
     def current_value
-      @data[@ts...@te].pack('c*').force_encoding('UTF-8')
+      @data[@ts...@te].pack(@pack_mode).force_encoding(@encoding)
     end
 
     def emit_operator
@@ -189,12 +190,12 @@ module Hotcell
 
     def emit_sstring
       emit :STRING, current_value[1..-2].gsub(SSTRING_ESCAPE_REGEXP) { |match|
-        SSTRING_ESCAPE_MAP[match] }.force_encoding('UTF-8')
+        SSTRING_ESCAPE_MAP[match] }.force_encoding(@encoding)
     end
 
     def emit_dstring
       emit :STRING, current_value[1..-2].gsub(DSTRING_ESCAPE_REGEXP) { |match|
-        DSTRING_ESCAPE_MAP[match] || match[1] }
+        DSTRING_ESCAPE_MAP[match] || match[1] }.force_encoding(@encoding)
     end
 
     def regexp_ambiguity
@@ -227,7 +228,7 @@ module Hotcell
       # Hack this to glue templates going straight
       last = @token_array[-1]
       if last && last[0] == :TEMPLATE
-        last[1] += current_value
+        last[1][0] += current_value
       else
         emit :TEMPLATE, current_value
       end
@@ -252,22 +253,15 @@ module Hotcell
     def emit_comment
       last = @token_array[-1]
       if last && last[0] == :COMMENT
-        last[1] += current_value
+        last[1][0] += current_value
       else
         emit :COMMENT, current_value
       end
     end
 
-    def current_position
-      parsed = @data[0..@ts].pack('c*').force_encoding('UTF-8')
-      line = parsed.count("\n") + 1
-      column = parsed.size  - 1 - (parsed.rindex("\n") || -1)
-      [line, column]
-    end
-
     def current_error
-      value = @data[@ts..@p].pack('c*').force_encoding('UTF-8')
-      [value, *current_position]
+      value = @data[@ts..@p].pack(@pack_mode).force_encoding(@encoding)
+      [value, *@source.info(@ts).values_at(:line, :column)]
     end
 
     def raise_unexpected_symbol

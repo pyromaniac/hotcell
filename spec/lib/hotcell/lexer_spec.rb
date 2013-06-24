@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe Hotcell::Lexer do
   def scan template
-    described_class.new(template).tokens
+    described_class.new(template).tokens.map { |token| [token[0], token[1][0]] }
   end
 
   def expression template

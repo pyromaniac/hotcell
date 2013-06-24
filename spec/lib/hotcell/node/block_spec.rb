@@ -37,7 +37,7 @@ describe Hotcell::Block do
             names.any? && names.last.in?('elsif', 'else') &&
             names[0..-2].uniq.in?(['elsif'], [])
           )
-          raise Hotcell::BlockError.new 'Invalid if syntax', *name.hotcell_position unless valid
+          raise Hotcell::BlockError.new 'Invalid if syntax', *position_info unless valid
         end
 
         def process context, condition

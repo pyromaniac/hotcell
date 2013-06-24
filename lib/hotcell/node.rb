@@ -1,6 +1,7 @@
 module Hotcell
   class Node
     attr_accessor :name, :children, :options
+    attr_reader :position, :source
 
     def self.build *args
       new(*args).optimize
@@ -9,7 +10,13 @@ module Hotcell
     def initialize name, *args
       @name = name
       @options = args.extract_options!
+      @source = @options.delete(:source)
+      @position = @options.delete(:position)
       @children = args
+    end
+
+    def position_info
+      source.info(position).values_at(:line, :column)
     end
 
     def optimize

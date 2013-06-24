@@ -49,11 +49,13 @@ module Hotcell
     ]
 
     def initialize source
-      @source = source
-      @data = @source.unpack 'c*'
+      @source = Source.wrap(source)
+      @data = @source.data
+      @encoding = Source::ENCODING
+      @pack_mode = Source::PACK_MODE
 
       
-# line 57 "lib/hotcell/lexer.rb"
+# line 59 "lib/hotcell/lexer.rb"
 class << self
 	attr_accessor :_puffer_lexer_actions
 	private :_puffer_lexer_actions, :_puffer_lexer_actions=
@@ -243,17 +245,16 @@ end
 self.puffer_lexer_en_main = 12;
 
 
-# line 149 "lib/hotcell/lexer.rl"
+# line 151 "lib/hotcell/lexer.rl"
       #%
     end
 
     def emit symbol, value
-      value.hotcell_position = current_position
-      @token_array << [symbol, value]
+      @token_array << [symbol, [value, @ts]]
     end
 
     def current_value
-      @data[@ts...@te].pack('c*').force_encoding('UTF-8')
+      @data[@ts...@te].pack(@pack_mode).force_encoding(@encoding)
     end
 
     def emit_operator
@@ -287,12 +288,12 @@ self.puffer_lexer_en_main = 12;
 
     def emit_sstring
       emit :STRING, current_value[1..-2].gsub(SSTRING_ESCAPE_REGEXP) { |match|
-        SSTRING_ESCAPE_MAP[match] }.force_encoding('UTF-8')
+        SSTRING_ESCAPE_MAP[match] }.force_encoding(@encoding)
     end
 
     def emit_dstring
       emit :STRING, current_value[1..-2].gsub(DSTRING_ESCAPE_REGEXP) { |match|
-        DSTRING_ESCAPE_MAP[match] || match[1] }
+        DSTRING_ESCAPE_MAP[match] || match[1] }.force_encoding(@encoding)
     end
 
     def regexp_ambiguity
@@ -325,7 +326,7 @@ self.puffer_lexer_en_main = 12;
       # Hack this to glue templates going straight
       last = @token_array[-1]
       if last && last[0] == :TEMPLATE
-        last[1] += current_value
+        last[1][0] += current_value
       else
         emit :TEMPLATE, current_value
       end
@@ -350,22 +351,15 @@ self.puffer_lexer_en_main = 12;
     def emit_comment
       last = @token_array[-1]
       if last && last[0] == :COMMENT
-        last[1] += current_value
+        last[1][0] += current_value
       else
         emit :COMMENT, current_value
       end
     end
 
-    def current_position
-      parsed = @data[0..@ts].pack('c*').force_encoding('UTF-8')
-      line = parsed.count("\n") + 1
-      column = parsed.size  - 1 - (parsed.rindex("\n") || -1)
-      [line, column]
-    end
-
     def current_error
-      value = @data[@ts..@p].pack('c*').force_encoding('UTF-8')
-      [value, *current_position]
+      value = @data[@ts..@p].pack(@pack_mode).force_encoding(@encoding)
+      [value, *@source.info(@ts).values_at(:line, :column)]
     end
 
     def raise_unexpected_symbol
@@ -388,7 +382,7 @@ self.puffer_lexer_en_main = 12;
       @token_array = []
 
       
-# line 392 "lib/hotcell/lexer.rb"
+# line 386 "lib/hotcell/lexer.rb"
 begin
 	 @p ||= 0
 	pe ||=  @data.length
@@ -399,14 +393,14 @@ begin
 	act = 0
 end
 
-# line 293 "lib/hotcell/lexer.rl"
+# line 287 "lib/hotcell/lexer.rl"
       #%
 
       eof = pe
       stack = []
 
       
-# line 410 "lib/hotcell/lexer.rb"
+# line 404 "lib/hotcell/lexer.rb"
 begin
 	_klen, _trans, _keys, _acts, _nacts = nil
 	_goto_level = 0
@@ -440,7 +434,7 @@ begin
 		begin
  @ts =  @p
 		end
-# line 444 "lib/hotcell/lexer.rb"
+# line 438 "lib/hotcell/lexer.rb"
 		end # from state action switch
 	end
 	if _trigger_goto
@@ -706,7 +700,7 @@ when 28 then
  @te =  @p
  @p =  @p - 1; begin  emit_template  end
 		end
-# line 710 "lib/hotcell/lexer.rb"
+# line 704 "lib/hotcell/lexer.rb"
 			end # action switch
 		end
 	end
@@ -726,7 +720,7 @@ when 3 then
 # line 1 "NONE"
 		begin
  @ts = nil;		end
-# line 730 "lib/hotcell/lexer.rb"
+# line 724 "lib/hotcell/lexer.rb"
 		end # to state action switch
 	end
 	if _trigger_goto
@@ -764,7 +758,7 @@ when 1 then
 # line 55 "lib/hotcell/lexer.rl"
 		begin
  raise_unterminated_string 		end
-# line 768 "lib/hotcell/lexer.rb"
+# line 762 "lib/hotcell/lexer.rb"
 		end # eof action switch
 	end
 	if _trigger_goto
@@ -778,7 +772,7 @@ end
 	end
 	end
 
-# line 299 "lib/hotcell/lexer.rl"
+# line 293 "lib/hotcell/lexer.rl"
       #%
 
       raise_unexpected_symbol unless @ts.nil?

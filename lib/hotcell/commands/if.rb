@@ -12,7 +12,7 @@ module Hotcell
       def subcommand_error subcommand, *allowed_names
         raise Hotcell::BlockError.new(
           "Unexpected subcommand `#{subcommand.name}` for `#{name}` command",
-          *subcommand.name.hotcell_position
+          *subcommand.position_info
         ) unless allowed_names.flatten.include?(subcommand.name)
       end
 
@@ -22,13 +22,13 @@ module Hotcell
 
         raise Hotcell::ArgumentError.new(
           "Wrond number of arguments for `#{subcommand.name}` (#{args_count} for #{proper_args_count})",
-          *subcommand.name.hotcell_position
+          *subcommand.position_info
         ) if args_count != proper_args_count
       end
 
       def validate!
         raise Hotcell::ArgumentError.new(
-          "Wrond number of arguments for `#{name}` (#{children.count} for 1)", *name.hotcell_position
+          "Wrond number of arguments for `#{name}` (#{children.count} for 1)", *position_info
         ) if children.count != 1
 
         last = subcommands.length - 1

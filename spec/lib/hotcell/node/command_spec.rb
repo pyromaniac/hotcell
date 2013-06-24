@@ -11,7 +11,7 @@ describe Hotcell::Command do
     let(:include_tag) do
       Class.new(described_class) do
         def validate!
-          raise Hotcell::ArgumentError.new('Template path is required', *name.hotcell_position) if children.count != 1
+          raise Hotcell::ArgumentError.new('Template path is required', *position_info) if children.count != 1
         end
 
         def process context, path

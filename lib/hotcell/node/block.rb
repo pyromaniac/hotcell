@@ -11,19 +11,11 @@ module Hotcell
       end
     end
 
-    def optimize
-      if klass = Hotcell.blocks[name]
-        klass.new name, *children, options
-      else
-        self
-      end
-    end
-
     def validate!
       subcommands.each do |subcommand|
         raise Hotcell::BlockError.new(
           "Unexpected subcommand `#{subcommand.name}` for `#{name}` command",
-          *subcommand.name.hotcell_position
+          *subcommand.position_info
         ) unless self.class.subcommands.key?(subcommand.name)
       end
     end

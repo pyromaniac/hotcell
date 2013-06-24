@@ -9,7 +9,7 @@ AwesomePrint::Formatter.class_eval do
   end
 
   def awesome_hotcell_node(object)
-    "#{colorize(object.class.name, :class)} #{colorize(object.name.to_s, :method)}" +
+    "#{colorize(object.class.to_s, :class)} #{colorize(object.name.to_s, :method)}" +
       ((awesome_hash(object.options) + "\n") if object.options.present?).to_s +
       awesome_array(object.children)
   end

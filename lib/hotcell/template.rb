@@ -9,7 +9,7 @@ module Hotcell
     end
 
     def initialize source, options = {}
-      @source = source
+      @source = Source.wrap(source, options.delete(:file))
       @options = options
     end
 

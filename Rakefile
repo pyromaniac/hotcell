@@ -12,7 +12,7 @@ namespace :build do
 
   desc 'Build parser'
   task :parser do
-    `racc -d -o lib/hotcell/parser.rb -O lib/hotcell/parser.out lib/hotcell/parser.y`
+    `racc -o lib/hotcell/parser.rb -O lib/hotcell/parser.out lib/hotcell/parser.y`
   end
 end
 
