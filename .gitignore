@@ -18,3 +18,4 @@ tmp
 *.out
 *.dot
 .DS_Store
+.rbx
