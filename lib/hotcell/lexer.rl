@@ -190,12 +190,12 @@ module Hotcell
 
     def emit_sstring
       emit :STRING, current_value[1..-2].gsub(SSTRING_ESCAPE_REGEXP) { |match|
-        SSTRING_ESCAPE_MAP[match] }.force_encoding(@encoding)
+        SSTRING_ESCAPE_MAP[match] }
     end
 
     def emit_dstring
       emit :STRING, current_value[1..-2].gsub(DSTRING_ESCAPE_REGEXP) { |match|
-        DSTRING_ESCAPE_MAP[match] || match[1] }.force_encoding(@encoding)
+        DSTRING_ESCAPE_MAP[match] || match[1] }
     end
 
     def regexp_ambiguity

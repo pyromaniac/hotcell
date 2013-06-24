@@ -3,7 +3,7 @@ require "bundler/gem_tasks"
 namespace :build do
   desc 'Build lexer'
   task :lexer do
-    `ragel -R -T0 lib/hotcell/lexer.rl`
+    `ragel -R -F1 lib/hotcell/lexer.rl`
   end
 
   task :dot do

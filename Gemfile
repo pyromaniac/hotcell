@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'awesome_print'
+gem 'ruby-prof'
 
 group :test do
   gem 'rspec'
