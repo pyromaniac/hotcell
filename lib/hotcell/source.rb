@@ -24,5 +24,9 @@ module Hotcell
       column = parsed[lastnl..position].pack(PACK_MODE).force_encoding(ENCODING).size
       { line: line, column: column }
     end
+
+    def inspect
+      "Source: `#{source}`"
+    end
   end
 end

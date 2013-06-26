@@ -25,5 +25,14 @@ module Hotcell
         syntax.render(Context.new(default_context.merge!(context)))
       end
     end
+
+    def render! context = {}
+      if context.is_a?(Context)
+        context.reraise = true
+        render context
+      else
+        render context.merge(reraise: true)
+      end
+    end
   end
 end

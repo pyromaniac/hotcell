@@ -172,6 +172,18 @@ the silence tag mode):
 
 #### Built-in Commands
 
+##### Cycle
+
+Command used for cycled output values from array. Useful with loops.
+
+```
+{{ for i, in: [1, 2, 3], loop: true }}
+  {{ i }} {{ cycle ['one', 'two', 'three'] }}{{ unless loop.last? }}, {{ end unless }}
+{{ end for }}
+```
+
+This will output `1 one, 2 two, 3 three`.
+
 #### Built-in Blocks
 
 ##### If

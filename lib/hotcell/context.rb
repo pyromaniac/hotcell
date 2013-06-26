@@ -2,7 +2,8 @@ require 'hotcell/scope'
 
 module Hotcell
   class Context
-    attr_reader :scope, :rescuer, :reraise
+    attr_reader :scope
+    attr_accessor :rescuer, :reraise, :shared
     delegate :[], :[]=, :key?, :scoped, to: :scope
 
     DEFAULT_RESCUER = ->(e){ "#{e.class}: #{e.message}" }
@@ -20,6 +21,7 @@ module Hotcell
         helpers_class.send(:include, helper)
       end
 
+      @shared = options.delete(:shared) || {}
       @scope = Scope.new scope.merge!(options.stringify_keys)
     end
 

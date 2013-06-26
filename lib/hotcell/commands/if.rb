@@ -43,13 +43,16 @@ module Hotcell
         subnodes.each do |subnode|
           if subnode.is_a?(Hotcell::Command)
             conditions.last[1] = '' if conditions.last[1] == nil
-            conditions << (subnode.name == 'elsif' ? [subnode.render_children(context).first] : [true])
+            conditions << (subnode.name == 'elsif' ? [subnode] : [true])
           else
-            conditions.last[1] = subnode.render(context)
+            conditions.last[1] = subnode
           end
         end
-        condition = conditions.detect { |condition| !!condition[0] }
-        condition ? condition[1] : nil
+        condition = conditions.detect do |condition|
+          condition[0].is_a?(Hotcell::Command) ?
+            condition[0].render_children(context).first : condition[0]
+        end
+        condition ? condition[1].render(context) : nil
       end
     end
   end

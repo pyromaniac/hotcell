@@ -34,8 +34,8 @@ describe Hotcell::Block do
         def validate!
           names = subcommands.map { |subcommand| subcommand.name }
           valid = names.empty? || (
-            names.any? && names.last.in?('elsif', 'else') &&
-            names[0..-2].uniq.in?(['elsif'], [])
+            names.any? && %w(elsif else).include?(names.last) &&
+            [['elsif'], []].include?(names[0..-2].uniq)
           )
           raise Hotcell::BlockError.new 'Invalid if syntax', *position_info unless valid
         end

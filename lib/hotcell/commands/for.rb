@@ -20,7 +20,7 @@ module Hotcell
 
         items.map.with_index do |item, index|
           scope = { variable => item }
-          scope.merge!(forloop => Forloop.new(item, index)) if forloop
+          scope.merge!(forloop => Forloop.new(items, index)) if forloop
 
           context.scoped scope do
             subnodes.first.try(:render, context)
@@ -43,14 +43,14 @@ module Hotcell
           @next ||= @object[index + 1]
         end
 
-        def length
-          @length ||= @object.size
+        def size
+          @size ||= @object.size
         end
-        alias_method :size, :length
-        alias_method :count, :length
+        alias_method :length, :size
+        alias_method :count, :size
 
         def rindex
-          @rindex ||= length - index - 1
+          @rindex ||= size - index - 1
         end
 
         def first
@@ -59,7 +59,7 @@ module Hotcell
         alias_method :first?, :first
 
         def last
-          @last ||= index == length - 1
+          @last ||= index == size - 1
         end
         alias_method :last?, :last
       end
