@@ -1,10 +1,10 @@
 module Hotcell
   module Commands
     class For < Hotcell::Block
+      validate_arguments_count 2
+
       def validate!
-        raise Hotcell::ArgumentError.new(
-          "Wrond number of arguments for `#{name}` (#{children.count} for 2)", *position_info
-        ) if children.count != 2
+        super
 
         raise Hotcell::SyntaxError.new(
           "Expected IDENTIFER as first argument in `#{name}` command", *position_info

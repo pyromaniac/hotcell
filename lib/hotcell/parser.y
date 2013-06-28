@@ -120,7 +120,6 @@ rule
                block.validate!
              }
 
-
   sequence: sequence SEMICOLON sequence { pospoppush(2); result = val[0].push(val[2]) }
           | sequence SEMICOLON { pospoppush(2) }
           | SEMICOLON sequence { pospoppush(2, 1); result = val[1] }

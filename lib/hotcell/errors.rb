@@ -1,5 +1,8 @@
 module Hotcell
-  class ParseError < StandardError
+  class Error < StandardError
+  end
+
+  class ParseError < Error
     def initialize value, line, column
       @value, @line, @column = value, line, column
       super(compose_message)
@@ -24,7 +27,7 @@ module Hotcell
   #   end
   # end
 
-  class SyntaxError < StandardError
+  class SyntaxError < Error
     def initialize value, line, column
       @value, @line, @column = value, line, column
       super(compose_message)

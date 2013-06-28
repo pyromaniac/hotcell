@@ -2,32 +2,15 @@ module Hotcell
   module Commands
     class Unless < Hotcell::Block
       subcommand else: Hotcell::Commands::If::Else
-
-      def subcommand_argument_error subcommand, allowed_args_counts
-        proper_args_count = allowed_args_counts[subcommand.name] or return
-        args_count = subcommand.children.size
-
-        raise Hotcell::ArgumentError.new(
-          "Wrond number of arguments for `#{subcommand.name}` (#{args_count} for #{proper_args_count})",
-          *subcommand.position_info
-        ) if args_count != proper_args_count
-      end
+      validate_arguments_count 1
 
       def validate!
-        raise Hotcell::ArgumentError.new(
-          "Wrond number of arguments for `#{name}` (#{children.count} for 1)", *position_info
-        ) if children.count != 1
-
-        subcommands.each do |subcommand|
-          subcommand_argument_error subcommand, { 'else' => 0 }
-        end
-
-        super
-
         raise Hotcell::BlockError.new(
-          "Unexpected subcommand `#{subcommands[1].name}` for `#{name}` command",
+          "Unexpected `#{subcommands[1].name}` for `#{name}` command",
           *subcommands[1].position_info
         ) if subcommands[1]
+
+        super
       end
 
       def process context, condition

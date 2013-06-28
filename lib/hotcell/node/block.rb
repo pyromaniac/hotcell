@@ -18,6 +18,10 @@ module Hotcell
           *subcommand.position_info
         ) unless self.class.subcommands.key?(subcommand.name)
       end
+
+      super
+
+      subcommands.each(&:validate!)
     end
 
     def subnodes

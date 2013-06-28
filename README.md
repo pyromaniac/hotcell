@@ -212,6 +212,21 @@ Reversed conditional command. Sumilar to rubys. Only `else` subcommand is suppor
 {{ end unless }}
 ```
 
+##### Case
+
+Case command. Like in most programming languages
+
+```
+{{ case 42 }}
+{{ when 42, 43 }}
+  foo
+{{ when value, 'string' }}
+  bar
+{{ else }}
+  baz
+{{ end case }}
+```
+
 ##### For
 
 Loop command, first argument - variable to put next value, `in` option

@@ -2,40 +2,30 @@ module Hotcell
   module Commands
     class If < Hotcell::Block
       class Else < Hotcell::Command
+        validate_arguments_count 0
       end
 
       class Elsif < Hotcell::Command
+        validate_arguments_count 1
       end
 
       subcommand else: Else, elsif: Elsif
+      validate_arguments_count 1
 
       def subcommand_error subcommand, *allowed_names
         raise Hotcell::BlockError.new(
-          "Unexpected subcommand `#{subcommand.name}` for `#{name}` command",
+          "Unexpected `#{subcommand.name}` for `#{name}` command",
           *subcommand.position_info
         ) unless allowed_names.flatten.include?(subcommand.name)
       end
 
-      def subcommand_argument_error subcommand, allowed_args_counts
-        proper_args_count = allowed_args_counts[subcommand.name]
-        args_count = subcommand.children.size
-
-        raise Hotcell::ArgumentError.new(
-          "Wrond number of arguments for `#{subcommand.name}` (#{args_count} for #{proper_args_count})",
-          *subcommand.position_info
-        ) if args_count != proper_args_count
-      end
-
       def validate!
-        raise Hotcell::ArgumentError.new(
-          "Wrond number of arguments for `#{name}` (#{children.count} for 1)", *position_info
-        ) if children.count != 1
-
         last = subcommands.length - 1
         subcommands.each_with_index do |subcommand, index|
           subcommand_error subcommand, (index == last ? ['elsif', 'else'] : ['elsif'])
-          subcommand_argument_error subcommand, { 'elsif' => 1, 'else' => 0 }
         end
+
+        super
       end
 
       def process context, condition

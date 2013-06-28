@@ -13,11 +13,11 @@ describe Hotcell::Commands::If do
     specify { expect { parse('{{ if true }}{{ elsif }}{{ end if }}').syntax
       }.to raise_error Hotcell::ArgumentError, 'Wrond number of arguments for `elsif` (0 for 1) at 1:17' }
     specify { expect { parse('{{ if true }}{{ else }}{{ elsif true }}{{ end if }}').syntax
-      }.to raise_error Hotcell::BlockError, 'Unexpected subcommand `else` for `if` command at 1:17' }
+      }.to raise_error Hotcell::BlockError, 'Unexpected `else` for `if` command at 1:17' }
     specify { expect { parse('{{ if true }}{{ else true }}{{ elsif true }}{{ end if }}').syntax
-      }.to raise_error Hotcell::BlockError, 'Unexpected subcommand `else` for `if` command at 1:17' }
+      }.to raise_error Hotcell::BlockError, 'Unexpected `else` for `if` command at 1:17' }
     specify { expect { parse('{{ if true }}{{ else }}{{ else }}{{ end if }}').syntax
-      }.to raise_error Hotcell::BlockError, 'Unexpected subcommand `else` for `if` command at 1:17' }
+      }.to raise_error Hotcell::BlockError, 'Unexpected `else` for `if` command at 1:17' }
   end
 
   describe '#render' do
