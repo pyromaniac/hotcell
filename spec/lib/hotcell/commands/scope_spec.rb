@@ -5,11 +5,6 @@ describe Hotcell::Commands::Scope do
     Hotcell::Template.parse(source)
   end
 
-  describe '#validate!' do
-    specify { expect { parse('{{ scope \'hello\' }}{{ end scope }}').syntax
-      }.to raise_error Hotcell::SyntaxError, 'Expected first argument to be a HASH in `scope` at 1:4' }
-  end
-
   describe '#render' do
     specify { parse(
       '{{ count = 42 }} {{ scope count: count + 8 }}{{ count }}{{ end scope }} {{ count }}'
