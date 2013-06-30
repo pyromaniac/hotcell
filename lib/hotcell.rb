@@ -1,14 +1,14 @@
 require 'active_support/all'
 require 'hotcell/version'
+require 'hotcell/resolver'
 require 'hotcell/config'
 require 'hotcell/errors'
 
 module Hotcell
-  [:commands, :blocks, :helpers, :register_command, :register_helpers].each do |method|
-    define_singleton_method method do |*args|
-      Config.instance.send(method, *args)
-    end
-  end
+  def self.config; Config.instance; end
+
+  singleton_class.delegate :commands, :blocks, :helpers, :register_command, :register_helpers,
+    :resolver, :resolver=, to: :config
 end
 
 require 'hotcell/manipulator'

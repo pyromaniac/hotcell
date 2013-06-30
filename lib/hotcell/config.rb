@@ -5,13 +5,24 @@ module Hotcell
     include Singleton
 
     attr_reader :commands, :blocks, :helpers
+    attr_accessor :resolver
 
     def initialize
       @commands = {}
       @blocks = {}
       @helpers = []
+      @resolver = Hotcell::Resolver.new
     end
 
+    # Adds command or block to the list of default commands or blocks returned
+    # by `Hotcell.commands` and `Hotcell.blocks` accessors respectively
+    #
+    # Usage:
+    #
+    #   Hotcell.register_command :block, BlockClass
+    #   Hotcell.register_command :command, CommandClass
+    #   Hotcell.register_command block: BlockClass, command: CommandClass
+    #
     def register_command name, klass = nil
       if name.is_a? Hash
         name.each do |(name, klass)|
@@ -32,6 +43,14 @@ module Hotcell
       end
     end
 
+    # Adds helper to the list of default helpers, accessible by `Hotcell.helpers`
+    #
+    # Usage:
+    #
+    #   Hotcell.register_helpers Helper
+    #   Hotcell.register_helpers Helper1, Helper2
+    #   Hotcell.register_helpers helpers_array
+    #
     def register_helpers *helpers
       @helpers |= helpers.flatten
     end

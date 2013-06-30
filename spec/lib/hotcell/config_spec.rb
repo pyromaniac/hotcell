@@ -15,32 +15,39 @@ describe Hotcell::Config do
   specify { subject.blocks.should == {} }
   specify { subject.commands.should == {} }
   specify { subject.helpers.should == [] }
+  specify { subject.resolver.should be_a Hotcell::Resolver }
+
+  describe '#resolver=' do
+    let(:resolver) { Hotcell::FileSystemResolver.new('/') }
+    before { subject.resolver = resolver }
+    its(:resolver) { should == resolver }
+  end
 
   describe '#register_command' do
     context do
       before { subject.register_command :for, command_class }
-      specify { subject.blocks.should == {} }
-      specify { subject.commands.should == { 'for' => command_class } }
+      its(:blocks) { should == {} }
+      its(:commands) { should == { 'for' => command_class } }
     end
 
     context do
       before { subject.register_command 'for', block_class }
-      specify { subject.blocks.should == { 'for' => block_class } }
-      specify { subject.commands.should == {} }
+      its(:blocks) { should == { 'for' => block_class } }
+      its(:commands) { should == {} }
     end
 
     context do
       before { subject.register_command 'for', block_class }
       before { subject.register_command :forloop, block_class }
       before { subject.register_command :include, command_class }
-      specify { subject.blocks.should == { 'for' => block_class, 'forloop' => block_class } }
-      specify { subject.commands.should == { 'include' => command_class } }
+      its(:blocks) { should == { 'for' => block_class, 'forloop' => block_class } }
+      its(:commands) { should == { 'include' => command_class } }
     end
 
     context do
       before { subject.register_command 'for' => block_class, forloop: block_class, include: command_class }
-      specify { subject.blocks.should == { 'for' => block_class, 'forloop' => block_class } }
-      specify { subject.commands.should == { 'include' => command_class } }
+      its(:blocks) { should == { 'for' => block_class, 'forloop' => block_class } }
+      its(:commands) { should == { 'include' => command_class } }
     end
 
     context 'errors' do
@@ -69,7 +76,7 @@ describe Hotcell::Config do
       before { subject.register_helpers helper1 }
       before { subject.register_helpers [helper3] }
 
-      specify { subject.helpers.should == [helper1, helper2, helper3] }
+      its(:helpers) { should == [helper1, helper2, helper3] }
     end
   end
 end

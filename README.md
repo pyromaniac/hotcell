@@ -172,6 +172,26 @@ the silence tag mode):
 
 #### Built-in Commands
 
+##### Include
+
+Include command renders and returns rendering result of another template
+into current.
+
+```
+{{ include 'template/path', name: 'Hulk' }}
+```
+
+Also additional local variables could be transferred to the included
+template via optional command hash.
+
+`Hotcell::Resolver` ancestors are used for template resolving. Default resolver
+stored in `Hotcell.resolver`, also resolver for current rendering could be
+set up via `:resolver` shared option:
+
+```
+Hotcell::Template.parse('{{ include 'template' }}').render(shared: { resolver: MyResolver.new })
+```
+
 ##### Cycle
 
 Command used for cycled output values from array. Useful with loops.
@@ -340,6 +360,24 @@ Remaining allowed options are:
       helpers: MyHelper # or array [MyHelper1, MyHelper2]
     )
   ```
+* `:shared` - just hash of shared variables, for internal usage
+
+### Configuring Hotcell
+
+Hotcell has several configuration methods, which provide default internals for
+template processor proper work.
+
+* `commands` accessor returns a hash of default commands
+* `blocks` - same is for blocks
+* `helpers` - default helper modules array
+* `resolver` - default resolver for `include` command
+
+Also there are methods to setup configuration options:
+
+* `register_command` adds command or block to the list of default commands or blocks
+* `register_helpers` used for adding module to the list of helpers
+* `resolver=` setups new default resolver
+
 
 ## Contributing
 

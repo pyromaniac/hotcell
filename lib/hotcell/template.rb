@@ -28,7 +28,7 @@ module Hotcell
 
     def render! context = {}
       if context.is_a?(Context)
-        context.reraise = true
+        context.options[:reraise] = true
         render context
       else
         render context.merge(reraise: true)

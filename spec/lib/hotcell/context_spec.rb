@@ -1,25 +1,49 @@
 require 'spec_helper'
 
 describe Hotcell::Context do
-  describe '#initialize' do
-    its('scope.scope') { should == [{}] }
+  its('scope.scope') { should == [{}] }
+  its(:helpers) { should be_a Hotcell::Manipulator }
 
-    context do
-      subject { described_class.new(
-        scope: { foo: 42, 'bar' => 'baz' },
-        variables: { baz: 'moo' },
-        boo: 'goo',
-        'taz' => 'man',
-        rescuer: ->{},
-        reraise: true
-      ) }
-      its('scope.scope') { should == [{foo: 42, 'bar' => 'baz', 'baz' => 'moo', 'boo' => 'goo', 'taz' => 'man'}] }
+  describe '#normalize_options' do
+    def result options = {}
+      default = { scope: {}, shared: {}, helpers: [], reraise: false, rescuer: described_class::DEFAULT_RESCUER }
+      default.merge options
     end
+    let(:rscr) { ->{} }
 
-    context do
-      subject { described_class.new(variables: { foo: 42, 'bar' => 'baz' }, environment: { 'baz' => 'moo' }) }
-      its('scope.scope') { should == [{'foo' => 42, 'bar' => 'baz', baz: 'moo'}] }
-    end
+    specify { subject.normalize_options({}).should == result }
+    specify { subject.normalize_options(foo: 42, 'bar' => 'baz').should == result(
+      scope: { 'foo' => 42, 'bar' => 'baz' }) }
+    specify { subject.normalize_options(foo: 42, scope: { bar: 'baz' }).should == result(
+      scope: { 'foo' => 42, bar: 'baz' }) }
+    specify { subject.normalize_options(foo: 42, variables: { bar: 'baz' }).should == result(
+      scope: { 'foo' => 42, 'bar' => 'baz' }) }
+    specify { subject.normalize_options(foo: 42, environment: { 'bar' => 'baz' }).should == result(
+      scope: { 'foo' => 42, bar: 'baz' }) }
+    specify { subject.normalize_options(shared: {resolver: 'resolver'}).should == result(
+      shared: {resolver: 'resolver'}) }
+    specify { subject.normalize_options(helpers: 'helper1').should == result(
+      helpers: ['helper1']) }
+    specify { subject.normalize_options(helpers: ['helper1', 'helper2']).should == result(
+      helpers: ['helper1', 'helper2']) }
+    specify { subject.normalize_options(reraise: nil).should == result(reraise: false) }
+    specify { subject.normalize_options(reraise: true).should == result(reraise: true) }
+    specify { subject.normalize_options(reraise: 'foo').should == result(reraise: true) }
+    specify { subject.normalize_options(rescuer: rscr).should == result(rescuer: rscr) }
+
+    specify { subject.normalize_options(
+      scope: { foo: 42, 'bar' => 'baz' },
+      variables: { baz: 'moo' },
+      environment: { hello: 'world' },
+      boo: 'goo',
+      'taz' => 'man',
+      rescuer: rscr,
+      reraise: true
+    ).should == result(
+      scope: { foo: 42, hello: 'world', 'bar' => 'baz', 'baz' => 'moo', 'boo' => 'goo', 'taz' => 'man' },
+      rescuer: rscr,
+      reraise: true
+    ) }
   end
 
   describe '#safe' do

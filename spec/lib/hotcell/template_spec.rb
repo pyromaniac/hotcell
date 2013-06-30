@@ -54,6 +54,14 @@ describe Hotcell::Template do
     end
   end
 
+  describe 'render!' do
+    subject { described_class.new('Hello, {{ 2 * foo }}!') }
+    specify { expect { subject.render! }.to raise_error TypeError }
+    specify { expect { subject.render!(foo: 42) }.not_to raise_error }
+    specify { expect { subject.render!(bar: 42) }.to raise_error TypeError }
+    specify { expect { subject.render!(Hotcell::Context.new) }.to raise_error TypeError }
+  end
+
   context 'complex tags test' do
     specify { described_class.parse(<<-SOURCE
         {{ for i, in: [1, 2, 3, 4] }}

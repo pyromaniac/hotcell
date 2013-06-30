@@ -20,6 +20,8 @@ describe Hotcell::Commands::If do
       }.to raise_error Hotcell::BlockError, 'Unexpected `else` for `case` command at 1:17' }
     specify { expect { parse('{{ case 42 }}{{ when 42 }}{{ else }}{{ when 43 }}{{ end case }}').syntax
       }.to raise_error Hotcell::BlockError, 'Unexpected `else` for `case` command at 1:30' }
+    specify { expect { parse('{{ case 42 }}{{ when 42 }}{{ else }}{{ else }}{{ end case }}').syntax
+      }.to raise_error Hotcell::BlockError, 'Unexpected `else` for `case` command at 1:30' }
   end
 
   describe '#render' do

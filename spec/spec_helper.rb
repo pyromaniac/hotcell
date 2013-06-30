@@ -28,8 +28,12 @@ RSpec::Matchers.define :be_equal_node_to do |expected|
 end
 
 RSpec.configure do |config|
+  def data_path name
+    File.join(File.dirname(__FILE__), 'data', name)
+  end
+
   def data name
-    File.read File.join(File.dirname(__FILE__), 'data', name)
+    File.read data_path(name)
   end
 
   config.treat_symbols_as_metadata_keys_with_true_values = true
