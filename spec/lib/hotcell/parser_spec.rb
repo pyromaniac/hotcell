@@ -188,6 +188,18 @@ describe Hotcell::Parser do
       specify { parse('{{ foo.bar.baz }}').should be_equal_node_to JOINER(TAG(
         METHOD('baz', METHOD('bar', METHOD('foo'))),
       mode: :normal)) }
+      specify { parse('{{ -bar.baz }}').should be_equal_node_to JOINER(TAG(
+        UMINUS(METHOD('baz', METHOD('bar'))),
+      mode: :normal)) }
+      specify { parse('{{ -42.baz }}').should be_equal_node_to JOINER(TAG(
+        METHOD('baz', -42),
+      mode: :normal)) }
+      specify { parse('{{ - 42.baz }}').should be_equal_node_to JOINER(TAG(
+        UMINUS(METHOD('baz', 42)),
+      mode: :normal)) }
+      specify { parse('{{ -42.42.baz }}').should be_equal_node_to JOINER(TAG(
+        METHOD('baz', -42.42),
+      mode: :normal)) }
       specify { parse('{{ foo(\'hello\').bar[2].baz(-42) }}').should be_equal_node_to JOINER(TAG(
         METHOD('baz',
           METHOD('manipulator_brackets',

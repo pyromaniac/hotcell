@@ -65,7 +65,8 @@ describe Hotcell::Lexer do
   context 'numeric' do
     context 'integer' do
       specify { expression('42').should == [[:INTEGER, 42]] }
-      specify { expression('-42').should == [[:MINUS, '-'], [:INTEGER, 42]] }
+      specify { expression('-42').should == [[:INTEGER, -42]] }
+      specify { expression('- 42').should == [[:MINUS, '-'], [:INTEGER, 42]] }
       specify { expression('!42').should == [[:NOT, '!'], [:INTEGER, 42]] }
       specify { expression('42.').should == [[:INTEGER, 42], [:PERIOD, '.']] }
       specify { expression('42.foo').should == [[:INTEGER, 42], [:PERIOD, '.'], [:IDENTIFER, 'foo']] }
@@ -74,7 +75,8 @@ describe Hotcell::Lexer do
 
     context 'float' do
       specify { expression('42.42').should == [[:FLOAT, 42.42]] }
-      specify { expression('-42.42').should == [[:MINUS, '-'], [:FLOAT, 42.42]] }
+      specify { expression('-42.42').should == [[:FLOAT, -42.42]] }
+      specify { expression('- 42.42').should == [[:MINUS, '-'], [:FLOAT, 42.42]] }
       specify { expression('!42.42').should == [[:NOT, '!'], [:FLOAT, 42.42]] }
       specify { expression('0.42').should == [[:FLOAT, 0.42]] }
       specify { expression('.42').should == [[:FLOAT, 0.42]] }
@@ -330,6 +332,9 @@ describe Hotcell::Lexer do
 
   context 'template comments' do
     specify { scan('{{#').should == [[:COMMENT, "{{#"]] }
+    specify { scan('{{{#').should == [[:TOPEN, "{{"], [:HOPEN, "{"], [:COMMENT, "#"]] }
+    specify { scan('{{{{#').should == [[:TOPEN, "{{"], [:HOPEN, "{"], [:HOPEN, "{"], [:COMMENT, "#"]] }
+    specify { scan('{#').should == [[:TEMPLATE, "{#"]] }
     specify { scan('{{# }}').should == [[:COMMENT, "{{# }}"]] }
     specify { scan('{{##}}').should == [[:COMMENT, "{{##}}"]] }
     specify { scan('{{###}}').should == [[:COMMENT, "{{###}}"]] }

@@ -60,16 +60,17 @@
     (rnon_quote | escaped_symbol)* rquote alpha* @lerr{ raise_unterminated_regexp };
 
 
-  numeric = digit* ('.' digit+)?;
+  numeric = '-'? digit* ('.' digit+)?;
   identifer = (alpha | '_') (alnum | '_')* [?!]?;
   operator = arithmetic | logic | flow | structure;
   comment = '#' ([^\n}]+ | '}' [^}])*;
   blank = [\t\v\f\r ];
 
-  tag_open = '{{' [!\#]?;
+  tag_open = '{{' '!'?;
   tag_close = '}}';
   template = [^{]+ | '{';
 
+  template_comment_open = '{{#';
   template_comment_close = '#}}';
   template_comment_body = [^\#]+ | '#';
 
@@ -92,7 +93,8 @@
   *|;
 
   main := |*
-    tag_open => { emit_tag_or_comment ->{ fcall expression; }, ->{ fcall template_comment; } };
+    tag_open => { emit_tag; fcall expression; };
+    template_comment_open => { emit_comment; fcall template_comment; };
     template => { emit_template };
   *|;
 }%%
@@ -231,17 +233,6 @@ module Hotcell
         last[1][0] += current_value
       else
         emit :TEMPLATE, current_value
-      end
-    end
-
-    def emit_tag_or_comment if_tag, if_comment
-      value = current_value
-      if value == '{{#'
-        emit_comment
-        if_comment.call
-      else
-        emit_tag
-        if_tag.call
       end
     end
 
