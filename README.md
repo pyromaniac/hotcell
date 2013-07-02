@@ -44,7 +44,7 @@ Hotcell has several basic types:
   Double-quoted strings also support escape sequences {{ "\n\r\s\t" }}
 * Regular expressions `{{ /Foo/i }}`. Simple. Expression plus options (imx)
 * Arrays `{{ [42, 'hello', /regex/m] }}`
-* Hashes `{{ a: 42, b: 'bar' }}` has js-like syntax, so only string
+* Hashes `{{ { a: 42, b: 'bar' } }}` has js-like syntax, so only string
   can be a key for a hash
 * Constant values `{{ true }}`, `{{ false }}`, `{{ nil }}` and `{{ null }}`.
   Last two have the same meaning, use whatever you like.
