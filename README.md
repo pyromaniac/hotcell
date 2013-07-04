@@ -188,7 +188,7 @@ template via optional command hash.
 stored in `Hotcell.resolver`, also resolver for current rendering could be
 set up via `:resolver` shared option:
 
-```
+```ruby
 Hotcell::Template.parse('{{ include 'template' }}').render(shared: { resolver: MyResolver.new })
 ```
 

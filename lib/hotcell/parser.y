@@ -190,11 +190,22 @@ rule
             result = build Summoner, val[0], nil, *val[2], position: pospoppush(4)
           }
 
----- header
-  require 'hotcell/lexer'
 ---- inner
-  NEWLINE_PRED = Set.new(Lexer::BOPEN.values + Lexer::OPERATIONS.values)
-  NEWLINE_NEXT = Set.new(Lexer::BCLOSE.values + [:NEWLINE])
+  OPERATIONS = {
+    '+' => :PLUS, '-' => :MINUS, '*' => :MULTIPLY, '**' => :POWER, '/' => :DIVIDE, '%' => :MODULO,
+
+    '&&' => :AND, '||' => :OR, '!' => :NOT, '==' => :EQUAL, '!=' => :INEQUAL,
+    '>' => :GT, '>=' => :GTE, '<' => :LT, '<=' => :LTE,
+
+    '=' => :ASSIGN, ',' => :COMMA, '.' => :PERIOD, ':' => :COLON, '?' => :QUESTION,
+    ';' => :SEMICOLON
+  }
+
+  BOPEN = { '[' => :AOPEN, '{' => :HOPEN, '(' => :POPEN }
+  BCLOSE = { ']' => :ACLOSE, '}' => :HCLOSE, ')' => :PCLOSE }
+
+  NEWLINE_PRED = Set.new(BOPEN.values + OPERATIONS.values)
+  NEWLINE_NEXT = Set.new(BCLOSE.values + [:NEWLINE])
 
   TAG_MODES = { '{{' => :normal, '{{!' => :silence }
 

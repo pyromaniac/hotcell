@@ -19,3 +19,4 @@ tmp
 *.dot
 .DS_Store
 .rbx
+*.bundle

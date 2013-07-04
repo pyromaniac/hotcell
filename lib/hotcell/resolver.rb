@@ -3,20 +3,23 @@ module Hotcell
   # Please inherit your own resolvers from it.
   class Resolver
     def template path, context = nil
-      source = resolve path, context
-      cache(path, context) { Template.parse(source) }
+      cache(path, context) do
+        source = resolve path, context
+        Template.parse(source)
+      end
     end
 
     # Returns template source
     # Not implemented by default
     def resolve path, context = nil
-      raise NotImplementedError, 'Default resolver`s template resolve function not implemented'
+      raise NotImplementedError, 'Default resolver`s template resolve function is not implemented'
     end
 
     # Caches parsed template
     # No cache by default
     def cache path, context = nil, &block
-      block.call
+      @cache ||= {}
+      @cache[path] ||= block.call
     end
   end
 

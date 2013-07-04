@@ -1,7 +1,6 @@
 module Hotcell
   class Source
     PACK_MODE = 'c*'
-    ENCODING = 'UTF-8'
 
     attr_reader :source, :file
 
@@ -13,6 +12,10 @@ module Hotcell
       @source, @file = source, file
     end
 
+    def encoding
+      'UTF-8'
+    end
+
     def data
       @data ||= source.unpack(PACK_MODE)
     end
@@ -21,7 +24,7 @@ module Hotcell
       parsed = data[0..position]
       line = parsed.count(10) + 1
       lastnl = (parsed.rindex(10) || -1) + 1
-      column = parsed[lastnl..position].pack(PACK_MODE).force_encoding(ENCODING).size
+      column = parsed[lastnl..position].pack(PACK_MODE).force_encoding(encoding).size
       { line: line, column: column }
     end
 

@@ -1,13 +1,35 @@
-require "bundler/gem_tasks"
+require 'bundler/gem_tasks'
+require 'rake/extensiontask'
+require 'rspec/core/rake_task'
 
-namespace :build do
+RSpec::Core::RakeTask.new(:spec)
+Rake::ExtensionTask.new('lexerc') do |config|
+  config.lib_dir = 'lib/hotcell'
+end
+
+task :default => :spec
+
+desc 'Builds all the project'
+task :project do
+  %w(project:lexerr project:lexerc project:parser clobber compile).each do |task|
+    Rake::Task[task].invoke
+  end
+end
+
+namespace :project do
   desc 'Build lexer'
-  task :lexer do
-    `ragel -R -F1 lib/hotcell/lexer.rl`
+  task :lexerr do
+    `ragel -R -F1 lib/hotcell/lexerr.rl`
+  end
+
+  desc 'Build lexer'
+  task :lexerc do
+    `ragel -C -G2 ext/lexerc/lexerc.rl`
   end
 
   task :dot do
-    `ragel -Vp lib/hotcell/lexer.rl > lexer.dot`
+    `ragel -Vp lib/hotcell/lexerr.rl > lexerr.dot`
+    `ragel -Vp lib/hotcell/lexerc.rl > lexerc.dot`
   end
 
   desc 'Build parser'
@@ -15,9 +37,3 @@ namespace :build do
     `racc -o lib/hotcell/parser.rb -O lib/hotcell/parser.out lib/hotcell/parser.y`
   end
 end
-
-require 'rspec/core/rake_task'
-
-RSpec::Core::RakeTask.new(:spec)
-
-task :default => :spec

@@ -5,14 +5,25 @@
 #
 
 require 'racc/parser.rb'
-
-  require 'hotcell/lexer'
 module Hotcell
   class Parser < Racc::Parser
 
-module_eval(<<'...end parser.y/module_eval...', 'parser.y', 196)
-  NEWLINE_PRED = Set.new(Lexer::BOPEN.values + Lexer::OPERATIONS.values)
-  NEWLINE_NEXT = Set.new(Lexer::BCLOSE.values + [:NEWLINE])
+module_eval(<<'...end parser.y/module_eval...', 'parser.y', 194)
+  OPERATIONS = {
+    '+' => :PLUS, '-' => :MINUS, '*' => :MULTIPLY, '**' => :POWER, '/' => :DIVIDE, '%' => :MODULO,
+
+    '&&' => :AND, '||' => :OR, '!' => :NOT, '==' => :EQUAL, '!=' => :INEQUAL,
+    '>' => :GT, '>=' => :GTE, '<' => :LT, '<=' => :LTE,
+
+    '=' => :ASSIGN, ',' => :COMMA, '.' => :PERIOD, ':' => :COLON, '?' => :QUESTION,
+    ';' => :SEMICOLON
+  }
+
+  BOPEN = { '[' => :AOPEN, '{' => :HOPEN, '(' => :POPEN }
+  BCLOSE = { ']' => :ACLOSE, '}' => :HCLOSE, ')' => :PCLOSE }
+
+  NEWLINE_PRED = Set.new(BOPEN.values + OPERATIONS.values)
+  NEWLINE_NEXT = Set.new(BCLOSE.values + [:NEWLINE])
 
   TAG_MODES = { '{{' => :normal, '{{!' => :silence }
 

@@ -13,10 +13,12 @@ end
 
 require 'hotcell/manipulator'
 require 'hotcell/extensions'
+require 'hotcell/source'
 require 'hotcell/lexer'
+require 'hotcell/lexerr'
+require 'hotcell/lexerc'
 require 'hotcell/parser'
 require 'hotcell/node'
 require 'hotcell/commands'
 require 'hotcell/context'
-require 'hotcell/source'
 require 'hotcell/template'

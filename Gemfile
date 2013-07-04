@@ -2,6 +2,9 @@ source 'https://rubygems.org'
 
 gemspec
 
+gem 'rake'
+gem 'rake-compiler'
+
 gem 'awesome_print'
 # gem 'ruby-prof'
 
