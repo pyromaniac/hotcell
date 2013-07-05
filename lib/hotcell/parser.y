@@ -57,9 +57,9 @@ rule
   document_unit: template | tag | block_tag | command_tag
 
   template: TEMPLATE { result = val[0] }
-  tag: TOPEN TCLOSE { result = build Tag, :TAG, mode: TAG_MODES[val[0]], position: pospoppush(2) }
+  tag: TOPEN TCLOSE { result = build Tag, :TAG, mode: tag_modes(val[0], :escape), position: pospoppush(2) }
      | TOPEN sequence TCLOSE {
-         result = build Tag, :TAG, *Array.wrap(val[1]).flatten, mode: TAG_MODES[val[0]], position: pospoppush(3)
+         result = build Tag, :TAG, *Array.wrap(val[1]).flatten, mode: tag_modes(val[0], :escape), position: pospoppush(3)
        }
 
   command_body: COMMAND { result = build @commands[val[0]] || Command, val[0], position: pospoppush(1) }
@@ -73,7 +73,7 @@ rule
   command_tag: TOPEN command TCLOSE {
                  command = val[1].is_a?(Command) ? val[1] : val[1].children[0]
                  command.validate!
-                 result = build Tag, :TAG, val[1], mode: TAG_MODES[val[0]], position: pospoppush(3)
+                 result = build Tag, :TAG, val[1], mode: tag_modes(val[0]), position: pospoppush(3)
                }
 
   subcommand: SUBCOMMAND { result = build @substack.last[val[0]], val[0], position: pospoppush(1) }
@@ -94,7 +94,7 @@ rule
              | END BLOCK { pospoppush(2) }
              | END
   block_open_tag: TOPEN block_open TCLOSE {
-                    result = build Tag, :TAG, val[1], mode: TAG_MODES[val[0]], position: pospoppush(3)
+                    result = build Tag, :TAG, val[1], mode: tag_modes(val[0]), position: pospoppush(3)
                   }
   block_close_tag: TOPEN block_close TCLOSE { pospoppush(3) }
   block_subnodes: block_subnodes document_unit {
@@ -207,7 +207,10 @@ rule
   NEWLINE_PRED = Set.new(BOPEN.values + OPERATIONS.values)
   NEWLINE_NEXT = Set.new(BCLOSE.values + [:NEWLINE])
 
-  TAG_MODES = { '{{' => :normal, '{{!' => :silence }
+  TAG_MODES = {
+    '!' => :silence, '^' => :escape, 'e' => :escape,
+    '~' => :normal, 'r' => :normal
+  }
 
   def initialize source, options = {}
     @source = Source.wrap(source)
@@ -235,6 +238,11 @@ rule
     reduced = @posstack.push(@posstack.pop(pop)[push])[-1]
     @posstack.push last
     reduced
+  end
+
+  def tag_modes tag, default = :normal
+    mode = tag.gsub(/^{{/, '').first
+    TAG_MODES[mode] || default
   end
 
   def parse

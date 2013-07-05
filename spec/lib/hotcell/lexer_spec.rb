@@ -311,22 +311,31 @@ describe Hotcell::Lexer do
       [:OR, "||"], [:INTEGER, 3], [:TCLOSE, "}}"], [:TEMPLATE, " hello"]
     ] }
 
-    context 'tag types' do
-      specify { scan('{{hello}}').should == [
-        [:TOPEN, "{{"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]
-      ] }
-      specify { scan('{{! hello}}').should == [
-        [:TOPEN, "{{!"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]
-      ] }
-      specify { scan('{{ !hello}}').should == [
-        [:TOPEN, "{{"], [:NOT, "!"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]
-      ] }
-      specify { scan('{{/ hello}}').should == [
-        [:TOPEN, "{{"], [:DIVIDE, "/"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]
-      ] }
-      specify { scan('{{ /hello}}').should == [
-        [:TOPEN, "{{"], [:DIVIDE, "/"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]
-      ] }
+    context 'tag modifers' do
+      specify { scan('{{hello}}').should == [[:TOPEN, "{{"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]] }
+
+      specify { scan('{{! hello}}').should == [[:TOPEN, "{{!"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]] }
+      specify { scan('{{!hello}}').should == [[:TOPEN, "{{!"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]] }
+      specify { scan('{{ !hello}}').should == [[:TOPEN, "{{"], [:NOT, "!"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]] }
+      specify { scan('{{!}}').should == [[:TOPEN, "{{!"], [:TCLOSE, "}}"]] }
+
+      specify { scan('{{~ hello}}').should == [[:TOPEN, "{{~"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]] }
+      specify { scan('{{~hello}}').should == [[:TOPEN, "{{~"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]] }
+      specify { expect { scan('{{ ~hello}}') }.to raise_error Hotcell::UnexpectedSymbol }
+      specify { scan('{{~}}').should == [[:TOPEN, "{{~"], [:TCLOSE, "}}"]] }
+
+      specify { scan('{{^ hello}}').should == [[:TOPEN, "{{^"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]] }
+      specify { scan('{{^hello}}').should == [[:TOPEN, "{{^"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]] }
+      specify { expect { scan('{{ ^hello}}') }.to raise_error Hotcell::UnexpectedSymbol }
+      specify { scan('{{^}}').should == [[:TOPEN, "{{^"], [:TCLOSE, "}}"]] }
+
+      specify { scan('{{r hello}}').should == [[:TOPEN, "{{r "], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]] }
+      specify { scan('{{ r hello}}').should == [[:TOPEN, "{{"], [:IDENTIFER, "r"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]] }
+      specify { scan('{{rhello}}').should == [[:TOPEN, "{{"], [:IDENTIFER, "rhello"], [:TCLOSE, "}}"]] }
+
+      specify { scan('{{e hello}}').should == [[:TOPEN, "{{e "], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]] }
+      specify { scan('{{ e hello}}').should == [[:TOPEN, "{{"], [:IDENTIFER, "e"], [:IDENTIFER, "hello"], [:TCLOSE, "}}"]] }
+      specify { scan('{{ehello}}').should == [[:TOPEN, "{{"], [:IDENTIFER, "ehello"], [:TCLOSE, "}}"]] }
     end
   end
 

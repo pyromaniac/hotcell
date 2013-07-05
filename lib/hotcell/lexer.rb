@@ -30,11 +30,6 @@ module Hotcell
       '\s' => "\s", '\r' => "\r", '\t' => "\t"
     }
 
-    TAGS = {
-      '{{' => :TOPEN, '{{!' => :TOPEN,
-      '}}' => :TCLOSE
-    }
-
     PREREGEXP = Set.new [
       :TOPEN, :NEWLINE, :SEMICOLON,
       :COLON, :COMMA, :PERIOD,
@@ -120,7 +115,7 @@ module Hotcell
 
     def emit_tag
       value = current_value
-      emit TAGS[value], value
+      emit (value == '}}' ? :TCLOSE : :TOPEN), value
     end
 
     def emit_comment

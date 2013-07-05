@@ -60,7 +60,7 @@
   comment = '#' ([^\n}]+ | '}' [^}])*;
   blank = [\t\v\f\r ];
 
-  tag_open = '{{' [!]?;
+  tag_open = '{{' ([!~^] | [re] ' ')?;
   tag_close = '}}';
   template = [^{]+ | '{';
 

@@ -81,4 +81,22 @@ describe Hotcell::Template do
       SOURCE
     ).render.gsub(/[\s\n]+/, ' ').strip.should == '4 3 2 1 8 6 4 2 12 9 6 3 16 12 8 4' }
   end
+
+  context 'escaping' do
+    specify { described_class.parse('{{ title }}').render(
+      title: '<h1>Title</h1>'
+    ).should == '&lt;h1&gt;Title&lt;/h1&gt;' }
+    specify { described_class.parse('{{~ title }}').render(
+      title: '<h1>Title</h1>'
+    ).should == '<h1>Title</h1>' }
+    specify { described_class.parse('{{ if true }}<h1>Title</h1>{{ end }}').render(
+      title: '<h1>Title</h1>'
+    ).should == '<h1>Title</h1>' }
+    specify { described_class.parse('{{^ if true }}<h1>Title</h1>{{ end }}').render(
+      title: '<h1>Title</h1>'
+    ).should == '&lt;h1&gt;Title&lt;/h1&gt;' }
+    specify { described_class.parse('{{ if true }}{{ title }}{{ end }}').render(
+      title: '<h1>Title</h1>'
+    ).should == '&lt;h1&gt;Title&lt;/h1&gt;' }
+  end
 end

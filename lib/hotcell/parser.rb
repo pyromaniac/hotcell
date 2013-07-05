@@ -25,7 +25,10 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 194)
   NEWLINE_PRED = Set.new(BOPEN.values + OPERATIONS.values)
   NEWLINE_NEXT = Set.new(BCLOSE.values + [:NEWLINE])
 
-  TAG_MODES = { '{{' => :normal, '{{!' => :silence }
+  TAG_MODES = {
+    '!' => :silence, '^' => :escape, 'e' => :escape,
+    '~' => :normal, 'r' => :normal
+  }
 
   def initialize source, options = {}
     @source = Source.wrap(source)
@@ -53,6 +56,11 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 194)
     reduced = @posstack.push(@posstack.pop(pop)[push])[-1]
     @posstack.push last
     reduced
+  end
+
+  def tag_modes tag, default = :normal
+    mode = tag.gsub(/^{{/, '').first
+    TAG_MODES[mode] || default
   end
 
   def parse
@@ -714,14 +722,14 @@ module_eval(<<'.,.,', 'parser.y', 58)
 
 module_eval(<<'.,.,', 'parser.y', 59)
   def _reduce_8(val, _values, result)
-     result = build Tag, :TAG, mode: TAG_MODES[val[0]], position: pospoppush(2) 
+     result = build Tag, :TAG, mode: tag_modes(val[0], :escape), position: pospoppush(2) 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'parser.y', 61)
   def _reduce_9(val, _values, result)
-             result = build Tag, :TAG, *Array.wrap(val[1]).flatten, mode: TAG_MODES[val[0]], position: pospoppush(3)
+             result = build Tag, :TAG, *Array.wrap(val[1]).flatten, mode: tag_modes(val[0], :escape), position: pospoppush(3)
        
     result
   end
@@ -756,7 +764,7 @@ module_eval(<<'.,.,', 'parser.y', 73)
   def _reduce_14(val, _values, result)
                      command = val[1].is_a?(Command) ? val[1] : val[1].children[0]
                  command.validate!
-                 result = build Tag, :TAG, val[1], mode: TAG_MODES[val[0]], position: pospoppush(3)
+                 result = build Tag, :TAG, val[1], mode: tag_modes(val[0]), position: pospoppush(3)
                
     result
   end
@@ -822,7 +830,7 @@ module_eval(<<'.,.,', 'parser.y', 93)
 
 module_eval(<<'.,.,', 'parser.y', 96)
   def _reduce_25(val, _values, result)
-                        result = build Tag, :TAG, val[1], mode: TAG_MODES[val[0]], position: pospoppush(3)
+                        result = build Tag, :TAG, val[1], mode: tag_modes(val[0]), position: pospoppush(3)
                   
     result
   end

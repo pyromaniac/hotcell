@@ -19,10 +19,12 @@ module Hotcell
 
     def concat context, result
       case mode
-      when :normal
-        result
-      else
+      when :silence
         ''
+      when :escape
+        ERB::Util.html_escape(result)
+      else
+        result
       end
     end
   end

@@ -113,8 +113,20 @@ really flexible expressions syntax.
 There is some tag modificators to set tag mode.
 
 * `!` - silence modificator. Prevents tag value to be concatenated with
-  template, so `{{! 42 }}` will return '' - empty string. This modificator
+  template, so `{{! 42 }}` will return `` - empty string. This modificator
   is useful for pre-calculation: `{{! var = 'foo' * 3 }}`.
+
+* `^` or `e` - html escape modificators. `{{^ '<article>' }}` will output
+  `&lt;article&gt;`, `{{e '<article>' }}` will do the same.
+  This also works with comants and blocks: `{{^ scope }}<article>{{ end }}`
+  will render `&lt;article&gt;`.
+
+* `~` or `r` means raw output, opposite to escape. `{{~ '<article>' }}`
+  will produce `<article>`.
+
+Expression tags are escaped by default, command and blocks are not.
+`{{ '<article>' }}` will be rendered to `&lt;article&gt;`, but
+`{{ scope }}<article>{{ end }}` will produce `<article>`
 
 ### Comments
 
