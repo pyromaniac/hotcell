@@ -1,7 +1,8 @@
 
 #line 1 "ext/lexerc/lexerc.rl"
 
-#line 94 "ext/lexerc/lexerc.rl"
+#line 12 "ext/lexerc/lexerc.rl"
+
 
 
 #include <ruby.h>
@@ -11,7 +12,7 @@ static VALUE mHotcell;
 static VALUE cHotcellLexer;
 
 
-#line 15 "ext/lexerc/lexerc.c"
+#line 16 "ext/lexerc/lexerc.c"
 static const int puffer_lexer_start = 12;
 static const int puffer_lexer_first_final = 12;
 static const int puffer_lexer_error = 0;
@@ -21,7 +22,7 @@ static const int puffer_lexer_en_template_comment = 26;
 static const int puffer_lexer_en_main = 12;
 
 
-#line 103 "ext/lexerc/lexerc.rl"
+#line 22 "ext/lexerc/lexerc.rl"
 
 static char *p;
 static char *ts;
@@ -46,7 +47,7 @@ static VALUE tokenize(VALUE self) {
   char *eof = pe;
 
   
-#line 50 "ext/lexerc/lexerc.c"
+#line 51 "ext/lexerc/lexerc.c"
 	{
 	cs = puffer_lexer_start;
 	top = 0;
@@ -55,9 +56,9 @@ static VALUE tokenize(VALUE self) {
 	act = 0;
 	}
 
-#line 127 "ext/lexerc/lexerc.rl"
+#line 46 "ext/lexerc/lexerc.rl"
   
-#line 61 "ext/lexerc/lexerc.c"
+#line 62 "ext/lexerc/lexerc.c"
 	{
 	if ( p == pe )
 		goto _test_eof;
@@ -103,19 +104,19 @@ _resume:
 	switch ( cs )
 	{
 tr20:
-#line 92 "ext/lexerc/lexerc.rl"
+#line 92 "lib/hotcell/lexer.rl"
 	{te = p;p--;{ emit_template; }}
 	goto st12;
 tr22:
-#line 90 "ext/lexerc/lexerc.rl"
+#line 90 "lib/hotcell/lexer.rl"
 	{te = p;p--;{ emit_tag; {stack[top++] = 12; goto st16;} }}
 	goto st12;
 tr23:
-#line 90 "ext/lexerc/lexerc.rl"
+#line 90 "lib/hotcell/lexer.rl"
 	{te = p+1;{ emit_tag; {stack[top++] = 12; goto st16;} }}
 	goto st12;
 tr24:
-#line 91 "ext/lexerc/lexerc.rl"
+#line 91 "lib/hotcell/lexer.rl"
 	{te = p+1;{ emit_comment; {stack[top++] = 12; goto st26;} }}
 	goto st12;
 st12:
@@ -126,7 +127,7 @@ st12:
 case 12:
 #line 1 "NONE"
 	{ts = p;}
-#line 130 "ext/lexerc/lexerc.c"
+#line 131 "ext/lexerc/lexerc.c"
 	if ( (*p) == 123 )
 		goto st14;
 	goto st13;
@@ -154,19 +155,19 @@ case 15:
 	}
 	goto tr22;
 tr1:
-#line 78 "ext/lexerc/lexerc.rl"
+#line 78 "lib/hotcell/lexer.rl"
 	{te = p+1;{ emit_dstring; }}
 	goto st16;
 tr3:
-#line 80 "ext/lexerc/lexerc.rl"
+#line 80 "lib/hotcell/lexer.rl"
 	{{p = ((te))-1;}{ emit_comment; }}
 	goto st16;
 tr5:
-#line 74 "ext/lexerc/lexerc.rl"
+#line 74 "lib/hotcell/lexer.rl"
 	{te = p+1;{ emit_operator; }}
 	goto st16;
 tr8:
-#line 77 "ext/lexerc/lexerc.rl"
+#line 77 "lib/hotcell/lexer.rl"
 	{te = p+1;{ emit_sstring; }}
 	goto st16;
 tr10:
@@ -182,35 +183,35 @@ tr10:
 	}
 	goto st16;
 tr12:
-#line 74 "ext/lexerc/lexerc.rl"
+#line 74 "lib/hotcell/lexer.rl"
 	{{p = ((te))-1;}{ emit_operator; }}
 	goto st16;
 tr25:
-#line 81 "ext/lexerc/lexerc.rl"
+#line 81 "lib/hotcell/lexer.rl"
 	{te = p+1;}
 	goto st16;
 tr36:
-#line 74 "ext/lexerc/lexerc.rl"
+#line 74 "lib/hotcell/lexer.rl"
 	{te = p;p--;{ emit_operator; }}
 	goto st16;
 tr37:
-#line 80 "ext/lexerc/lexerc.rl"
+#line 80 "lib/hotcell/lexer.rl"
 	{te = p;p--;{ emit_comment; }}
 	goto st16;
 tr40:
-#line 79 "ext/lexerc/lexerc.rl"
+#line 79 "lib/hotcell/lexer.rl"
 	{te = p;p--;{ emit_regexp; }}
 	goto st16;
 tr41:
-#line 76 "ext/lexerc/lexerc.rl"
+#line 76 "lib/hotcell/lexer.rl"
 	{te = p;p--;{ emit_identifer; }}
 	goto st16;
 tr42:
-#line 76 "ext/lexerc/lexerc.rl"
+#line 76 "lib/hotcell/lexer.rl"
 	{te = p+1;{ emit_identifer; }}
 	goto st16;
 tr43:
-#line 73 "ext/lexerc/lexerc.rl"
+#line 73 "lib/hotcell/lexer.rl"
 	{te = p+1;{ emit_tag; {cs = stack[--top];goto _again;} }}
 	goto st16;
 st16:
@@ -221,7 +222,7 @@ st16:
 case 16:
 #line 1 "NONE"
 	{ts = p;}
-#line 225 "ext/lexerc/lexerc.c"
+#line 226 "ext/lexerc/lexerc.c"
 	switch( (*p) ) {
 		case 10: goto tr5;
 		case 32: goto tr25;
@@ -295,7 +296,7 @@ st18:
 	if ( ++p == pe )
 		goto _test_eof18;
 case 18:
-#line 299 "ext/lexerc/lexerc.c"
+#line 300 "ext/lexerc/lexerc.c"
 	switch( (*p) ) {
 		case 10: goto tr37;
 		case 125: goto st3;
@@ -339,20 +340,20 @@ case 19:
 tr32:
 #line 1 "NONE"
 	{te = p+1;}
-#line 75 "ext/lexerc/lexerc.rl"
+#line 75 "lib/hotcell/lexer.rl"
 	{act = 3;}
 	goto st20;
 tr29:
 #line 1 "NONE"
 	{te = p+1;}
-#line 74 "ext/lexerc/lexerc.rl"
+#line 74 "lib/hotcell/lexer.rl"
 	{act = 2;}
 	goto st20;
 st20:
 	if ( ++p == pe )
 		goto _test_eof20;
 case 20:
-#line 356 "ext/lexerc/lexerc.c"
+#line 357 "ext/lexerc/lexerc.c"
 	if ( (*p) == 46 )
 		goto st7;
 	if ( 48 <= (*p) && (*p) <= 57 )
@@ -368,34 +369,39 @@ case 7:
 tr11:
 #line 1 "NONE"
 	{te = p+1;}
-#line 75 "ext/lexerc/lexerc.rl"
+#line 75 "lib/hotcell/lexer.rl"
 	{act = 3;}
 	goto st21;
 tr30:
 #line 1 "NONE"
 	{te = p+1;}
-#line 74 "ext/lexerc/lexerc.rl"
+#line 74 "lib/hotcell/lexer.rl"
 	{act = 2;}
 	goto st21;
 st21:
 	if ( ++p == pe )
 		goto _test_eof21;
 case 21:
-#line 385 "ext/lexerc/lexerc.c"
+#line 386 "ext/lexerc/lexerc.c"
 	if ( 48 <= (*p) && (*p) <= 57 )
 		goto tr11;
 	goto tr10;
 tr31:
 #line 1 "NONE"
 	{te = p+1;}
-#line 53 "ext/lexerc/lexerc.rl"
-	{ regexp_ambiguity({goto st16;}) }
+#line 4 "ext/lexerc/lexerc.rl"
+	{
+    if (regexp_possible == Qfalse) {
+      emit_operator;
+      {goto st16;}
+    }
+  }
 	goto st22;
 st22:
 	if ( ++p == pe )
 		goto _test_eof22;
 case 22:
-#line 399 "ext/lexerc/lexerc.c"
+#line 405 "ext/lexerc/lexerc.c"
 	switch( (*p) ) {
 		case 47: goto st23;
 		case 92: goto st9;
@@ -458,15 +464,15 @@ case 25:
 		goto tr43;
 	goto tr36;
 tr16:
-#line 86 "ext/lexerc/lexerc.rl"
+#line 86 "lib/hotcell/lexer.rl"
 	{{p = ((te))-1;}{ emit_comment; }}
 	goto st26;
 tr17:
-#line 85 "ext/lexerc/lexerc.rl"
+#line 85 "lib/hotcell/lexer.rl"
 	{te = p+1;{ emit_comment; {cs = stack[--top];goto _again;} }}
 	goto st26;
 tr46:
-#line 86 "ext/lexerc/lexerc.rl"
+#line 86 "lib/hotcell/lexer.rl"
 	{te = p;p--;{ emit_comment; }}
 	goto st26;
 st26:
@@ -477,7 +483,7 @@ st26:
 case 26:
 #line 1 "NONE"
 	{ts = p;}
-#line 481 "ext/lexerc/lexerc.c"
+#line 487 "ext/lexerc/lexerc.c"
 	if ( (*p) == 35 )
 		goto tr45;
 	goto st27;
@@ -496,7 +502,7 @@ st28:
 	if ( ++p == pe )
 		goto _test_eof28;
 case 28:
-#line 500 "ext/lexerc/lexerc.c"
+#line 506 "ext/lexerc/lexerc.c"
 	if ( (*p) == 125 )
 		goto st11;
 	goto tr46;
@@ -561,21 +567,21 @@ case 11:
 	case 28: goto tr46;
 	case 11: goto tr16;
 	case 5: 
-#line 45 "ext/lexerc/lexerc.rl"
+#line 45 "lib/hotcell/lexer.rl"
 	{ raise_unterminated_string; }
 	break;
 	case 1: 
-#line 49 "ext/lexerc/lexerc.rl"
+#line 49 "lib/hotcell/lexer.rl"
 	{ raise_unterminated_string; }
 	break;
-#line 572 "ext/lexerc/lexerc.c"
+#line 578 "ext/lexerc/lexerc.c"
 	}
 	}
 
 	_out: {}
 	}
 
-#line 128 "ext/lexerc/lexerc.rl"
+#line 47 "ext/lexerc/lexerc.rl"
 
   free(stack);
 

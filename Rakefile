@@ -19,12 +19,12 @@ end
 namespace :project do
   desc 'Build lexer'
   task :lexerr do
-    `ragel -R -F1 lib/hotcell/lexerr.rl`
+    `ragel -R -F1 -I lib/hotcell lib/hotcell/lexerr.rl`
   end
 
   desc 'Build lexer'
   task :lexerc do
-    `ragel -C -G2 ext/lexerc/lexerc.rl`
+    `ragel -C -G2 -I lib/hotcell ext/lexerc/lexerc.rl`
   end
 
   task :dot do

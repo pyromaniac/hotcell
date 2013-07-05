@@ -83,13 +83,13 @@ module Hotcell
     end
 
     def regexp_ambiguity
-      unless regexp_possible?
+      unless regexp_possible
         emit_operator
         yield
       end
     end
 
-    def regexp_possible?
+    def regexp_possible
       last = @token_array[-1]
       # Need more rules!
       !last || PREREGEXP.include?(last[0])
