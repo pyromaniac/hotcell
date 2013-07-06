@@ -5,13 +5,14 @@ module Hotcell
     include Singleton
 
     attr_reader :commands, :blocks, :helpers
-    attr_accessor :resolver
+    attr_accessor :resolver, :escape_tags
 
     def initialize
       @commands = {}
       @blocks = {}
       @helpers = []
       @resolver = Hotcell::Resolver.new
+      @escape_tags = false
     end
 
     # Adds command or block to the list of default commands or blocks returned

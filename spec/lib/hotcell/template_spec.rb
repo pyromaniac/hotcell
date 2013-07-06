@@ -8,7 +8,8 @@ describe Hotcell::Template do
     end
 
     specify { described_class.parse('').should be_a described_class }
-    specify { described_class.parse('').options.values.map(&:keys).should == [['include'], ['for']] }
+    specify { described_class.parse(''
+      ).options.slice(:commands, :blocks).values.map(&:keys).should == [['include'], ['for']] }
   end
 
   describe '#syntax' do
@@ -85,7 +86,7 @@ describe Hotcell::Template do
   context 'escaping' do
     specify { described_class.parse('{{ title }}').render(
       title: '<h1>Title</h1>'
-    ).should == '&lt;h1&gt;Title&lt;/h1&gt;' }
+    ).should == '<h1>Title</h1>' }
     specify { described_class.parse('{{~ title }}').render(
       title: '<h1>Title</h1>'
     ).should == '<h1>Title</h1>' }
@@ -97,6 +98,20 @@ describe Hotcell::Template do
     ).should == '&lt;h1&gt;Title&lt;/h1&gt;' }
     specify { described_class.parse('{{ if true }}{{ title }}{{ end }}').render(
       title: '<h1>Title</h1>'
-    ).should == '&lt;h1&gt;Title&lt;/h1&gt;' }
+    ).should == '<h1>Title</h1>' }
+
+    context 'escape_tags' do
+      before { Hotcell.stub(:escape_tags) { true } }
+
+      specify { described_class.parse('{{ title }}').render(
+        title: '<h1>Title</h1>'
+      ).should == '&lt;h1&gt;Title&lt;/h1&gt;' }
+      specify { described_class.parse('{{ if true }}{{ title }}{{ end }}').render(
+        title: '<h1>Title</h1>'
+      ).should == '&lt;h1&gt;Title&lt;/h1&gt;' }
+      specify { described_class.parse('{{ if true }}<h1>Title</h1>{{ end }}').render(
+        title: '<h1>Title</h1>'
+      ).should == '<h1>Title</h1>' }
+    end
   end
 end

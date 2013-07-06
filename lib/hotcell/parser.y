@@ -57,9 +57,16 @@ rule
   document_unit: template | tag | block_tag | command_tag
 
   template: TEMPLATE { result = val[0] }
-  tag: TOPEN TCLOSE { result = build Tag, :TAG, mode: tag_modes(val[0], :escape), position: pospoppush(2) }
+  tag: TOPEN TCLOSE {
+         result = build Tag, :TAG,
+           mode: tag_modes(val[0], @escape_tags ? :escape : :normal),
+           position: pospoppush(2)
+       }
      | TOPEN sequence TCLOSE {
-         result = build Tag, :TAG, *Array.wrap(val[1]).flatten, mode: tag_modes(val[0], :escape), position: pospoppush(3)
+         result = build Tag, :TAG,
+           *Array.wrap(val[1]).flatten,
+           mode: tag_modes(val[0], @escape_tags ? :escape : :normal),
+           position: pospoppush(3)
        }
 
   command_body: COMMAND { result = build @commands[val[0]] || Command, val[0], position: pospoppush(1) }
@@ -221,6 +228,7 @@ rule
     @commands = options[:commands] || {}
     @blocks = options[:blocks] || {}
     @endblocks = Set.new(@blocks.keys.map { |identifer| "end#{identifer}" })
+    @escape_tags = !!options[:escape_tags]
 
     @substack = []
     @posstack = []

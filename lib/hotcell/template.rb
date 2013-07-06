@@ -5,7 +5,8 @@ module Hotcell
     def self.parse source
       new source,
         commands: Hotcell.commands,
-        blocks: Hotcell.blocks
+        blocks: Hotcell.blocks,
+        escape_tags: Hotcell.escape_tags
     end
 
     def initialize source, options = {}
@@ -14,7 +15,7 @@ module Hotcell
     end
 
     def syntax
-      @syntax ||= Parser.new(source, options.slice(:commands, :blocks)).parse
+      @syntax ||= Parser.new(source, options.slice(:commands, :blocks, :escape_tags)).parse
     end
 
     def render context = {}

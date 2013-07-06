@@ -8,7 +8,7 @@ module Hotcell
   def self.config; Config.instance; end
 
   singleton_class.delegate :commands, :blocks, :helpers, :register_command, :register_helpers,
-    :resolver, :resolver=, to: :config
+    :resolver, :resolver=, :escape_tags, :escape_tags=, to: :config
 end
 
 require 'hotcell/manipulator'

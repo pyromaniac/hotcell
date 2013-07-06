@@ -16,11 +16,17 @@ describe Hotcell::Config do
   specify { subject.commands.should == {} }
   specify { subject.helpers.should == [] }
   specify { subject.resolver.should be_a Hotcell::Resolver }
+  specify { subject.escape_tags.should be_false }
 
   describe '#resolver=' do
     let(:resolver) { Hotcell::FileSystemResolver.new('/') }
     before { subject.resolver = resolver }
     its(:resolver) { should == resolver }
+  end
+
+  describe '#escape_tags=' do
+    before { subject.escape_tags = true }
+    its(:escape_tags) { should be_true }
   end
 
   describe '#register_command' do

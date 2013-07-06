@@ -8,7 +8,7 @@ require 'racc/parser.rb'
 module Hotcell
   class Parser < Racc::Parser
 
-module_eval(<<'...end parser.y/module_eval...', 'parser.y', 194)
+module_eval(<<'...end parser.y/module_eval...', 'parser.y', 201)
   OPERATIONS = {
     '+' => :PLUS, '-' => :MINUS, '*' => :MULTIPLY, '**' => :POWER, '/' => :DIVIDE, '%' => :MODULO,
 
@@ -39,6 +39,7 @@ module_eval(<<'...end parser.y/module_eval...', 'parser.y', 194)
     @commands = options[:commands] || {}
     @blocks = options[:blocks] || {}
     @endblocks = Set.new(@blocks.keys.map { |identifer| "end#{identifer}" })
+    @escape_tags = !!options[:escape_tags]
 
     @substack = []
     @posstack = []
@@ -720,29 +721,35 @@ module_eval(<<'.,.,', 'parser.y', 58)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 59)
+module_eval(<<'.,.,', 'parser.y', 60)
   def _reduce_8(val, _values, result)
-     result = build Tag, :TAG, mode: tag_modes(val[0], :escape), position: pospoppush(2) 
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'parser.y', 61)
-  def _reduce_9(val, _values, result)
-             result = build Tag, :TAG, *Array.wrap(val[1]).flatten, mode: tag_modes(val[0], :escape), position: pospoppush(3)
+             result = build Tag, :TAG,
+           mode: tag_modes(val[0], @escape_tags ? :escape : :normal),
+           position: pospoppush(2)
        
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 64)
+module_eval(<<'.,.,', 'parser.y', 65)
+  def _reduce_9(val, _values, result)
+             result = build Tag, :TAG,
+           *Array.wrap(val[1]).flatten,
+           mode: tag_modes(val[0], @escape_tags ? :escape : :normal),
+           position: pospoppush(3)
+       
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'parser.y', 71)
   def _reduce_10(val, _values, result)
      result = build @commands[val[0]] || Command, val[0], position: pospoppush(1) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 66)
+module_eval(<<'.,.,', 'parser.y', 73)
   def _reduce_11(val, _values, result)
                       result = build @commands[val[0]] || Command, val[0], *val[1], position: pospoppush(2)
                 
@@ -752,7 +759,7 @@ module_eval(<<'.,.,', 'parser.y', 66)
 
 # reduce 12 omitted
 
-module_eval(<<'.,.,', 'parser.y', 70)
+module_eval(<<'.,.,', 'parser.y', 77)
   def _reduce_13(val, _values, result)
                  result = build Assigner, val[0], val[2], position: pospoppush(3)
            
@@ -760,7 +767,7 @@ module_eval(<<'.,.,', 'parser.y', 70)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 73)
+module_eval(<<'.,.,', 'parser.y', 80)
   def _reduce_14(val, _values, result)
                      command = val[1].is_a?(Command) ? val[1] : val[1].children[0]
                  command.validate!
@@ -770,14 +777,14 @@ module_eval(<<'.,.,', 'parser.y', 73)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 78)
+module_eval(<<'.,.,', 'parser.y', 85)
   def _reduce_15(val, _values, result)
      result = build @substack.last[val[0]], val[0], position: pospoppush(1) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 80)
+module_eval(<<'.,.,', 'parser.y', 87)
   def _reduce_16(val, _values, result)
                     result = build @substack.last[val[0]], val[0], *val[1], position: pospoppush(2)
               
@@ -785,21 +792,21 @@ module_eval(<<'.,.,', 'parser.y', 80)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 82)
+module_eval(<<'.,.,', 'parser.y', 89)
   def _reduce_17(val, _values, result)
      pospoppush(3); result = val[1] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 84)
+module_eval(<<'.,.,', 'parser.y', 91)
   def _reduce_18(val, _values, result)
      result = build @blocks[val[0]] || Block, val[0], position: pospoppush(1) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 86)
+module_eval(<<'.,.,', 'parser.y', 93)
   def _reduce_19(val, _values, result)
                     result = build @blocks[val[0]] || Block, val[0], *val[1], position: pospoppush(2)
               
@@ -809,7 +816,7 @@ module_eval(<<'.,.,', 'parser.y', 86)
 
 # reduce 20 omitted
 
-module_eval(<<'.,.,', 'parser.y', 90)
+module_eval(<<'.,.,', 'parser.y', 97)
   def _reduce_21(val, _values, result)
                     result = build Assigner, val[0], val[2], position: pospoppush(3)
               
@@ -819,7 +826,7 @@ module_eval(<<'.,.,', 'parser.y', 90)
 
 # reduce 22 omitted
 
-module_eval(<<'.,.,', 'parser.y', 93)
+module_eval(<<'.,.,', 'parser.y', 100)
   def _reduce_23(val, _values, result)
      pospoppush(2) 
     result
@@ -828,7 +835,7 @@ module_eval(<<'.,.,', 'parser.y', 93)
 
 # reduce 24 omitted
 
-module_eval(<<'.,.,', 'parser.y', 96)
+module_eval(<<'.,.,', 'parser.y', 103)
   def _reduce_25(val, _values, result)
                         result = build Tag, :TAG, val[1], mode: tag_modes(val[0]), position: pospoppush(3)
                   
@@ -836,14 +843,14 @@ module_eval(<<'.,.,', 'parser.y', 96)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 98)
+module_eval(<<'.,.,', 'parser.y', 105)
   def _reduce_26(val, _values, result)
      pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 100)
+module_eval(<<'.,.,', 'parser.y', 107)
   def _reduce_27(val, _values, result)
                         pospoppush(2)
                     val[0][-1].is_a?(Joiner) ?
@@ -854,28 +861,28 @@ module_eval(<<'.,.,', 'parser.y', 100)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 105)
+module_eval(<<'.,.,', 'parser.y', 112)
   def _reduce_28(val, _values, result)
      pospoppush(2); val[0].push(val[1]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 106)
+module_eval(<<'.,.,', 'parser.y', 113)
   def _reduce_29(val, _values, result)
      result = [build(Joiner, :JOINER, val[0], position: pospoppush(1))] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 107)
+module_eval(<<'.,.,', 'parser.y', 114)
   def _reduce_30(val, _values, result)
      result = [val[0]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 109)
+module_eval(<<'.,.,', 'parser.y', 116)
   def _reduce_31(val, _values, result)
                    pospoppush(2)
                block = val[0].children[0].is_a?(Block) ?
@@ -886,7 +893,7 @@ module_eval(<<'.,.,', 'parser.y', 109)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 115)
+module_eval(<<'.,.,', 'parser.y', 122)
   def _reduce_32(val, _values, result)
                    pospoppush(3)
                block = val[0].children[0].is_a?(Block) ?
@@ -898,203 +905,203 @@ module_eval(<<'.,.,', 'parser.y', 115)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 122)
+module_eval(<<'.,.,', 'parser.y', 129)
   def _reduce_33(val, _values, result)
      pospoppush(2); result = val[0].push(val[2]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 123)
+module_eval(<<'.,.,', 'parser.y', 130)
   def _reduce_34(val, _values, result)
      pospoppush(2) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 124)
+module_eval(<<'.,.,', 'parser.y', 131)
   def _reduce_35(val, _values, result)
      pospoppush(2, 1); result = val[1] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 125)
+module_eval(<<'.,.,', 'parser.y', 132)
   def _reduce_36(val, _values, result)
      result = [] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 126)
+module_eval(<<'.,.,', 'parser.y', 133)
   def _reduce_37(val, _values, result)
      pospoppush(2); result = val[0].push(val[2]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 127)
+module_eval(<<'.,.,', 'parser.y', 134)
   def _reduce_38(val, _values, result)
      pospoppush(2) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 128)
+module_eval(<<'.,.,', 'parser.y', 135)
   def _reduce_39(val, _values, result)
      pospoppush(2, 1); result = val[1] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 129)
+module_eval(<<'.,.,', 'parser.y', 136)
   def _reduce_40(val, _values, result)
      result = [] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 130)
+module_eval(<<'.,.,', 'parser.y', 137)
   def _reduce_41(val, _values, result)
      result = [val[0]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 132)
+module_eval(<<'.,.,', 'parser.y', 139)
   def _reduce_42(val, _values, result)
      result = build Calculator, :MULTIPLY, val[0], val[2], position: pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 133)
+module_eval(<<'.,.,', 'parser.y', 140)
   def _reduce_43(val, _values, result)
      result = build Calculator, :POWER, val[0], val[2], position: pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 134)
+module_eval(<<'.,.,', 'parser.y', 141)
   def _reduce_44(val, _values, result)
      result = build Calculator, :DIVIDE, val[0], val[2], position: pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 135)
+module_eval(<<'.,.,', 'parser.y', 142)
   def _reduce_45(val, _values, result)
      result = build Calculator, :PLUS, val[0], val[2], position: pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 136)
+module_eval(<<'.,.,', 'parser.y', 143)
   def _reduce_46(val, _values, result)
      result = build Calculator, :MINUS, val[0], val[2], position: pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 137)
+module_eval(<<'.,.,', 'parser.y', 144)
   def _reduce_47(val, _values, result)
      result = build Calculator, :MODULO, val[0], val[2], position: pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 138)
+module_eval(<<'.,.,', 'parser.y', 145)
   def _reduce_48(val, _values, result)
      result = build Calculator, :UMINUS, val[1], position: pospoppush(2) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 139)
+module_eval(<<'.,.,', 'parser.y', 146)
   def _reduce_49(val, _values, result)
      result = build Calculator, :UPLUS, val[1], position: pospoppush(2) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 140)
+module_eval(<<'.,.,', 'parser.y', 147)
   def _reduce_50(val, _values, result)
      result = build Calculator, :AND, val[0], val[2], position: pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 141)
+module_eval(<<'.,.,', 'parser.y', 148)
   def _reduce_51(val, _values, result)
      result = build Calculator, :OR, val[0], val[2], position: pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 142)
+module_eval(<<'.,.,', 'parser.y', 149)
   def _reduce_52(val, _values, result)
      result = build Calculator, :GT, val[0], val[2], position: pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 143)
+module_eval(<<'.,.,', 'parser.y', 150)
   def _reduce_53(val, _values, result)
      result = build Calculator, :GTE, val[0], val[2], position: pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 144)
+module_eval(<<'.,.,', 'parser.y', 151)
   def _reduce_54(val, _values, result)
      result = build Calculator, :LT, val[0], val[2], position: pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 145)
+module_eval(<<'.,.,', 'parser.y', 152)
   def _reduce_55(val, _values, result)
      result = build Calculator, :LTE, val[0], val[2], position: pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 146)
+module_eval(<<'.,.,', 'parser.y', 153)
   def _reduce_56(val, _values, result)
      result = build Calculator, :EQUAL, val[0], val[2], position: pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 147)
+module_eval(<<'.,.,', 'parser.y', 154)
   def _reduce_57(val, _values, result)
      result = build Calculator, :INEQUAL, val[0], val[2], position: pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 148)
+module_eval(<<'.,.,', 'parser.y', 155)
   def _reduce_58(val, _values, result)
      result = build Calculator, :NOT, val[1], position: pospoppush(2) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 149)
+module_eval(<<'.,.,', 'parser.y', 156)
   def _reduce_59(val, _values, result)
      result = build Assigner, val[0], val[2], position: pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 150)
+module_eval(<<'.,.,', 'parser.y', 157)
   def _reduce_60(val, _values, result)
      pospoppush(3); val[2].children[0] = val[0]; result = val[2] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 152)
+module_eval(<<'.,.,', 'parser.y', 159)
   def _reduce_61(val, _values, result)
               result = build Summoner, 'manipulator_brackets', val[0], *val[2], position: pospoppush(4)
         
@@ -1102,14 +1109,14 @@ module_eval(<<'.,.,', 'parser.y', 152)
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 154)
+module_eval(<<'.,.,', 'parser.y', 161)
   def _reduce_62(val, _values, result)
      pospoppush(2); result = nil 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 156)
+module_eval(<<'.,.,', 'parser.y', 163)
   def _reduce_63(val, _values, result)
               position = pospoppush(3)
           result = case val[1].size
@@ -1151,70 +1158,70 @@ module_eval(<<'.,.,', 'parser.y', 156)
 
 # reduce 77 omitted
 
-module_eval(<<'.,.,', 'parser.y', 172)
+module_eval(<<'.,.,', 'parser.y', 179)
   def _reduce_78(val, _values, result)
      result = build Arrayer, :ARRAY, position: pospoppush(2) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 173)
+module_eval(<<'.,.,', 'parser.y', 180)
   def _reduce_79(val, _values, result)
      result = build Arrayer, :ARRAY, *val[1], position: pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 174)
+module_eval(<<'.,.,', 'parser.y', 181)
   def _reduce_80(val, _values, result)
      pospoppush(3); val[0].push(val[2]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 175)
+module_eval(<<'.,.,', 'parser.y', 182)
   def _reduce_81(val, _values, result)
      result = [val[0]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 177)
+module_eval(<<'.,.,', 'parser.y', 184)
   def _reduce_82(val, _values, result)
      result = build Hasher, :HASH, position: pospoppush(2) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 178)
+module_eval(<<'.,.,', 'parser.y', 185)
   def _reduce_83(val, _values, result)
      result = build Hasher, :HASH, *val[1], position: pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 179)
+module_eval(<<'.,.,', 'parser.y', 186)
   def _reduce_84(val, _values, result)
      pospoppush(3); val[0].push(val[2]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 180)
+module_eval(<<'.,.,', 'parser.y', 187)
   def _reduce_85(val, _values, result)
      result = [val[0]] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 181)
+module_eval(<<'.,.,', 'parser.y', 188)
   def _reduce_86(val, _values, result)
      result = build Arrayer, :PAIR, val[0], val[2], position: pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 183)
+module_eval(<<'.,.,', 'parser.y', 190)
   def _reduce_87(val, _values, result)
      result = [*val[0], build(Hasher, :HASH, *val[2], position: pospoppush(3))] 
     result
@@ -1223,28 +1230,28 @@ module_eval(<<'.,.,', 'parser.y', 183)
 
 # reduce 88 omitted
 
-module_eval(<<'.,.,', 'parser.y', 185)
+module_eval(<<'.,.,', 'parser.y', 192)
   def _reduce_89(val, _values, result)
      result = build Hasher, :HASH, *val[0], position: pospoppush(1) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 186)
+module_eval(<<'.,.,', 'parser.y', 193)
   def _reduce_90(val, _values, result)
      result = build Summoner, val[0], position: pospoppush(1) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 187)
+module_eval(<<'.,.,', 'parser.y', 194)
   def _reduce_91(val, _values, result)
      result = build Summoner, val[0], position: pospoppush(3) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'parser.y', 189)
+module_eval(<<'.,.,', 'parser.y', 196)
   def _reduce_92(val, _values, result)
                 result = build Summoner, val[0], nil, *val[2], position: pospoppush(4)
           

@@ -22,7 +22,7 @@ module Hotcell
       when :silence
         ''
       when :escape
-        ERB::Util.html_escape(result)
+        ERB::Util.html_escape_once(result)
       else
         result
       end

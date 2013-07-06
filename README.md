@@ -124,9 +124,12 @@ There is some tag modificators to set tag mode.
 * `~` or `r` means raw output, opposite to escape. `{{~ '<article>' }}`
   will produce `<article>`.
 
-Expression tags are escaped by default, command and blocks are not.
-`{{ '<article>' }}` will be rendered to `&lt;article&gt;`, but
-`{{ scope }}<article>{{ end }}` will produce `<article>`
+#### escape_tags config option
+
+Expression tags are not escaped by default, but if you will perform
+`Hotcell.escape_tags = true` - they will. But command and blocks still
+will not. This means: `{{ '<article>' }}` will be rendered as `&lt;article&gt;`,
+but `{{ scope }}<article>{{ end }}` will produce `<article>`.
 
 ### Comments
 
@@ -382,13 +385,16 @@ template processor proper work.
 * `commands` accessor returns a hash of default commands
 * `blocks` - same is for blocks
 * `helpers` - default helper modules array
-* `resolver` - default resolver for `include` command
+* `resolver` - default resolver instance for `include` command
+* `escape_tags` - erb-like behavior. Escape tags, but not commands output
+  by default.
 
 Also there are methods to setup configuration options:
 
 * `register_command` adds command or block to the list of default commands or blocks
 * `register_helpers` used for adding module to the list of helpers
-* `resolver=` setups new default resolver
+* `resolver=` setups new default resolver (any Hotcell::Resolver-like class instance)
+* `escape_tags=` sets tags scaping behavior (true or false)
 
 
 ## Contributing
