@@ -26,6 +26,90 @@ Or install it yourself as:
 
     $ gem install hotcell
 
+## Usage
+
+### Basic usage:
+
+```ruby
+Hotcell::Template.parse('Hello, {{ name }}!').render name: 'Hulk'
+```
+
+### Additional `render` options:
+
+* `:variables` - variables hash
+* `:environment` - environment variables hash
+* `:scope` - variables and environment variables together
+
+The main difference between environment and ordinary variables is: ordinary variables
+are accessible from the template and environment variables are not. Environment variables
+are user for official purposes, in tag, for example. At the options level, variables have
+string keys and environment variables have symbol keys.
+
+```ruby
+Hotcell::Template.parse('Hello, {{ name }}!').render(
+  variables: { name: 'Hulk' },
+  environments: { some_access_token: '1234567890' },
+  scope: { 'foo' => 42, bar: 43 },
+  moo: 'Hello'
+)
+```
+
+So if you will use something like above, all three options will be merged, but `:variables`
+hash keys will be stringified, `:environment` hash keys will be symbolized, `:scope`
+hash will be lived as is and the rest non-official options will be stringified and used as
+variables. The result of this algorithm will be:
+
+```ruby
+{
+  'name' => 'Hulk', 'foo' => 42, 'moo' => 'Hello',
+  some_access_token: '1234567890', bar: 43
+}
+```
+
+Remaining allowed options are:
+
+* `:rescuer` - a lambda for error rescuing logic. The result of lambda call will be joined to
+  the template. The default lambda just returns error message to the template.
+
+  ```ruby
+    Hotcell::Template.parse('Hello, {{ name }}!').render(
+      name: 'Hulk',
+      rescuer: ->(e) { Rollbar.report_exception(e) }
+    )
+  ```
+
+* `:reraise` - raise exception after occurence or not. Error raises after `:rescuer` execution and
+  doesn't affect it. Accepts true or false.
+* `:helpers` - array of modules with fuctions accessible from template. `Hotcell.helpers` config
+  option is used by default. Works similar to ActionController's helpers.
+
+  ```ruby
+    Hotcell::Template.parse('Hello, {{ name }}!').render(
+      name: 'Hulk',
+      helpers: MyHelper # or array [MyHelper1, MyHelper2]
+    )
+  ```
+* `:shared` - just hash of shared variables, for internal usage
+
+### Configuring Hotcell
+
+Hotcell has several configuration methods, which provide default internals for
+template processor proper work.
+
+* `commands` accessor returns a hash of default commands
+* `blocks` - same is for blocks
+* `helpers` - default helper modules array
+* `resolver` - default resolver instance for `include` command
+* `escape_tags` - erb-like behavior. Escape tags, but not commands output.
+  False by default.
+
+Also there are methods to setup configuration options:
+
+* `register_command` adds command or block to the list of default commands or blocks
+* `register_helpers` used for adding module to the list of helpers
+* `resolver=` setups new default resolver (any Hotcell::Resolver-like class instance)
+* `escape_tags=` sets tags scaping behavior (true or false)
+
 ## Language reference
 
 Hotcell template consists of template parts and tags. Tags are enclosed in
@@ -312,91 +396,6 @@ Or for template capturing:
 {{! title = scope }}<h1>Hello</h1>{{ end scope }}
 {{ title }}
 ```
-
-## Usage
-
-### Basic usage:
-
-```ruby
-Hotcell::Template.parse('Hello, {{ name }}!').render name: 'Pyromaniac'
-```
-
-### Additional `render` options:
-
-* `:variables` - variables hash
-* `:environment` - environment variables hash
-* `:scope` - variables and environment variables together
-
-The main difference between environment and ordinary variables is: ordinary variables
-are accessible from the template and environment variables are not. Environment variables
-are user for official purposes, in tag, for example. At the options level, variables have
-string keys and environment variables have symbol keys.
-
-```ruby
-Hotcell::Template.parse('Hello, {{ name }}!').render(
-  variables: { name: 'Pyromaniac' },
-  environments: { some_access_token: '1234567890' },
-  scope: { 'foo' => 42, bar: 43 },
-  moo: 'Hello'
-)
-```
-
-So if you will use something like above, all three options will be merged, but `:variables`
-hash keys will be stringified, `:environment` hash keys will be symbolized, `:scope`
-hash will be lived as is and the rest non-official options will be stringified and used as
-variables. The result of this algorithm will be:
-
-```ruby
-{
-  'name' => 'Pyromaniac', 'foo' => 42, 'moo' => 'Hello',
-  some_access_token: '1234567890', bar: 43
-}
-```
-
-Remaining allowed options are:
-
-* `:rescuer` - a lambda for error rescuing logic. The result of lambda call will be joined to
-  the template. The default lambda just returns error message to the template.
-
-  ```ruby
-    Hotcell::Template.parse('Hello, {{ name }}!').render(
-      name: 'Pyromaniac',
-      rescuer: ->(e) { Rollbar.report_exception(e) }
-    )
-  ```
-
-* `:reraise` - raise exception after occurence or not. Error raises after `:rescuer` execution and
-  doesn't affect it. Accepts true or false.
-* `:helpers` - array of modules with fuctions accessible from template. `Hotcell.helpers` config
-  option is used by default. Works similar to ActionController's helpers.
-
-  ```ruby
-    Hotcell::Template.parse('Hello, {{ name }}!').render(
-      name: 'Pyromaniac',
-      helpers: MyHelper # or array [MyHelper1, MyHelper2]
-    )
-  ```
-* `:shared` - just hash of shared variables, for internal usage
-
-### Configuring Hotcell
-
-Hotcell has several configuration methods, which provide default internals for
-template processor proper work.
-
-* `commands` accessor returns a hash of default commands
-* `blocks` - same is for blocks
-* `helpers` - default helper modules array
-* `resolver` - default resolver instance for `include` command
-* `escape_tags` - erb-like behavior. Escape tags, but not commands output
-  by default.
-
-Also there are methods to setup configuration options:
-
-* `register_command` adds command or block to the list of default commands or blocks
-* `register_helpers` used for adding module to the list of helpers
-* `resolver=` setups new default resolver (any Hotcell::Resolver-like class instance)
-* `escape_tags=` sets tags scaping behavior (true or false)
-
 
 ## Contributing
 
