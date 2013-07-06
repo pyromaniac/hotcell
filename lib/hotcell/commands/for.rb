@@ -15,7 +15,12 @@ module Hotcell
 
       def process context, variable, options
         forloop = options['loop'] == true ? 'loop' : options['loop']
-        items = Array.wrap(options['in'])
+        items = case options['in']
+        when Range, Hash
+          options['in'].to_a
+        else
+          Array.wrap(options['in'])
+        end
         length = items.size
 
         items.map.with_index do |item, index|
@@ -25,7 +30,7 @@ module Hotcell
           context.scoped scope do
             subnodes.first.try(:render, context)
           end
-        end
+        end.join
       end
 
       class Forloop < Hotcell::Manipulator

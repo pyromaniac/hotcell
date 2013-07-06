@@ -34,10 +34,11 @@ self._puffer_lexer_trans_keys = [
 	123, 123, 123, 123, 123, 
 	33, 126, 9, 125, 61, 61, 
 	10, 125, 42, 42, 46, 
-	57, 48, 57, 47, 92, 
-	65, 122, 33, 122, 125, 125, 
-	35, 35, 35, 35, 125, 
-	125, 0
+	57, 48, 57, 46, 57, 
+	46, 46, 47, 92, 65, 122, 
+	33, 122, 125, 125, 35, 
+	35, 35, 35, 125, 125, 
+	0
 ]
 
 class << self
@@ -47,8 +48,8 @@ end
 self._puffer_lexer_key_spans = [
 	0, 1, 59, 0, 1, 1, 54, 0, 
 	10, 46, 0, 1, 1, 1, 1, 1, 
-	94, 117, 1, 116, 1, 12, 10, 46, 
-	58, 90, 1, 1, 1, 1
+	94, 117, 1, 116, 1, 12, 10, 12, 
+	1, 46, 58, 90, 1, 1, 1, 1
 ]
 
 class << self
@@ -59,7 +60,7 @@ self._puffer_lexer_index_offsets = [
 	0, 0, 2, 62, 63, 65, 67, 122, 
 	123, 134, 181, 182, 184, 186, 188, 190, 
 	192, 287, 405, 407, 524, 526, 539, 550, 
-	597, 656, 747, 749, 751, 753
+	563, 565, 612, 671, 762, 764, 766, 768
 ]
 
 class << self
@@ -135,33 +136,35 @@ self._puffer_lexer_indicies = [
 	6, 6, 40, 6, 7, 38, 41, 12, 
 	34, 34, 34, 34, 34, 34, 34, 34, 
 	34, 34, 12, 13, 13, 13, 13, 13, 
-	13, 13, 13, 13, 13, 12, 16, 15, 
+	13, 13, 13, 13, 13, 42, 43, 38, 
+	13, 13, 13, 13, 13, 13, 13, 13, 
+	13, 13, 38, 7, 38, 16, 15, 15, 
 	15, 15, 15, 15, 15, 15, 15, 15, 
 	15, 15, 15, 15, 15, 15, 15, 15, 
 	15, 15, 15, 15, 15, 15, 15, 15, 
 	15, 15, 15, 15, 15, 15, 15, 15, 
 	15, 15, 15, 15, 15, 15, 15, 15, 
-	15, 15, 15, 17, 15, 16, 16, 16, 
+	15, 15, 17, 15, 16, 16, 16, 16, 
 	16, 16, 16, 16, 16, 16, 16, 16, 
 	16, 16, 16, 16, 16, 16, 16, 16, 
-	16, 16, 16, 16, 16, 16, 16, 42, 
-	42, 42, 42, 42, 42, 16, 16, 16, 
+	16, 16, 16, 16, 16, 16, 44, 44, 
+	44, 44, 44, 44, 16, 16, 16, 16, 
 	16, 16, 16, 16, 16, 16, 16, 16, 
 	16, 16, 16, 16, 16, 16, 16, 16, 
-	16, 16, 16, 16, 16, 16, 16, 42, 
-	44, 43, 43, 43, 43, 43, 43, 43, 
-	43, 43, 43, 43, 43, 43, 43, 35, 
+	16, 16, 16, 16, 16, 16, 44, 46, 
+	45, 45, 45, 45, 45, 45, 45, 45, 
+	45, 45, 45, 45, 45, 45, 35, 35, 
 	35, 35, 35, 35, 35, 35, 35, 35, 
-	35, 43, 43, 43, 43, 43, 44, 43, 
-	35, 35, 35, 35, 35, 35, 35, 35, 
-	35, 35, 35, 35, 35, 35, 35, 35, 
-	35, 35, 35, 35, 35, 35, 35, 35, 
-	35, 35, 43, 43, 43, 43, 35, 43, 
+	45, 45, 45, 45, 45, 46, 45, 35, 
 	35, 35, 35, 35, 35, 35, 35, 35, 
 	35, 35, 35, 35, 35, 35, 35, 35, 
 	35, 35, 35, 35, 35, 35, 35, 35, 
-	35, 35, 43, 45, 38, 47, 46, 48, 
-	46, 49, 48, 0
+	35, 45, 45, 45, 45, 35, 45, 35, 
+	35, 35, 35, 35, 35, 35, 35, 35, 
+	35, 35, 35, 35, 35, 35, 35, 35, 
+	35, 35, 35, 35, 35, 35, 35, 35, 
+	35, 45, 47, 38, 49, 48, 50, 48, 
+	51, 50, 0
 ]
 
 class << self
@@ -171,11 +174,11 @@ end
 self._puffer_lexer_trans_targs = [
 	13, 13, 2, 17, 3, 17, 19, 17, 
 	0, 6, 17, 7, 17, 22, 17, 9, 
-	24, 10, 27, 27, 14, 15, 13, 16, 
+	26, 10, 29, 29, 14, 15, 13, 16, 
 	13, 13, 1, 17, 18, 5, 20, 21, 
-	22, 23, 21, 25, 11, 26, 17, 17, 
-	4, 8, 17, 17, 17, 17, 28, 29, 
-	27, 12
+	23, 25, 21, 27, 11, 28, 17, 17, 
+	4, 8, 17, 24, 17, 17, 17, 17, 
+	30, 31, 29, 12
 ]
 
 class << self
@@ -184,12 +187,12 @@ class << self
 end
 self._puffer_lexer_trans_actions = [
 	1, 2, 0, 4, 0, 5, 6, 7, 
-	0, 0, 9, 0, 10, 11, 12, 0, 
-	0, 0, 13, 14, 0, 0, 17, 6, 
-	18, 19, 0, 20, 0, 0, 0, 21, 
-	21, 22, 11, 0, 0, 0, 23, 24, 
-	0, 0, 25, 26, 27, 28, 0, 6, 
-	29, 0
+	0, 0, 9, 0, 10, 0, 11, 0, 
+	0, 0, 12, 13, 0, 0, 16, 6, 
+	17, 18, 0, 19, 0, 0, 0, 20, 
+	0, 21, 22, 0, 0, 0, 23, 24, 
+	0, 0, 25, 0, 26, 27, 28, 29, 
+	0, 6, 30, 0
 ]
 
 class << self
@@ -198,9 +201,9 @@ class << self
 end
 self._puffer_lexer_to_state_actions = [
 	0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 0, 0, 15, 0, 0, 
-	0, 15, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 15, 0, 0
+	0, 0, 0, 0, 0, 14, 0, 0, 
+	0, 14, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 14, 0, 0
 ]
 
 class << self
@@ -209,9 +212,9 @@ class << self
 end
 self._puffer_lexer_from_state_actions = [
 	0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 0, 0, 16, 0, 0, 
-	0, 16, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 16, 0, 0
+	0, 0, 0, 0, 0, 15, 0, 0, 
+	0, 15, 0, 0, 0, 0, 0, 0, 
+	0, 0, 0, 0, 0, 15, 0, 0
 ]
 
 class << self
@@ -222,7 +225,7 @@ self._puffer_lexer_eof_actions = [
 	0, 0, 3, 0, 0, 0, 8, 0, 
 	0, 0, 0, 0, 0, 0, 0, 0, 
 	0, 0, 0, 0, 0, 0, 0, 0, 
-	0, 0, 0, 0, 0, 0
+	0, 0, 0, 0, 0, 0, 0, 0
 ]
 
 class << self
@@ -232,8 +235,8 @@ end
 self._puffer_lexer_eof_trans = [
 	0, 1, 0, 0, 6, 0, 0, 0, 
 	13, 15, 15, 0, 19, 0, 23, 23, 
-	25, 0, 39, 40, 39, 13, 13, 39, 
-	43, 44, 39, 0, 49, 49
+	25, 0, 39, 40, 39, 13, 43, 39, 
+	39, 39, 45, 46, 39, 0, 51, 51
 ]
 
 class << self
@@ -256,7 +259,7 @@ self.puffer_lexer_en_expression = 17;
 class << self
 	attr_accessor :puffer_lexer_en_template_comment
 end
-self.puffer_lexer_en_template_comment = 27;
+self.puffer_lexer_en_template_comment = 29;
 class << self
 	attr_accessor :puffer_lexer_en_main
 end
@@ -270,7 +273,7 @@ self.puffer_lexer_en_main = 13;
     @token_array = []
 
     
-# line 274 "lib/hotcell/lexerr.rb"
+# line 277 "lib/hotcell/lexerr.rb"
 begin
 	 @p ||= 0
 	pe ||=  @data.length
@@ -288,7 +291,7 @@ end
     stack = []
 
     
-# line 292 "lib/hotcell/lexerr.rb"
+# line 295 "lib/hotcell/lexerr.rb"
 begin
 	testEof = false
 	_slen, _trans, _keys, _inds, _acts, _nacts = nil
@@ -311,12 +314,12 @@ begin
 	end
 	if _goto_level <= _resume
 	case _puffer_lexer_from_state_actions[cs] 
-	when 16 then
+	when 15 then
 # line 1 "NONE"
 		begin
  @ts =  @p
 		end
-# line 320 "lib/hotcell/lexerr.rb"
+# line 323 "lib/hotcell/lexerr.rb"
 	end
 	_keys = cs << 1
 	_inds = _puffer_lexer_index_offsets[cs]
@@ -339,8 +342,8 @@ begin
 		begin
  @te =  @p+1
 		end
-	when 28 then
-# line 73 "lib/hotcell/lexer.rl"
+	when 29 then
+# line 74 "lib/hotcell/lexer.rl"
 		begin
  @te =  @p+1
  begin  emit_tag; 	begin
@@ -352,66 +355,72 @@ begin
   end
 		end
 	when 7 then
-# line 74 "lib/hotcell/lexer.rl"
+# line 75 "lib/hotcell/lexer.rl"
 		begin
  @te =  @p+1
  begin  emit_operator;  end
 		end
-	when 27 then
-# line 76 "lib/hotcell/lexer.rl"
+	when 28 then
+# line 77 "lib/hotcell/lexer.rl"
 		begin
  @te =  @p+1
  begin  emit_identifer;  end
 		end
 	when 9 then
-# line 77 "lib/hotcell/lexer.rl"
+# line 78 "lib/hotcell/lexer.rl"
 		begin
  @te =  @p+1
  begin  emit_sstring;  end
 		end
 	when 4 then
-# line 78 "lib/hotcell/lexer.rl"
+# line 79 "lib/hotcell/lexer.rl"
 		begin
  @te =  @p+1
  begin  emit_dstring;  end
 		end
-	when 20 then
-# line 81 "lib/hotcell/lexer.rl"
+	when 19 then
+# line 82 "lib/hotcell/lexer.rl"
 		begin
  @te =  @p+1
 		end
 	when 23 then
-# line 74 "lib/hotcell/lexer.rl"
+# line 75 "lib/hotcell/lexer.rl"
 		begin
  @te =  @p
  @p =  @p - 1; begin  emit_operator;  end
 		end
-	when 26 then
+	when 25 then
 # line 76 "lib/hotcell/lexer.rl"
+		begin
+ @te =  @p
+ @p =  @p - 1; begin  emit_numeric;  end
+		end
+	when 27 then
+# line 77 "lib/hotcell/lexer.rl"
 		begin
  @te =  @p
  @p =  @p - 1; begin  emit_identifer;  end
 		end
-	when 25 then
-# line 79 "lib/hotcell/lexer.rl"
+	when 26 then
+# line 80 "lib/hotcell/lexer.rl"
 		begin
  @te =  @p
  @p =  @p - 1; begin  emit_regexp;  end
 		end
 	when 24 then
-# line 80 "lib/hotcell/lexer.rl"
+# line 81 "lib/hotcell/lexer.rl"
 		begin
  @te =  @p
  @p =  @p - 1; begin  emit_comment;  end
 		end
-	when 12 then
-# line 74 "lib/hotcell/lexer.rl"
+	when 11 then
+# line 75 "lib/hotcell/lexer.rl"
 		begin
  begin  @p = (( @te))-1; end
  begin  emit_operator;  end
 		end
 	when 5 then
-# line 80 "lib/hotcell/lexer.rl"
+# line 81 "lib/hotcell/lexer.rl"
 		begin
  begin  @p = (( @te))-1; end
  begin  emit_comment;  end
@@ -428,8 +437,8 @@ begin
  emit_numeric; end
 end 
 			end
-	when 14 then
-# line 85 "lib/hotcell/lexer.rl"
+	when 13 then
+# line 86 "lib/hotcell/lexer.rl"
 		begin
  @te =  @p+1
  begin  emit_comment; 	begin
@@ -440,20 +449,20 @@ end
 	end
   end
 		end
-	when 29 then
-# line 86 "lib/hotcell/lexer.rl"
+	when 30 then
+# line 87 "lib/hotcell/lexer.rl"
 		begin
  @te =  @p
  @p =  @p - 1; begin  emit_comment;  end
 		end
-	when 13 then
-# line 86 "lib/hotcell/lexer.rl"
+	when 12 then
+# line 87 "lib/hotcell/lexer.rl"
 		begin
  begin  @p = (( @te))-1; end
  begin  emit_comment;  end
 		end
 	when 2 then
-# line 90 "lib/hotcell/lexer.rl"
+# line 91 "lib/hotcell/lexer.rl"
 		begin
  @te =  @p+1
  begin  emit_tag; 	begin
@@ -465,21 +474,21 @@ end
 	end
   end
 		end
-	when 19 then
-# line 91 "lib/hotcell/lexer.rl"
+	when 18 then
+# line 92 "lib/hotcell/lexer.rl"
 		begin
  @te =  @p+1
  begin  emit_comment; 	begin
 		stack[top] = cs
 		top+= 1
-		cs = 27
+		cs = 29
 		_goto_level = _again
 		next
 	end
   end
 		end
-	when 18 then
-# line 90 "lib/hotcell/lexer.rl"
+	when 17 then
+# line 91 "lib/hotcell/lexer.rl"
 		begin
  @te =  @p
  @p =  @p - 1; begin  emit_tag; 	begin
@@ -491,14 +500,14 @@ end
 	end
   end
 		end
-	when 17 then
-# line 92 "lib/hotcell/lexer.rl"
+	when 16 then
+# line 93 "lib/hotcell/lexer.rl"
 		begin
  @te =  @p
  @p =  @p - 1; begin  emit_template;  end
 		end
 	when 1 then
-# line 90 "lib/hotcell/lexer.rl"
+# line 91 "lib/hotcell/lexer.rl"
 		begin
  begin  @p = (( @te))-1; end
  begin  emit_tag; 	begin
@@ -510,7 +519,7 @@ end
 	end
   end
 		end
-	when 22 then
+	when 21 then
 # line 1 "NONE"
 		begin
  @te =  @p+1
@@ -528,33 +537,33 @@ end
 
     end
   		end
-	when 21 then
-# line 1 "NONE"
-		begin
- @te =  @p+1
-		end
-# line 74 "lib/hotcell/lexer.rl"
-		begin
-act = 2;		end
-	when 11 then
+	when 20 then
 # line 1 "NONE"
 		begin
  @te =  @p+1
 		end
 # line 75 "lib/hotcell/lexer.rl"
 		begin
+act = 2;		end
+	when 22 then
+# line 1 "NONE"
+		begin
+ @te =  @p+1
+		end
+# line 76 "lib/hotcell/lexer.rl"
+		begin
 act = 3;		end
-# line 548 "lib/hotcell/lexerr.rb"
+# line 557 "lib/hotcell/lexerr.rb"
 	end
 	end
 	end
 	if _goto_level <= _again
 	case _puffer_lexer_to_state_actions[cs] 
-	when 15 then
+	when 14 then
 # line 1 "NONE"
 		begin
  @ts = nil;		end
-# line 558 "lib/hotcell/lexerr.rb"
+# line 567 "lib/hotcell/lexerr.rb"
 	end
 
 	if cs == 0
@@ -576,14 +585,14 @@ act = 3;		end
 	end
 	  case _puffer_lexer_eof_actions[cs]
 	when 8 then
-# line 45 "lib/hotcell/lexer.rl"
+# line 46 "lib/hotcell/lexer.rl"
 		begin
  raise_unterminated_string; 		end
 	when 3 then
-# line 49 "lib/hotcell/lexer.rl"
+# line 50 "lib/hotcell/lexer.rl"
 		begin
  raise_unterminated_string; 		end
-# line 587 "lib/hotcell/lexerr.rb"
+# line 596 "lib/hotcell/lexerr.rb"
 	  end
 	end
 

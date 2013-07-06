@@ -23,11 +23,12 @@
   assign = '=';
   comma = ',';
   period = '.';
+  range = '..' '.'?;
   colon = ':';
   question = '?';
   semicolon = ';';
   newline = '\n';
-  flow = assign | comma | period | colon | question | semicolon | newline;
+  flow = assign | comma | period | range | colon | question | semicolon | newline;
 
   array_open = '[';
   array_close = ']';

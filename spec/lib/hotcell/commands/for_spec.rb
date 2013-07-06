@@ -17,6 +17,9 @@ describe Hotcell::Commands::For do
   describe '#render' do
     specify { parse('{{ for item, in: [1, 2, 3] }}{{ end for }}').render.should == '' }
     specify { parse('{{ for item, in: [1, 2, 3] }}{{ item }}{{ end for }}').render.should == '123' }
+    specify { parse('{{ for item, in: 1..3 }}{{ item }}{{ end for }}').render.should == '123' }
+    specify { parse('{{ for item, in: { a: 1, b: 2, c: 3 } }}{{ item[0] }}{{ end }}').render.should == 'abc' }
+    specify { parse('{{ for item, in: { a: 1, b: 2, c: 3 } }}{{ item[1] }}{{ end }}').render.should == '123' }
     specify { parse(
       '{{ for item, in: [1, 2, 3] }}{{ item }} * 3 = {{ item * 3 }}; {{ end for }}'
     ).render(reraise: true).should == '1 * 3 = 3; 2 * 3 = 6; 3 * 3 = 9; ' }

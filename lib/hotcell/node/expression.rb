@@ -1,5 +1,5 @@
 module Hotcell
-  class Calculator < Hotcell::Node
+  class Expression < Hotcell::Node
     HANDLERS = {
       :PLUS => ->(value1, value2) { value1 + value2 },
       :MINUS => ->(value1, value2) { value1 - value2 },
@@ -17,7 +17,9 @@ module Hotcell
       :GT => ->(value1, value2) { value1 > value2 },
       :GTE => ->(value1, value2) { value1 >= value2 },
       :LT => ->(value1, value2) { value1 < value2 },
-      :LTE => ->(value1, value2) { value1 <= value2 }
+      :LTE => ->(value1, value2) { value1 <= value2 },
+      :RANGE => ->(value1, value2) { Range.new value1, value2 },
+      :ERANGE => ->(value1, value2) { Range.new value1, value2, true }
     }
 
     def optimize

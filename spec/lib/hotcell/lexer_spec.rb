@@ -45,6 +45,8 @@ describe Hotcell::Lexer do
     specify { expression('= =').should == [[:ASSIGN, '='], [:ASSIGN, '=']] }
     specify { expression(',').should == [[:COMMA, ',']] }
     specify { expression('.').should == [[:PERIOD, '.']] }
+    specify { expression('..').should == [[:RANGE, '..']] }
+    specify { expression('...').should == [[:RANGE, '...']] }
     specify { expression(':').should == [[:COLON, ':']] }
     specify { expression('?').should == [[:QUESTION, '?']] }
     specify { expression('hello?').should == [[:IDENTIFER, 'hello?']] }
@@ -83,7 +85,7 @@ describe Hotcell::Lexer do
       specify { expression('.42.').should == [[:FLOAT, 0.42], [:PERIOD, '.']] }
       specify { expression('.42.foo').should == [[:FLOAT, 0.42], [:PERIOD, '.'], [:IDENTIFER, 'foo']] }
       specify { expression('.42foo').should == [[:FLOAT, 0.42], [:IDENTIFER, 'foo']] }
-      specify { expression('..42').should == [[:PERIOD, '.'], [:FLOAT, 0.42]] }
+      specify { expression('..42').should == [[:RANGE, '..'], [:INTEGER, 42]] }
     end
   end
 

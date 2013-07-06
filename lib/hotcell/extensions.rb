@@ -16,6 +16,8 @@ end
 
 String.class_eval do
   include Hotcell::Manipulator::Mixin
+
+  manipulate :size, :length
 end
 
 Regexp.class_eval do
@@ -32,13 +34,23 @@ end
 
 Array.class_eval do
   include Hotcell::Manipulator::Mixin
+
+  manipulate :first, :last, :count, :size, :length
 end
 
 Hash.class_eval do
   include Hotcell::Manipulator::Mixin
 
+  manipulate :keys, :values, :count, :size, :length
+
   def manipulator_invoke method, *arguments
-    arguments.size == 0 && key?(method) ? self[method] : super
+    if method == '[]'
+      manipulator_invoke_brackets *arguments
+    elsif manipulator_invokable? method
+      send(method, *arguments)
+    elsif arguments.count == 0
+      self[method]
+    end
   end
 end
 

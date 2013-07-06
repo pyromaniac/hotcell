@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe Hotcell::Block do
   def method_missing method, *args, &block
-    klass = Hotcell::Calculator::HANDLERS[method] ?
-      Hotcell::Calculator : Hotcell::Node
+    klass = Hotcell::Expression::HANDLERS[method] ?
+      Hotcell::Expression : Hotcell::Node
 
     instance = Hotcell::Assigner.new *args if method == :ASSIGN
     instance = Hotcell::Summoner.new *args if method == :METHOD

@@ -18,7 +18,7 @@ static const int puffer_lexer_first_final = 13;
 static const int puffer_lexer_error = 0;
 
 static const int puffer_lexer_en_expression = 17;
-static const int puffer_lexer_en_template_comment = 27;
+static const int puffer_lexer_en_template_comment = 29;
 static const int puffer_lexer_en_main = 13;
 
 
@@ -86,15 +86,17 @@ _again:
 		case 8: goto st8;
 		case 22: goto st22;
 		case 23: goto st23;
-		case 9: goto st9;
 		case 24: goto st24;
-		case 10: goto st10;
 		case 25: goto st25;
-		case 11: goto st11;
+		case 9: goto st9;
 		case 26: goto st26;
+		case 10: goto st10;
 		case 27: goto st27;
+		case 11: goto st11;
 		case 28: goto st28;
 		case 29: goto st29;
+		case 30: goto st30;
+		case 31: goto st31;
 		case 12: goto st12;
 	default: break;
 	}
@@ -105,24 +107,24 @@ _resume:
 	switch ( cs )
 	{
 tr0:
-#line 90 "lib/hotcell/lexer.rl"
+#line 91 "lib/hotcell/lexer.rl"
 	{{p = ((te))-1;}{ emit_tag; {stack[top++] = 13; goto st17;} }}
 	goto st13;
 tr1:
-#line 90 "lib/hotcell/lexer.rl"
+#line 91 "lib/hotcell/lexer.rl"
 	{te = p+1;{ emit_tag; {stack[top++] = 13; goto st17;} }}
 	goto st13;
 tr22:
-#line 92 "lib/hotcell/lexer.rl"
+#line 93 "lib/hotcell/lexer.rl"
 	{te = p;p--;{ emit_template; }}
 	goto st13;
 tr24:
-#line 90 "lib/hotcell/lexer.rl"
+#line 91 "lib/hotcell/lexer.rl"
 	{te = p;p--;{ emit_tag; {stack[top++] = 13; goto st17;} }}
 	goto st13;
 tr25:
-#line 91 "lib/hotcell/lexer.rl"
-	{te = p+1;{ emit_comment; {stack[top++] = 13; goto st27;} }}
+#line 92 "lib/hotcell/lexer.rl"
+	{te = p+1;{ emit_comment; {stack[top++] = 13; goto st29;} }}
 	goto st13;
 st13:
 #line 1 "NONE"
@@ -132,7 +134,7 @@ st13:
 case 13:
 #line 1 "NONE"
 	{ts = p;}
-#line 136 "ext/lexerc/lexerc.c"
+#line 138 "ext/lexerc/lexerc.c"
 	if ( (*p) == 123 )
 		goto st15;
 	goto st14;
@@ -158,7 +160,7 @@ st16:
 	if ( ++p == pe )
 		goto _test_eof16;
 case 16:
-#line 162 "ext/lexerc/lexerc.c"
+#line 164 "ext/lexerc/lexerc.c"
 	switch( (*p) ) {
 		case 33: goto tr1;
 		case 35: goto tr25;
@@ -176,19 +178,19 @@ case 1:
 		goto tr1;
 	goto tr0;
 tr3:
-#line 78 "lib/hotcell/lexer.rl"
+#line 79 "lib/hotcell/lexer.rl"
 	{te = p+1;{ emit_dstring; }}
 	goto st17;
 tr5:
-#line 80 "lib/hotcell/lexer.rl"
+#line 81 "lib/hotcell/lexer.rl"
 	{{p = ((te))-1;}{ emit_comment; }}
 	goto st17;
 tr7:
-#line 74 "lib/hotcell/lexer.rl"
+#line 75 "lib/hotcell/lexer.rl"
 	{te = p+1;{ emit_operator; }}
 	goto st17;
 tr10:
-#line 77 "lib/hotcell/lexer.rl"
+#line 78 "lib/hotcell/lexer.rl"
 	{te = p+1;{ emit_sstring; }}
 	goto st17;
 tr12:
@@ -204,35 +206,39 @@ tr12:
 	}
 	goto st17;
 tr14:
-#line 74 "lib/hotcell/lexer.rl"
+#line 75 "lib/hotcell/lexer.rl"
 	{{p = ((te))-1;}{ emit_operator; }}
 	goto st17;
 tr27:
-#line 81 "lib/hotcell/lexer.rl"
+#line 82 "lib/hotcell/lexer.rl"
 	{te = p+1;}
 	goto st17;
 tr38:
-#line 74 "lib/hotcell/lexer.rl"
+#line 75 "lib/hotcell/lexer.rl"
 	{te = p;p--;{ emit_operator; }}
 	goto st17;
 tr39:
-#line 80 "lib/hotcell/lexer.rl"
+#line 81 "lib/hotcell/lexer.rl"
 	{te = p;p--;{ emit_comment; }}
 	goto st17;
 tr42:
-#line 79 "lib/hotcell/lexer.rl"
-	{te = p;p--;{ emit_regexp; }}
-	goto st17;
-tr43:
 #line 76 "lib/hotcell/lexer.rl"
-	{te = p;p--;{ emit_identifer; }}
+	{te = p;p--;{ emit_numeric; }}
 	goto st17;
 tr44:
-#line 76 "lib/hotcell/lexer.rl"
-	{te = p+1;{ emit_identifer; }}
+#line 80 "lib/hotcell/lexer.rl"
+	{te = p;p--;{ emit_regexp; }}
 	goto st17;
 tr45:
-#line 73 "lib/hotcell/lexer.rl"
+#line 77 "lib/hotcell/lexer.rl"
+	{te = p;p--;{ emit_identifer; }}
+	goto st17;
+tr46:
+#line 77 "lib/hotcell/lexer.rl"
+	{te = p+1;{ emit_identifer; }}
+	goto st17;
+tr47:
+#line 74 "lib/hotcell/lexer.rl"
 	{te = p+1;{ emit_tag; {cs = stack[--top];goto _again;} }}
 	goto st17;
 st17:
@@ -243,7 +249,7 @@ st17:
 case 17:
 #line 1 "NONE"
 	{ts = p;}
-#line 247 "ext/lexerc/lexerc.c"
+#line 253 "ext/lexerc/lexerc.c"
 	switch( (*p) ) {
 		case 10: goto tr7;
 		case 32: goto tr27;
@@ -254,15 +260,15 @@ case 17:
 		case 39: goto st6;
 		case 42: goto st20;
 		case 45: goto tr31;
-		case 46: goto tr32;
+		case 46: goto st23;
 		case 47: goto tr33;
 		case 63: goto tr7;
 		case 91: goto tr7;
 		case 93: goto tr7;
-		case 95: goto st25;
+		case 95: goto st27;
 		case 123: goto tr7;
 		case 124: goto st11;
-		case 125: goto st26;
+		case 125: goto st28;
 	}
 	if ( (*p) < 58 ) {
 		if ( (*p) < 37 ) {
@@ -279,9 +285,9 @@ case 17:
 				goto st18;
 		} else if ( (*p) > 90 ) {
 			if ( 97 <= (*p) && (*p) <= 122 )
-				goto st25;
+				goto st27;
 		} else
-			goto st25;
+			goto st27;
 	} else
 		goto tr7;
 	goto st0;
@@ -317,7 +323,7 @@ st19:
 	if ( ++p == pe )
 		goto _test_eof19;
 case 19:
-#line 321 "ext/lexerc/lexerc.c"
+#line 327 "ext/lexerc/lexerc.c"
 	switch( (*p) ) {
 		case 10: goto tr39;
 		case 125: goto st4;
@@ -358,23 +364,23 @@ case 20:
 	if ( (*p) == 42 )
 		goto tr7;
 	goto tr38;
-tr34:
-#line 1 "NONE"
-	{te = p+1;}
-#line 75 "lib/hotcell/lexer.rl"
-	{act = 3;}
-	goto st21;
 tr31:
 #line 1 "NONE"
 	{te = p+1;}
-#line 74 "lib/hotcell/lexer.rl"
+#line 75 "lib/hotcell/lexer.rl"
 	{act = 2;}
+	goto st21;
+tr34:
+#line 1 "NONE"
+	{te = p+1;}
+#line 76 "lib/hotcell/lexer.rl"
+	{act = 3;}
 	goto st21;
 st21:
 	if ( ++p == pe )
 		goto _test_eof21;
 case 21:
-#line 378 "ext/lexerc/lexerc.c"
+#line 384 "ext/lexerc/lexerc.c"
 	if ( (*p) == 46 )
 		goto st8;
 	if ( 48 <= (*p) && (*p) <= 57 )
@@ -385,28 +391,31 @@ st8:
 		goto _test_eof8;
 case 8:
 	if ( 48 <= (*p) && (*p) <= 57 )
-		goto tr13;
+		goto st22;
 	goto tr12;
-tr13:
-#line 1 "NONE"
-	{te = p+1;}
-#line 75 "lib/hotcell/lexer.rl"
-	{act = 3;}
-	goto st22;
-tr32:
-#line 1 "NONE"
-	{te = p+1;}
-#line 74 "lib/hotcell/lexer.rl"
-	{act = 2;}
-	goto st22;
 st22:
 	if ( ++p == pe )
 		goto _test_eof22;
 case 22:
-#line 407 "ext/lexerc/lexerc.c"
 	if ( 48 <= (*p) && (*p) <= 57 )
-		goto tr13;
-	goto tr12;
+		goto st22;
+	goto tr42;
+st23:
+	if ( ++p == pe )
+		goto _test_eof23;
+case 23:
+	if ( (*p) == 46 )
+		goto st24;
+	if ( 48 <= (*p) && (*p) <= 57 )
+		goto st22;
+	goto tr38;
+st24:
+	if ( ++p == pe )
+		goto _test_eof24;
+case 24:
+	if ( (*p) == 46 )
+		goto tr7;
+	goto tr38;
 tr33:
 #line 1 "NONE"
 	{te = p+1;}
@@ -417,14 +426,14 @@ tr33:
       {goto st17;}
     }
   }
-	goto st23;
-st23:
+	goto st25;
+st25:
 	if ( ++p == pe )
-		goto _test_eof23;
-case 23:
-#line 426 "ext/lexerc/lexerc.c"
+		goto _test_eof25;
+case 25:
+#line 435 "ext/lexerc/lexerc.c"
 	switch( (*p) ) {
-		case 47: goto st24;
+		case 47: goto st26;
 		case 92: goto st10;
 	}
 	goto st9;
@@ -433,43 +442,43 @@ st9:
 		goto _test_eof9;
 case 9:
 	switch( (*p) ) {
-		case 47: goto st24;
+		case 47: goto st26;
 		case 92: goto st10;
 	}
 	goto st9;
-st24:
+st26:
 	if ( ++p == pe )
-		goto _test_eof24;
-case 24:
+		goto _test_eof26;
+case 26:
 	if ( (*p) > 90 ) {
 		if ( 97 <= (*p) && (*p) <= 122 )
-			goto st24;
+			goto st26;
 	} else if ( (*p) >= 65 )
-		goto st24;
-	goto tr42;
+		goto st26;
+	goto tr44;
 st10:
 	if ( ++p == pe )
 		goto _test_eof10;
 case 10:
 	goto st9;
-st25:
+st27:
 	if ( ++p == pe )
-		goto _test_eof25;
-case 25:
+		goto _test_eof27;
+case 27:
 	switch( (*p) ) {
-		case 33: goto tr44;
-		case 63: goto tr44;
-		case 95: goto st25;
+		case 33: goto tr46;
+		case 63: goto tr46;
+		case 95: goto st27;
 	}
 	if ( (*p) < 65 ) {
 		if ( 48 <= (*p) && (*p) <= 57 )
-			goto st25;
+			goto st27;
 	} else if ( (*p) > 90 ) {
 		if ( 97 <= (*p) && (*p) <= 122 )
-			goto st25;
+			goto st27;
 	} else
-		goto st25;
-	goto tr43;
+		goto st27;
+	goto tr45;
 st11:
 	if ( ++p == pe )
 		goto _test_eof11;
@@ -477,56 +486,56 @@ case 11:
 	if ( (*p) == 124 )
 		goto tr7;
 	goto st0;
-st26:
-	if ( ++p == pe )
-		goto _test_eof26;
-case 26:
-	if ( (*p) == 125 )
-		goto tr45;
-	goto tr38;
-tr18:
-#line 86 "lib/hotcell/lexer.rl"
-	{{p = ((te))-1;}{ emit_comment; }}
-	goto st27;
-tr19:
-#line 85 "lib/hotcell/lexer.rl"
-	{te = p+1;{ emit_comment; {cs = stack[--top];goto _again;} }}
-	goto st27;
-tr48:
-#line 86 "lib/hotcell/lexer.rl"
-	{te = p;p--;{ emit_comment; }}
-	goto st27;
-st27:
-#line 1 "NONE"
-	{ts = 0;}
-	if ( ++p == pe )
-		goto _test_eof27;
-case 27:
-#line 1 "NONE"
-	{ts = p;}
-#line 508 "ext/lexerc/lexerc.c"
-	if ( (*p) == 35 )
-		goto tr47;
-	goto st28;
 st28:
 	if ( ++p == pe )
 		goto _test_eof28;
 case 28:
-	if ( (*p) == 35 )
-		goto tr48;
-	goto st28;
-tr47:
-#line 1 "NONE"
-	{te = p+1;}
+	if ( (*p) == 125 )
+		goto tr47;
+	goto tr38;
+tr18:
+#line 87 "lib/hotcell/lexer.rl"
+	{{p = ((te))-1;}{ emit_comment; }}
+	goto st29;
+tr19:
+#line 86 "lib/hotcell/lexer.rl"
+	{te = p+1;{ emit_comment; {cs = stack[--top];goto _again;} }}
+	goto st29;
+tr50:
+#line 87 "lib/hotcell/lexer.rl"
+	{te = p;p--;{ emit_comment; }}
 	goto st29;
 st29:
+#line 1 "NONE"
+	{ts = 0;}
 	if ( ++p == pe )
 		goto _test_eof29;
 case 29:
-#line 527 "ext/lexerc/lexerc.c"
+#line 1 "NONE"
+	{ts = p;}
+#line 517 "ext/lexerc/lexerc.c"
+	if ( (*p) == 35 )
+		goto tr49;
+	goto st30;
+st30:
+	if ( ++p == pe )
+		goto _test_eof30;
+case 30:
+	if ( (*p) == 35 )
+		goto tr50;
+	goto st30;
+tr49:
+#line 1 "NONE"
+	{te = p+1;}
+	goto st31;
+st31:
+	if ( ++p == pe )
+		goto _test_eof31;
+case 31:
+#line 536 "ext/lexerc/lexerc.c"
 	if ( (*p) == 125 )
 		goto st12;
-	goto tr48;
+	goto tr50;
 st12:
 	if ( ++p == pe )
 		goto _test_eof12;
@@ -554,15 +563,17 @@ case 12:
 	_test_eof8: cs = 8; goto _test_eof; 
 	_test_eof22: cs = 22; goto _test_eof; 
 	_test_eof23: cs = 23; goto _test_eof; 
-	_test_eof9: cs = 9; goto _test_eof; 
 	_test_eof24: cs = 24; goto _test_eof; 
-	_test_eof10: cs = 10; goto _test_eof; 
 	_test_eof25: cs = 25; goto _test_eof; 
-	_test_eof11: cs = 11; goto _test_eof; 
+	_test_eof9: cs = 9; goto _test_eof; 
 	_test_eof26: cs = 26; goto _test_eof; 
+	_test_eof10: cs = 10; goto _test_eof; 
 	_test_eof27: cs = 27; goto _test_eof; 
+	_test_eof11: cs = 11; goto _test_eof; 
 	_test_eof28: cs = 28; goto _test_eof; 
 	_test_eof29: cs = 29; goto _test_eof; 
+	_test_eof30: cs = 30; goto _test_eof; 
+	_test_eof31: cs = 31; goto _test_eof; 
 	_test_eof12: cs = 12; goto _test_eof; 
 
 	_test_eof: {}
@@ -579,25 +590,27 @@ case 12:
 	case 20: goto tr38;
 	case 21: goto tr12;
 	case 8: goto tr12;
-	case 22: goto tr12;
+	case 22: goto tr42;
 	case 23: goto tr38;
+	case 24: goto tr38;
+	case 25: goto tr38;
 	case 9: goto tr14;
-	case 24: goto tr42;
+	case 26: goto tr44;
 	case 10: goto tr14;
-	case 25: goto tr43;
-	case 26: goto tr38;
-	case 28: goto tr48;
-	case 29: goto tr48;
+	case 27: goto tr45;
+	case 28: goto tr38;
+	case 30: goto tr50;
+	case 31: goto tr50;
 	case 12: goto tr18;
 	case 6: 
-#line 45 "lib/hotcell/lexer.rl"
+#line 46 "lib/hotcell/lexer.rl"
 	{ raise_unterminated_string; }
 	break;
 	case 2: 
-#line 49 "lib/hotcell/lexer.rl"
+#line 50 "lib/hotcell/lexer.rl"
 	{ raise_unterminated_string; }
 	break;
-#line 601 "ext/lexerc/lexerc.c"
+#line 614 "ext/lexerc/lexerc.c"
 	}
 	}
 

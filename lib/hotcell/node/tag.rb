@@ -24,7 +24,7 @@ module Hotcell
       when :escape
         ERB::Util.html_escape_once(result)
       else
-        result
+        result.to_s
       end
     end
   end

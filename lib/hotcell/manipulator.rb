@@ -7,7 +7,7 @@ module Hotcell
         class_attribute :manipulator_methods, instance_writter: false
         self.manipulator_methods = Set.new
 
-        def self.manipulator *methods
+        def self.manipulate *methods
           self.manipulator_methods = Set.new(manipulator_methods.to_a + methods.flatten.map(&:to_s))
         end
       end
@@ -17,7 +17,25 @@ module Hotcell
       end
 
       def manipulator_invoke method, *arguments
-        send(method, *arguments) if manipulator_methods.include? method
+        if method == '[]'
+          manipulator_invoke_brackets *arguments
+        elsif manipulator_invokable? method
+          send(method, *arguments)
+        end
+      end
+
+    private
+
+      def manipulator_invokable? method
+        manipulator_methods.include? method
+      end
+
+      def manipulator_invoke_brackets *arguments
+        if respond_to? :[]
+          self[*arguments]
+        else
+          manipulator_invoke *arguments
+        end
       end
     end
 

@@ -3,8 +3,8 @@ require 'spec_helper'
 
 describe Hotcell::Parser do
   def method_missing method, *args, &block
-    klass = Hotcell::Calculator::HANDLERS[method] ?
-      Hotcell::Calculator : Hotcell::Node
+    klass = Hotcell::Expression::HANDLERS[method] ?
+      Hotcell::Expression : Hotcell::Node
 
     instance = Hotcell::Assigner.new *args if method == :ASSIGN
     instance = Hotcell::Summoner.new *args if method == :METHOD
@@ -157,6 +157,12 @@ describe Hotcell::Parser do
     specify { parse('{{ (\'hello\') }}').should be_equal_node_to JOINER(TAG('hello', mode: :normal)) }
     specify { parse('{{ () }}').should be_equal_node_to JOINER(TAG(nil, mode: :normal)) }
 
+    specify { parse('{{ \'a\'..\'z\' }}').should be_equal_node_to JOINER(TAG('a'..'z', mode: :normal)) }
+    specify { parse('{{ 0..10 }}').should be_equal_node_to JOINER(TAG(0..10, mode: :normal)) }
+    specify { parse('{{ 0...10 }}').should be_equal_node_to JOINER(TAG(0...10, mode: :normal)) }
+    specify { parse('{{ 3 + 0..10 + 5 }}').should be_equal_node_to JOINER(TAG(3..15, mode: :normal)) }
+    specify { parse('{{ 3 + (0..var) + 5 }}').should be_equal_node_to JOINER(TAG(PLUS(PLUS(3, RANGE(0, METHOD('var'))), 5), mode: :normal)) }
+
     specify { parse('{{ bar > 2 }}').should be_equal_node_to JOINER(TAG(GT(METHOD('bar'), 2), mode: :normal)) }
     specify { parse('{{ 2 < bar }}').should be_equal_node_to JOINER(TAG(LT(2, METHOD('bar')), mode: :normal)) }
     specify { parse('{{ 2 >= tru }}').should be_equal_node_to JOINER(TAG(GTE(2, METHOD('tru')), mode: :normal)) }
@@ -202,7 +208,7 @@ describe Hotcell::Parser do
       mode: :normal)) }
       specify { parse('{{ foo(\'hello\').bar[2].baz(-42) }}').should be_equal_node_to JOINER(TAG(
         METHOD('baz',
-          METHOD('manipulator_brackets',
+          METHOD('[]',
             METHOD('bar',
               METHOD('foo', nil, 'hello')
             ), 2
@@ -216,7 +222,7 @@ describe Hotcell::Parser do
     specify { parse('{{ [] }}').should be_equal_node_to JOINER(TAG(ARRAY(), mode: :normal)) }
     specify { parse('{{ [ 2 ] }}').should be_equal_node_to JOINER(TAG(ARRAY(2), mode: :normal)) }
     specify { parse('{{ [ 2, 3 ] }}').should be_equal_node_to JOINER(TAG(ARRAY(2, 3), mode: :normal)) }
-    specify { parse('{{ [2, 3][42] }}').should be_equal_node_to JOINER(TAG(METHOD('manipulator_brackets', ARRAY(2, 3), 42), mode: :normal)) }
+    specify { parse('{{ [2, 3][42] }}').should be_equal_node_to JOINER(TAG(METHOD('[]', ARRAY(2, 3), 42), mode: :normal)) }
     specify { parse('{{ [2 + foo, (2 * bar)] }}').should be_equal_node_to JOINER(TAG(ARRAY(PLUS(2, METHOD('foo')), MULTIPLY(2, METHOD('bar'))), mode: :normal)) }
     specify { parse('{{ [[2, 3], 42] }}').should be_equal_node_to JOINER(TAG(ARRAY(ARRAY(2, 3), 42), mode: :normal)) }
   end
@@ -227,7 +233,7 @@ describe Hotcell::Parser do
       JOINER(TAG(HASH(PAIR('hello', 'world')), mode: :normal))
     ) }
     specify { parse('{{ {hello: \'world\'}[\'hello\'] }}').should be_equal_node_to(
-      JOINER(TAG(METHOD('manipulator_brackets', HASH(PAIR('hello', 'world')), 'hello'), mode: :normal))
+      JOINER(TAG(METHOD('[]', HASH(PAIR('hello', 'world')), 'hello'), mode: :normal))
     ) }
     specify { parse('{{ { hello: 3, world: 6 * foo } }}').should be_equal_node_to(
       JOINER(TAG(HASH(
@@ -238,11 +244,11 @@ describe Hotcell::Parser do
   end
 
   context '[]' do
-    specify { parse('{{ hello[3] }}').should be_equal_node_to JOINER(TAG(METHOD('manipulator_brackets', METHOD('hello'), 3), mode: :normal)) }
-    specify { parse('{{ \'boom\'[3] }}').should be_equal_node_to JOINER(TAG(METHOD('manipulator_brackets', 'boom', 3), mode: :normal)) }
-    specify { parse('{{ 7[3] }}').should be_equal_node_to JOINER(TAG(METHOD('manipulator_brackets', 7, 3), mode: :normal)) }
-    specify { parse('{{ 3 + 5[7] }}').should be_equal_node_to JOINER(TAG(PLUS(3, METHOD('manipulator_brackets', 5, 7)), mode: :normal)) }
-    specify { parse('{{ (3 + 5)[7] }}').should be_equal_node_to JOINER(TAG(METHOD('manipulator_brackets', 8, 7), mode: :normal)) }
+    specify { parse('{{ hello[3] }}').should be_equal_node_to JOINER(TAG(METHOD('[]', METHOD('hello'), 3), mode: :normal)) }
+    specify { parse('{{ \'boom\'[3] }}').should be_equal_node_to JOINER(TAG(METHOD('[]', 'boom', 3), mode: :normal)) }
+    specify { parse('{{ 7[3] }}').should be_equal_node_to JOINER(TAG(METHOD('[]', 7, 3), mode: :normal)) }
+    specify { parse('{{ 3 + 5[7] }}').should be_equal_node_to JOINER(TAG(PLUS(3, METHOD('[]', 5, 7)), mode: :normal)) }
+    specify { parse('{{ (3 + 5)[7] }}').should be_equal_node_to JOINER(TAG(METHOD('[]', 8, 7), mode: :normal)) }
   end
 
   context 'function arguments' do

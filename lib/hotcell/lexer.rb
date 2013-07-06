@@ -6,8 +6,8 @@ module Hotcell
       '&&' => :AND, '||' => :OR, '!' => :NOT, '==' => :EQUAL, '!=' => :INEQUAL,
       '>' => :GT, '>=' => :GTE, '<' => :LT, '<=' => :LTE,
 
-      '=' => :ASSIGN, ',' => :COMMA, '.' => :PERIOD, ':' => :COLON, '?' => :QUESTION,
-      ';' => :SEMICOLON
+      '=' => :ASSIGN, ',' => :COMMA, '.' => :PERIOD, '..' => :RANGE, '...' => :RANGE,
+      ':' => :COLON, '?' => :QUESTION, ';' => :SEMICOLON
     }
 
     BOPEN = { '[' => :AOPEN, '{' => :HOPEN, '(' => :POPEN }

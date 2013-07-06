@@ -45,6 +45,7 @@ prechigh
   nonassoc EQUAL INEQUAL
   left AND
   left OR
+  nonassoc RANGE
   right TERNARY
   right ASSIGN
   nonassoc COMMA COLON
@@ -137,27 +138,27 @@ rule
           | NEWLINE { result = [] }
           | expr { result = [val[0]] }
 
-  expr: expr MULTIPLY expr { result = build Calculator, :MULTIPLY, val[0], val[2], position: pospoppush(3) }
-      | expr POWER expr { result = build Calculator, :POWER, val[0], val[2], position: pospoppush(3) }
-      | expr DIVIDE expr { result = build Calculator, :DIVIDE, val[0], val[2], position: pospoppush(3) }
-      | expr PLUS expr { result = build Calculator, :PLUS, val[0], val[2], position: pospoppush(3) }
-      | expr MINUS expr { result = build Calculator, :MINUS, val[0], val[2], position: pospoppush(3) }
-      | expr MODULO expr { result = build Calculator, :MODULO, val[0], val[2], position: pospoppush(3) }
-      | MINUS expr =UMINUS { result = build Calculator, :UMINUS, val[1], position: pospoppush(2) }
-      | PLUS expr =UPLUS { result = build Calculator, :UPLUS, val[1], position: pospoppush(2) }
-      | expr AND expr { result = build Calculator, :AND, val[0], val[2], position: pospoppush(3) }
-      | expr OR expr { result = build Calculator, :OR, val[0], val[2], position: pospoppush(3) }
-      | expr GT expr { result = build Calculator, :GT, val[0], val[2], position: pospoppush(3) }
-      | expr GTE expr { result = build Calculator, :GTE, val[0], val[2], position: pospoppush(3) }
-      | expr LT expr { result = build Calculator, :LT, val[0], val[2], position: pospoppush(3) }
-      | expr LTE expr { result = build Calculator, :LTE, val[0], val[2], position: pospoppush(3) }
-      | expr EQUAL expr { result = build Calculator, :EQUAL, val[0], val[2], position: pospoppush(3) }
-      | expr INEQUAL expr { result = build Calculator, :INEQUAL, val[0], val[2], position: pospoppush(3) }
-      | NOT expr { result = build Calculator, :NOT, val[1], position: pospoppush(2) }
+  expr: expr MULTIPLY expr { result = build Expression, :MULTIPLY, val[0], val[2], position: pospoppush(3) }
+      | expr POWER expr { result = build Expression, :POWER, val[0], val[2], position: pospoppush(3) }
+      | expr DIVIDE expr { result = build Expression, :DIVIDE, val[0], val[2], position: pospoppush(3) }
+      | expr PLUS expr { result = build Expression, :PLUS, val[0], val[2], position: pospoppush(3) }
+      | expr MINUS expr { result = build Expression, :MINUS, val[0], val[2], position: pospoppush(3) }
+      | expr MODULO expr { result = build Expression, :MODULO, val[0], val[2], position: pospoppush(3) }
+      | MINUS expr =UMINUS { result = build Expression, :UMINUS, val[1], position: pospoppush(2) }
+      | PLUS expr =UPLUS { result = build Expression, :UPLUS, val[1], position: pospoppush(2) }
+      | expr AND expr { result = build Expression, :AND, val[0], val[2], position: pospoppush(3) }
+      | expr OR expr { result = build Expression, :OR, val[0], val[2], position: pospoppush(3) }
+      | expr GT expr { result = build Expression, :GT, val[0], val[2], position: pospoppush(3) }
+      | expr GTE expr { result = build Expression, :GTE, val[0], val[2], position: pospoppush(3) }
+      | expr LT expr { result = build Expression, :LT, val[0], val[2], position: pospoppush(3) }
+      | expr LTE expr { result = build Expression, :LTE, val[0], val[2], position: pospoppush(3) }
+      | expr EQUAL expr { result = build Expression, :EQUAL, val[0], val[2], position: pospoppush(3) }
+      | expr INEQUAL expr { result = build Expression, :INEQUAL, val[0], val[2], position: pospoppush(3) }
+      | NOT expr { result = build Expression, :NOT, val[1], position: pospoppush(2) }
       | IDENTIFER ASSIGN expr { result = build Assigner, val[0], val[2], position: pospoppush(3) }
       | expr PERIOD method { pospoppush(3); val[2].children[0] = val[0]; result = val[2] }
       | expr AOPEN arguments ACLOSE {
-          result = build Summoner, 'manipulator_brackets', val[0], *val[2], position: pospoppush(4)
+          result = build Summoner, '[]', val[0], *val[2], position: pospoppush(4)
         }
       | POPEN PCLOSE { pospoppush(2); result = nil }
       | POPEN sequence PCLOSE {
@@ -171,11 +172,16 @@ rule
         }
       | value
 
-  value: const | number | string | array | hash | method
+  value: const | number | string | range | array | hash | method
 
   const: NIL | TRUE | FALSE
   number: INTEGER | FLOAT
   string: STRING | REGEXP
+
+  range: expr RANGE expr {
+           result = build Expression, val[1] == '..' ? :RANGE : :ERANGE,
+             val[0], val[2], position: pospoppush(3)
+         }
 
   array: AOPEN ACLOSE { result = build Arrayer, :ARRAY, position: pospoppush(2) }
        | AOPEN params ACLOSE { result = build Arrayer, :ARRAY, *val[1], position: pospoppush(3) }

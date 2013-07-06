@@ -54,7 +54,7 @@ module Hotcell
   end
 end
 
-require 'hotcell/node/calculator'
+require 'hotcell/node/expression'
 require 'hotcell/node/assigner'
 require 'hotcell/node/summoner'
 require 'hotcell/node/arrayer'

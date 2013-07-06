@@ -81,6 +81,23 @@ describe Hotcell::Template do
         {{ end for }}
       SOURCE
     ).render.gsub(/[\s\n]+/, ' ').strip.should == '4 3 2 1 8 6 4 2 12 9 6 3 16 12 8 4' }
+
+    context 'method invokation' do
+      specify { described_class.parse("{{ [1, 2, 3][1] }}").render.should == '2' }
+      specify { described_class.parse("{{ [1, 2, 3][1..2] }}").render.should == '[2, 3]' }
+      specify { described_class.parse("{{ [1, 2, 3].last }}").render.should == '3' }
+      specify { described_class.parse("{{ [1, 2, 3]['last'] }}").render.should =~ /TypeError/ }
+      specify { described_class.parse("{{ { a: 1, b: 2 }['b'] }}").render.should == '2' }
+      specify { described_class.parse("{{ { count: 5, b: 7 }.count }}").render.should == '2' }
+      specify { described_class.parse("{{ { count: 5, b: 7 }.b }}").render.should == '7' }
+      specify { described_class.parse("{{ { count: 5, b: 7 }['count'] }}").render.should == '5' }
+      specify { described_class.parse("{{ { count: 5, b: 7 }['b'] }}").render.should == '7' }
+      specify { described_class.parse("{{ { count: 5, b: 7 }['size'] }}").render.should == '' }
+      specify { described_class.parse("{{ 'string'[1] }}").render.should == 't' }
+      specify { described_class.parse("{{ 'string'[1, 3] }}").render.should == 'tri' }
+      specify { described_class.parse("{{ 'string'.size }}").render.should == '6' }
+      specify { described_class.parse("{{ 'string'['size'] }}").render.should == '' }
+    end
   end
 
   context 'escaping' do

@@ -43,6 +43,7 @@ Hotcell has several basic types:
   Strings support escaping `{{ 'tlhab \'oS \'Iw HoHwI\' So\' batlh\' }}`.
   Double-quoted strings also support escape sequences {{ "\n\r\s\t" }}
 * Regular expressions `{{ /Foo/i }}`. Simple. Expression plus options (imx)
+* Ranges `{{ 'a'..var_z }}` or `{{ 1...9 }}` for end value exclusion.
 * Arrays `{{ [42, 'hello', /regex/m] }}`
 * Hashes `{{ { a: 42, b: 'bar' } }}` has js-like syntax, so only string
   can be a key for a hash
@@ -265,7 +266,7 @@ Case command. Like in most programming languages
 ##### For
 
 Loop command, first argument - variable to put next value, `in` option
-takes an array.
+takes any enumerable (i.e. array, range or hash).
 
 ```
 {{ for post, in: posts }}
