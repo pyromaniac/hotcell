@@ -135,11 +135,12 @@ Hotcell has several basic types:
   Last two have the same meaning, use whatever you like.
 
 All the basic types are objects and support method calls on themselfs.
+Hotcell supports ruby-like string interpolation: `{{ "hello, #{name}" }}`
 
 ### Variables
 
 Variable is a value reference (`{{ name }}`). Variable name is better
-to describe with regexp 
+to describe with regexp
 
 ```ruby
 /\[_a-z\]\[_a-z0-9\]*[?!]?/i

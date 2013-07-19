@@ -53,8 +53,8 @@ prechigh
 preclow
 start document
 rule
-  document: document document_unit { pospoppush(2); val[0].children.push(val[1]) }
-          | document_unit { result = build Joiner, :JOINER, val[0], position: pospoppush(1) }
+  document: document document_unit { pospoppush(2); val[0].push(val[1]) }
+          | document_unit { result = [val[0]] }
   document_unit: template | tag | block_tag | command_tag
 
   template: TEMPLATE { result = val[0] }
@@ -162,21 +162,37 @@ rule
         }
       | POPEN PCLOSE { pospoppush(2); result = nil }
       | POPEN sequence PCLOSE {
-          position = pospoppush(3)
           result = case val[1].size
           when 1
             val[1][0]
           else
-            build Sequencer, :SEQUENCE, *val[1].flatten, position: position
+            build Sequencer, :SEQUENCE, *val[1].flatten, position: pospoppush(3)
           end
         }
       | value
 
-  value: const | number | string | range | array | hash | method
+  value: const | number | string | dstring | regexp | range | array | hash | method
 
   const: NIL | TRUE | FALSE
   number: INTEGER | FLOAT
-  string: STRING | REGEXP
+  string: STRING
+  regexp: REGEXP
+
+  dstring: DOPEN dstring_content DCLOSE { result = build Expression, :DSTRING, *val[1], position: pospoppush(3) }
+         | DOPEN DCLOSE { pospoppush(2); result = '' }
+  dstring_content: STRING { result = [val[0]] }
+                 | dstring_interpolation { result = [val[0]] }
+                 | dstring_content STRING { pospoppush(2); val[0].push(val[1]); result = val[0] }
+                 | dstring_content dstring_interpolation { pospoppush(2); val[0].push(val[1]); result = val[0] }
+  dstring_interpolation: IOPEN sequence ICLOSE {
+                           result = case val[1].size
+                           when 1
+                             val[1][0]
+                           else
+                             build Sequencer, :SEQUENCE, *val[1].flatten, position: pospoppush(3)
+                           end
+                         }
+                       | IOPEN ICLOSE { pospoppush(2); result = nil }
 
   range: expr RANGE expr {
            result = build Expression, val[1] == '..' ? :RANGE : :ERANGE,
@@ -260,11 +276,8 @@ rule
   end
 
   def parse
-    if @tokens.size == 0
-      build Joiner, :JOINER, position: 0
-    else
-      do_parse
-    end
+    children = @tokens.size.zero? ? [] : do_parse
+    build Joiner, :JOINER, *children, position: 0
   end
 
   def next_token

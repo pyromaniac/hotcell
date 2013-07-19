@@ -218,6 +218,21 @@ describe Hotcell::Parser do
     end
   end
 
+  context 'interpolation' do
+    specify { parse('{{ "hello" }}').should be_equal_node_to JOINER(TAG('hello', mode: :normal)) }
+    specify { parse('{{ \'#{}\' }}').should be_equal_node_to JOINER(TAG('#{}', mode: :normal)) }
+    specify { parse('{{ "#{}" }}').should be_equal_node_to JOINER(TAG('', mode: :normal)) }
+    specify { parse('{{ "#{ 3 }" }}').should be_equal_node_to JOINER(TAG('3', mode: :normal)) }
+    specify { parse('{{ "#{ var }" }}').should be_equal_node_to JOINER(TAG(DSTRING(METHOD('var')), mode: :normal)) }
+    specify { parse('{{ "#{ var }world" }}').should be_equal_node_to JOINER(TAG(DSTRING(METHOD('var'), 'world'), mode: :normal)) }
+    specify { parse('{{ "hello#{}" }}').should be_equal_node_to JOINER(TAG('hello', mode: :normal)) }
+    specify { parse('{{ "hello#{}world" }}').should be_equal_node_to JOINER(TAG('helloworld', mode: :normal)) }
+    specify { parse('{{ "hello#{ 6 * 7 }world" }}').should be_equal_node_to JOINER(TAG('hello42world', mode: :normal)) }
+    specify { parse('{{ "hello#{ var = 6 * 7; var + 1 }world" }}').should be_equal_node_to JOINER(
+      TAG(DSTRING('hello', SEQUENCE(ASSIGN('var', 42), PLUS(METHOD('var'), 1)),  'world'), mode: :normal)
+    ) }
+  end
+
   context 'arrays' do
     specify { parse('{{ [] }}').should be_equal_node_to JOINER(TAG(ARRAY(), mode: :normal)) }
     specify { parse('{{ [ 2 ] }}').should be_equal_node_to JOINER(TAG(ARRAY(2), mode: :normal)) }

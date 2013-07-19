@@ -8,6 +8,33 @@
     }
   }
 
+  action Interpolate {
+    braces_count = 0;
+    emit_interpolation;
+    fcall interpolation;
+  }
+
+  action OpenBrace {
+    emit_operator;
+    braces_count++;
+  }
+
+  action CloseBrace {
+    if (braces_count < 1) {
+      emit_interpolation;
+      fret;
+    } else {
+      emit_operator;
+      braces_count--;
+    }
+  }
+
+  action ParseDstring {
+    dstring_start = ts - data;
+    emit_dstring_open;
+    fcall dstring;
+  }
+
   include "lexer.rl";
 }%%
 
@@ -25,6 +52,8 @@ static char *ts;
 static char *te;
 static char *data;
 static VALUE encoding;
+static int braces_count;
+static long dstring_start;
 
 static VALUE tokenize(VALUE self) {
   VALUE source = rb_iv_get(self, "@source");
@@ -49,6 +78,11 @@ static VALUE tokenize(VALUE self) {
 
   if (ts > 0 && ((ts - data) < (pe - data - 1))) {
     raise_unexpected_symbol;
+  }
+
+  if (cs == puffer_lexer_en_dstring) {
+    ts = data + dstring_start;
+    raise_unterminated_string;
   }
 
   return rb_iv_get(self, "@token_array");

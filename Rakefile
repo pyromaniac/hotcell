@@ -28,8 +28,8 @@ namespace :project do
   end
 
   task :dot do
-    `ragel -Vp lib/hotcell/lexerr.rl > lexerr.dot`
-    `ragel -Vp lib/hotcell/lexerc.rl > lexerc.dot`
+    `ragel -Vp -I lib/hotcell lib/hotcell/lexerr.rl > lexerr.dot`
+    `ragel -Vp -I lib/hotcell ext/lexerc/lexerc.rl > lexerc.dot`
   end
 
   desc 'Build parser'

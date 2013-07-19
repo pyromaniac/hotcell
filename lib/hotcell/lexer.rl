@@ -43,11 +43,8 @@
 
   squote = "'";
   snon_quote = [^\\'];
-  sstring = squote (snon_quote | escaped_symbol)* squote @lerr{ raise_unterminated_string; };
-
-  dquote = '"';
-  dnon_quote = [^\\"];
-  dstring = dquote (dnon_quote | escaped_symbol)* dquote @lerr{ raise_unterminated_string; };
+  string_content = squote (snon_quote | escaped_symbol)* squote @lerr{ raise_unterminated_string; };
+  string = '""' | string_content;
 
   rquote = '/';
   rnon_quote = [^\\/];
@@ -69,14 +66,36 @@
   template_comment_close = '#}}';
   template_comment_body = [^\#]+ | '#';
 
+  dnon_quote = [^\\#"];
+  dstring_content = (dnon_quote | escaped_symbol)+ | '#';
+
+  dstring := |*
+    '"' => { emit_dstring_close; fret; };
+    '#{' => Interpolate;
+    dstring_content => { emit_dstring; };
+  *|;
+
+  interpolation_operator = operator - [{}];
+
+  interpolation := |*
+    interpolation_operator => { emit_operator; };
+    '{' => OpenBrace;
+    '}' => CloseBrace;
+    '"' => ParseDstring;
+    numeric => { emit_numeric; };
+    identifer => { emit_identifer; };
+    string => { emit_string; };
+    regexp => { emit_regexp; };
+    blank;
+  *|;
 
   expression := |*
     tag_close => { emit_tag; fret; };
+    '"' => ParseDstring;
     operator => { emit_operator; };
     numeric => { emit_numeric; };
     identifer => { emit_identifer; };
-    sstring => { emit_sstring; };
-    dstring => { emit_dstring; };
+    string => { emit_string; };
     regexp => { emit_regexp; };
     comment => { emit_comment; };
     blank;

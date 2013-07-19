@@ -67,11 +67,11 @@ describe Hotcell::Template do
     specify { described_class.parse(<<-SOURCE
         {{ for i, in: [1, 2, 3, 4] }}
           {{ if i % 2 == 1 }}
-            {{ i }}
+            {{ "number\#{i}" }}
           {{ end if }}
         {{ end for }}
       SOURCE
-    ).render.gsub(/[\s\n]+/, ' ').strip.should == '1 3' }
+    ).render.gsub(/[\s\n]+/, ' ').strip.should == 'number1 number3' }
 
     specify { described_class.parse(<<-SOURCE
         {{ for i, in: [1, 2, 3, 4] }}

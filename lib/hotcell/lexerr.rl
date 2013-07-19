@@ -13,6 +13,33 @@
     end
   }
 
+  action Interpolate {
+    @braces_count = 0;
+    emit_interpolation
+    fcall interpolation;
+  }
+
+  action OpenBrace {
+    emit_operator
+    @braces_count += 1
+  }
+
+  action CloseBrace {
+    if @braces_count < 1
+      emit_interpolation
+      fret;
+    else
+      emit_operator
+      @braces_count -= 1
+    end
+  }
+
+  action ParseDstring {
+    @dstring_start = @ts
+    emit_dstring_open
+    fcall dstring;
+  }
+
   include "lexer.rl";
 }%%
 
@@ -47,6 +74,11 @@ Hotcell::Lexer.class_eval do
     #%
 
     raise_unexpected_symbol unless @ts.nil?
+
+    if cs == puffer_lexer_en_dstring
+      @ts = @dstring_start
+      raise_unterminated_string
+    end
 
     @token_array
   end

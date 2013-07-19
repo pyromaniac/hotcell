@@ -67,14 +67,28 @@ module Hotcell
       end
     end
 
-    def emit_sstring
+    def emit_string
       emit :STRING, current_value[1..-2].gsub(SSTRING_ESCAPE_REGEXP) { |match|
         SSTRING_ESCAPE_MAP[match] }
     end
 
     def emit_dstring
-      emit :STRING, current_value[1..-2].gsub(DSTRING_ESCAPE_REGEXP) { |match|
+      last = @token_array[-1]
+      value = current_value.gsub(DSTRING_ESCAPE_REGEXP) { |match|
         DSTRING_ESCAPE_MAP[match] || match[1] }
+      if last && last[0] == :STRING
+        last[1][0] += value
+      else
+        emit :STRING, value
+      end
+    end
+
+    def emit_dstring_open
+      emit :DOPEN, '"'
+    end
+
+    def emit_dstring_close
+      emit :DCLOSE, '"'
     end
 
     def regexp_ambiguity
@@ -125,6 +139,11 @@ module Hotcell
       else
         emit :COMMENT, current_value
       end
+    end
+
+    def emit_interpolation
+      value = current_value
+      emit (value == '#{' ? :IOPEN : :ICLOSE), value
     end
 
     def raise_unexpected_symbol

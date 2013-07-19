@@ -105,13 +105,13 @@ describe Hotcell::Lexer do
 
     context 'constants' do
       specify { expression('nil').should == [[:NIL, nil]] }
-      specify { expression('"nil"').should == [[:STRING, 'nil']] }
+      specify { expression('"nil"').should == [[:DOPEN, '"'], [:STRING, 'nil'], [:DCLOSE, '"']] }
       specify { expression('null').should == [[:NIL, nil]] }
-      specify { expression('"null"').should == [[:STRING, 'null']] }
+      specify { expression('"null"').should == [[:DOPEN, '"'], [:STRING, 'null'], [:DCLOSE, '"']] }
       specify { expression('false').should == [[:FALSE, false]] }
-      specify { expression('"false"').should == [[:STRING, 'false']] }
+      specify { expression('"false"').should == [[:DOPEN, '"'], [:STRING, 'false'], [:DCLOSE, '"']] }
       specify { expression('true').should == [[:TRUE, true]] }
-      specify { expression('"true"').should == [[:STRING, 'true']] }
+      specify { expression('"true"').should == [[:DOPEN, '"'], [:STRING, 'true'], [:DCLOSE, '"']] }
     end
   end
 
@@ -130,7 +130,7 @@ describe Hotcell::Lexer do
       specify { expression(%q{'при\вет'}).should == [[:STRING, 'при\вет']] }
 
       context do
-        let(:strings) { data 'sstrings' }
+        let(:strings) { data 'strings' }
 
         specify { expression(strings).delete_if { |token| token.first == :NEWLINE }.should == [
           [:STRING, 'fo\'o'], [:STRING, 'fo\o'], [:STRING, 'fo\\o'],
@@ -141,26 +141,62 @@ describe Hotcell::Lexer do
 
     context 'double quoted' do
       specify { expression(%q{""}).should == [[:STRING, ""]] }
-      specify { expression(%q{"foo"}).should == [[:STRING, "foo"]] }
-      specify { expression(%q{"fo'o"}).should == [[:STRING, "fo'o"]] }
-      specify { expression(%q{"fo\o"}).should == [[:STRING, "fo\o"]] }
-      specify { expression(%q{"fo\"o"}).should == [[:STRING, "fo\"o"]] }
-      specify { expression(%q{"fo\'o"}).should == [[:STRING, "fo\'o"]] }
-      specify { expression(%q{"fo\no"}).should == [[:STRING, "fo\no"]] }
-      specify { expression(%q{"fo\mo"}).should == [[:STRING, "fo\mo"]] }
-      specify { expression(%q{"foo42"}).should == [[:STRING, "foo42"]] }
-      specify { expression(%q{"привет"}).should == [[:STRING, "привет"]] }
+      specify { expression(%q{"foo"}).should == [[:DOPEN, '"'], [:STRING, "foo"], [:DCLOSE, '"']] }
+      specify { expression(%q{"fo'o"}).should == [[:DOPEN, '"'], [:STRING, "fo'o"], [:DCLOSE, '"']] }
+      specify { expression(%q{"fo\o"}).should == [[:DOPEN, '"'], [:STRING, "fo\o"], [:DCLOSE, '"']] }
+      specify { expression(%q{"fo\"o"}).should == [[:DOPEN, '"'], [:STRING, "fo\"o"], [:DCLOSE, '"']] }
+      specify { expression(%q{"fo\'o"}).should == [[:DOPEN, '"'], [:STRING, "fo\'o"], [:DCLOSE, '"']] }
+      specify { expression(%q{"fo\no"}).should == [[:DOPEN, '"'], [:STRING, "fo\no"], [:DCLOSE, '"']] }
+      specify { expression(%q{"fo\mo"}).should == [[:DOPEN, '"'], [:STRING, "fo\mo"], [:DCLOSE, '"']] }
+      specify { expression(%q{"foo42"}).should == [[:DOPEN, '"'], [:STRING, "foo42"], [:DCLOSE, '"']] }
+      specify { expression(%q{"привет"}).should == [[:DOPEN, '"'], [:STRING, "привет"], [:DCLOSE, '"']] }
       # RBX can not handle this
       # specify { expression(%q{"при\вет"}).should == [[:STRING, "при\вет"]] }
 
       context do
         let(:strings) { data 'dstrings' }
 
-        specify { expression(strings).delete_if { |token| token.first == :NEWLINE }.should == [
+        specify { expression(strings).delete_if { |token|
+          [:NEWLINE, :DOPEN, :DCLOSE].include?(token.first)
+        }.should == [
           [:STRING, "fo\"o"], [:STRING, "fo\o"], [:STRING, "fo\\o"],
           [:STRING, "fo\no"], [:STRING, "fo\mo"], [:STRING, "fo\to"],
           [:STRING, "foo\nbar"]
         ] }
+      end
+    end
+
+    context 'interpolation' do
+      specify { expression('"{ }"').should == [[:DOPEN, '"'], [:STRING, '{ }'], [:DCLOSE, '"']] }
+      specify { expression('"#"').should == [[:DOPEN, '"'], [:STRING, '#'], [:DCLOSE, '"']] }
+      specify { expression('"# "').should == [[:DOPEN, '"'], [:STRING, '# '], [:DCLOSE, '"']] }
+      specify { expression('" #"').should == [[:DOPEN, '"'], [:STRING, ' #'], [:DCLOSE, '"']] }
+      specify { expression('"#{ var }"').should == [[:DOPEN, '"'], [:IOPEN, "\#{"], [:IDENTIFER, "var"],
+        [:ICLOSE, "}"], [:DCLOSE, '"']] }
+      specify { expression('"#{ } world"').should == [[:DOPEN, '"'], [:IOPEN, "\#{"], [:ICLOSE, "}"],
+        [:STRING, " world"], [:DCLOSE, '"']] }
+      specify { expression('"hello #{ }"').should == [[:DOPEN, '"'], [:STRING, "hello "], [:IOPEN, "\#{"],
+        [:ICLOSE, "}"], [:DCLOSE, '"']] }
+      specify { expression('"hello#{ } world"').should == [[:DOPEN, '"'], [:STRING, "hello"], [:IOPEN, "\#{"],
+        [:ICLOSE, "}"], [:STRING, " world"], [:DCLOSE, '"']] }
+      specify { expression('"hello #{ 2 + 3 }world"').should == [[:DOPEN, '"'], [:STRING, "hello "],
+        [:IOPEN, "\#{"], [:INTEGER, 2], [:PLUS, "+"], [:INTEGER, 3],
+        [:ICLOSE, "}"], [:STRING, "world"], [:DCLOSE, '"']] }
+      specify { expression('"\#{ var }"').should == [[:DOPEN, '"'], [:STRING, '#{ var }'], [:DCLOSE, '"']] }
+      specify { expression('"#{ } }"').should == [[:DOPEN, '"'], [:IOPEN, "\#{"], [:ICLOSE, "}"],
+        [:STRING, ' }'], [:DCLOSE, '"']] }
+      specify { expression('"#{ { } }"').should == [[:DOPEN, '"'], [:IOPEN, "\#{"], [:HOPEN, "{"],
+        [:HCLOSE, "}"], [:ICLOSE, "}"], [:DCLOSE, '"']] }
+      specify { expression('"#{ [ ] }"').should == [[:DOPEN, '"'], [:IOPEN, "\#{"], [:AOPEN, "["],
+        [:ACLOSE, "]"], [:ICLOSE, "}"], [:DCLOSE, '"']] }
+      specify { expression('"#\{ }"').should == [[:DOPEN, '"'], [:STRING, '#{ }'], [:DCLOSE, '"']] }
+      specify { expression('"##{ }"').should == [[:DOPEN, '"'], [:STRING, '#'], [:IOPEN, "\#{"], [:ICLOSE, "}"], [:DCLOSE, '"']] }
+      specify { expression('"###{ } #{ }"').should == [[:DOPEN, '"'], [:STRING, '##'], [:IOPEN, "\#{"],
+        [:ICLOSE, "}"], [:STRING, ' '], [:IOPEN, "\#{"], [:ICLOSE, "}"], [:DCLOSE, '"']] }
+
+      context 'exceptions' do
+        specify { expect { expression('"#{"') }.to raise_error Hotcell::UnterminatedString, /`" }}`.*1:7/ }
+        specify { expect { expression('"#{ { }"') }.to raise_error Hotcell::UnterminatedString, /`" }}`.*1:11/ }
       end
     end
   end
@@ -204,7 +240,8 @@ describe Hotcell::Lexer do
         [:INTEGER, 42], [:SEMICOLON, ";"], [:REGEXP, /regexp/]
       ] }
       specify { expression('"hello" /regexp/').should == [
-        [:STRING, "hello"], [:DIVIDE, "/"], [:IDENTIFER, "regexp"], [:DIVIDE, "/"]
+        [:DOPEN, '"'], [:STRING, "hello"], [:DCLOSE, '"'],
+        [:DIVIDE, "/"], [:IDENTIFER, "regexp"], [:DIVIDE, "/"]
       ] }
     end
   end
@@ -274,11 +311,13 @@ describe Hotcell::Lexer do
     specify { expression("foo(36.6);\n  a = \"привет\"").should == [
       [:IDENTIFER, "foo"], [:POPEN, "("], [:FLOAT, 36.6],
       [:PCLOSE, ")"], [:SEMICOLON, ";"], [:NEWLINE, "\n"],
-      [:IDENTIFER, "a"], [:ASSIGN, "="], [:STRING, "привет"]
+      [:IDENTIFER, "a"], [:ASSIGN, "="], [:DOPEN, '"'],
+      [:STRING, "привет"], [:DCLOSE, '"']
     ] }
     specify { expression("'foo'.match(\"^foo$\")").should == [
       [:STRING, "foo"], [:PERIOD, "."], [:IDENTIFER, "match"],
-      [:POPEN, "("], [:STRING, "^foo$"], [:PCLOSE, ")"]
+      [:POPEN, "("], [:DOPEN, '"'], [:STRING, "^foo$"],
+      [:DCLOSE, '"'], [:PCLOSE, ")"]
     ] }
   end
 

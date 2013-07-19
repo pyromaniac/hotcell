@@ -27,7 +27,7 @@ describe Hotcell::Commands::Include do
 
   describe '#render' do
     specify { parse("{{ include 'template0' }}").render(render_options).should =~ /Template not found/ }
-    specify { parse("{{ include 'template1' }}").render(render_options).should == 'Hello' }
+    specify { parse("{{ include 'template1' }}").render!(render_options).should == 'Hello' }
     specify { parse("{{ include 'template2' }}").render(render_options).should == 'Hello, ' }
     specify { parse(
       "{{ include 'template2', name: 'Pyrosha' }}"
