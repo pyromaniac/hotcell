@@ -218,6 +218,39 @@ describe Hotcell::Parser do
     end
   end
 
+  context 'ternary operator' do
+    specify { parse('{{ true ? 42 : 43 }}').should be_equal_node_to JOINER(TAG(42, mode: :normal)) }
+    specify { parse('{{ false ? 42 : 43 }}').should be_equal_node_to JOINER(TAG(43, mode: :normal)) }
+    specify { parse('{{ cond ? branch1 : branch2 }}').should be_equal_node_to JOINER(
+      TAG(TERNARY(METHOD('cond'), METHOD('branch1'), METHOD('branch2')), mode: :normal)
+    ) }
+    specify { parse('{{ cond1 ? branch1 : cond2 ? branch2 : branch3 }}').should be_equal_node_to JOINER(
+      TAG(TERNARY(
+        METHOD('cond1'), METHOD('branch1'),
+        TERNARY(METHOD('cond2'), METHOD('branch2'), METHOD('branch3'))
+      ), mode: :normal)
+    ) }
+    specify { parse('{{ (cond1 ? branch1 : cond2) ? branch2 : branch3 }}').should be_equal_node_to JOINER(
+      TAG(TERNARY(
+        TERNARY(METHOD('cond1'), METHOD('branch1'), METHOD('cond2')),
+        METHOD('branch2'), METHOD('branch3')
+      ), mode: :normal)
+    ) }
+    specify { parse('{{ cond1 ? cond2 ? branch1 : branch2 : branch3 }}').should be_equal_node_to JOINER(
+      TAG(TERNARY(
+        METHOD('cond1'),
+        TERNARY(METHOD('cond2'), METHOD('branch1'), METHOD('branch2')),
+        METHOD('branch3')
+      ), mode: :normal)
+    ) }
+    specify { parse('{{ res = cond ? branch1 + 3 : branch2 && true }}').should be_equal_node_to JOINER(
+      TAG(ASSIGN('res',
+        TERNARY(METHOD('cond'), PLUS(METHOD('branch1'), 3), AND(METHOD('branch2'), true)
+      )), mode: :normal)
+    ) }
+    specify { expect { parse('{{ (1 ? 2) : 3 }}') }.to raise_error Hotcell::UnexpectedLexem, "Unexpected PCLOSE `)` at 1:10"}
+  end
+
   context 'interpolation' do
     specify { parse('{{ "hello" }}').should be_equal_node_to JOINER(TAG('hello', mode: :normal)) }
     specify { parse('{{ \'#{}\' }}').should be_equal_node_to JOINER(TAG('#{}', mode: :normal)) }

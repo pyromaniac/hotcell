@@ -46,7 +46,7 @@ prechigh
   left AND
   left OR
   nonassoc RANGE
-  right TERNARY
+  right QUESTION
   right ASSIGN
   nonassoc COMMA COLON
   left SEMICOLON NEWLINE
@@ -155,6 +155,7 @@ rule
       | expr EQUAL expr { result = build Expression, :EQUAL, val[0], val[2], position: pospoppush(3) }
       | expr INEQUAL expr { result = build Expression, :INEQUAL, val[0], val[2], position: pospoppush(3) }
       | NOT expr { result = build Expression, :NOT, val[1], position: pospoppush(2) }
+      | expr QUESTION expr COLON expr { result = build Expression, :TERNARY, val[0], val[2], val[4], position: pospoppush(5) }
       | IDENTIFER ASSIGN expr { result = build Assigner, val[0], val[2], position: pospoppush(3) }
       | expr PERIOD method { pospoppush(3); val[2].children[0] = val[0]; result = val[2] }
       | expr AOPEN arguments ACLOSE {

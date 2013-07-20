@@ -18,6 +18,7 @@ module Hotcell
       GTE: ->(value1, value2) { value1 >= value2 },
       LT: ->(value1, value2) { value1 < value2 },
       LTE: ->(value1, value2) { value1 <= value2 },
+      TERNARY: ->(value1, value2, value3) { value1 ? value2 : value3 },
       RANGE: ->(value1, value2) { Range.new value1, value2 },
       ERANGE: ->(value1, value2) { Range.new value1, value2, true },
       DSTRING: ->(*values) { values.map(&:to_s).join }

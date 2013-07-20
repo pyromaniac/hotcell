@@ -170,6 +170,8 @@ Operators between values form an expression: `{{ forty_two = 6 * 7 }}` or
     method arguments passing: `{{ hello(who, where) }}`
   * `[]` is used for array or hash elements access (`{{ some_array[2] }}`
     or `{{ [1, 2, 3][2] }}` or `{{ { foo: 'bar' }['foo'] }}`)
+  * `?:` - ternary conditional operator: `{{ cond ? branch1 : branch2 }}`.
+    Similar behavior as ruby's, right-associative.
 
 Method call args are similar to ruby ones. You can call function like
 this: `{{ foo(42, 'string', opt1: 3, opt2: /regexp/) }}`, and the last
