@@ -11,7 +11,7 @@ module Hotcell
     :resolver, :resolver=, :escape_tags, :escape_tags=, to: :config
 end
 
-require 'hotcell/manipulator'
+require 'hotcell/tong'
 require 'hotcell/extensions'
 require 'hotcell/source'
 require 'hotcell/lexer'

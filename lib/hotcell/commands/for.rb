@@ -33,7 +33,7 @@ module Hotcell
         end.join
       end
 
-      class Forloop < Hotcell::Manipulator
+      class Forloop < Hotcell::Tong
         attr_reader :index
 
         def initialize object, index

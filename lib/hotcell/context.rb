@@ -46,11 +46,11 @@ module Hotcell
       raise e if e && options[:reraise]
     end
 
-    def manipulator_invoke method, *arguments
+    def tong_invoke method, *arguments
       if arguments.any?
-        helpers.manipulator_invoke(method, *arguments)
+        helpers.tong_invoke(method, *arguments)
       else
-        scope.key?(method) ? scope[method] : helpers.manipulator_invoke(method)
+        scope.key?(method) ? scope[method] : helpers.tong_invoke(method)
       end
     end
 
@@ -61,7 +61,7 @@ module Hotcell
     end
 
     def helpers_class
-      @helpers_class ||= Class.new(Hotcell::Manipulator).tap do |klass|
+      @helpers_class ||= Class.new(Hotcell::Tong).tap do |klass|
         options[:helpers].each { |helper| klass.send(:include, helper) }
       end
     end

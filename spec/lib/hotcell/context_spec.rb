@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Hotcell::Context do
   its('scope.scope') { should == [{}] }
-  its(:helpers) { should be_a Hotcell::Manipulator }
+  its(:helpers) { should be_a Hotcell::Tong }
 
   describe '#normalize_options' do
     def result options = {}
@@ -69,7 +69,7 @@ describe Hotcell::Context do
     end
   end
 
-  describe '#manipulator_invoke' do
+  describe '#tong_invoke' do
     subject { described_class.new(
       variables: { foo: 42, 'bar' => 'baz' }, environment: { 'baz' => 'moo' },
       helpers: Module.new do
@@ -82,12 +82,12 @@ describe Hotcell::Context do
         end
       end
     ) }
-    specify { subject.manipulator_invoke('foo').should == 42 }
-    specify { subject.manipulator_invoke('moo').should be_nil }
-    specify { subject.manipulator_invoke('baz').should be_nil }
-    specify { subject.manipulator_invoke('bar').should == 'baz' }
-    specify { expect { subject.manipulator_invoke('bar', 42) }.to raise_error ArgumentError }
-    specify { expect { subject.manipulator_invoke('strip') }.to raise_error ArgumentError }
-    specify { subject.manipulator_invoke('strip', '  hello  ').should == 'hello' }
+    specify { subject.tong_invoke('foo').should == 42 }
+    specify { subject.tong_invoke('moo').should be_nil }
+    specify { subject.tong_invoke('baz').should be_nil }
+    specify { subject.tong_invoke('bar').should == 'baz' }
+    specify { expect { subject.tong_invoke('bar', 42) }.to raise_error ArgumentError }
+    specify { expect { subject.tong_invoke('strip') }.to raise_error ArgumentError }
+    specify { subject.tong_invoke('strip', '  hello  ').should == 'hello' }
   end
 end
