@@ -21,7 +21,12 @@ module Hotcell
           tong_invoke_brackets *arguments
         elsif tong_invokable? method
           send(method, *arguments)
+        else
+          tong_missing(method, *arguments)
         end
+      end
+
+      def tong_missing method, *arguments
       end
 
     private

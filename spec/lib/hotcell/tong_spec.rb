@@ -66,4 +66,18 @@ describe Hotcell::Tong do
     specify { subject.tong_invoke('bar', 5, 8).should == 13 }
     specify { expect { subject.tong_invoke('bar') }.to raise_error ArgumentError }
   end
+
+  describe '#tong_missing' do
+    let(:klass) do
+      Class.new(described_class) do
+        def tong_missing method, *args
+          "missing #{method} with #{args}"
+        end
+      end
+    end
+    subject { klass.new }
+
+    specify { subject.tong_invoke('foo').should == 'missing foo with []' }
+    specify { subject.tong_invoke('bar', 42).should == 'missing bar with [42]' }
+  end
 end
