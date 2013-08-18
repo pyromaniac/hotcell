@@ -1,5 +1,5 @@
 %%{
-  machine puffer_lexer;
+  machine hotcell_lexer;
 
   action RegexpCheck {
     if (regexp_possible == Qfalse) {
@@ -80,7 +80,7 @@ static VALUE tokenize(VALUE self) {
     raise_unexpected_symbol;
   }
 
-  if (cs == puffer_lexer_en_dstring) {
+  if (cs == hotcell_lexer_en_dstring) {
     ts = data + dstring_start;
     raise_unterminated_string;
   }

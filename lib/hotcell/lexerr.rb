@@ -22,10 +22,10 @@ Hotcell::Lexer.class_eval do
     
 # line 24 "lib/hotcell/lexerr.rb"
 class << self
-	attr_accessor :_puffer_lexer_trans_keys
-	private :_puffer_lexer_trans_keys, :_puffer_lexer_trans_keys=
+	attr_accessor :_hotcell_lexer_trans_keys
+	private :_hotcell_lexer_trans_keys, :_hotcell_lexer_trans_keys=
 end
-self._puffer_lexer_trans_keys = [
+self._hotcell_lexer_trans_keys = [
 	0, 0, 32, 32, 0, 0, 
 	38, 38, 39, 92, 0, 
 	0, 48, 57, 47, 92, 
@@ -49,10 +49,10 @@ self._puffer_lexer_trans_keys = [
 ]
 
 class << self
-	attr_accessor :_puffer_lexer_key_spans
-	private :_puffer_lexer_key_spans, :_puffer_lexer_key_spans=
+	attr_accessor :_hotcell_lexer_key_spans
+	private :_hotcell_lexer_key_spans, :_hotcell_lexer_key_spans=
 end
-self._puffer_lexer_key_spans = [
+self._hotcell_lexer_key_spans = [
 	0, 1, 0, 1, 54, 0, 10, 46, 
 	0, 1, 1, 1, 54, 0, 10, 46, 
 	0, 1, 1, 1, 1, 1, 94, 59, 
@@ -63,10 +63,10 @@ self._puffer_lexer_key_spans = [
 ]
 
 class << self
-	attr_accessor :_puffer_lexer_index_offsets
-	private :_puffer_lexer_index_offsets, :_puffer_lexer_index_offsets=
+	attr_accessor :_hotcell_lexer_index_offsets
+	private :_hotcell_lexer_index_offsets, :_hotcell_lexer_index_offsets=
 end
-self._puffer_lexer_index_offsets = [
+self._hotcell_lexer_index_offsets = [
 	0, 0, 2, 3, 5, 60, 61, 72, 
 	119, 120, 122, 124, 126, 181, 182, 193, 
 	240, 241, 243, 245, 247, 249, 251, 346, 
@@ -77,10 +77,10 @@ self._puffer_lexer_index_offsets = [
 ]
 
 class << self
-	attr_accessor :_puffer_lexer_indicies
-	private :_puffer_lexer_indicies, :_puffer_lexer_indicies=
+	attr_accessor :_hotcell_lexer_indicies
+	private :_hotcell_lexer_indicies, :_hotcell_lexer_indicies=
 end
-self._puffer_lexer_indicies = [
+self._hotcell_lexer_indicies = [
 	1, 0, 3, 4, 5, 7, 6, 6, 
 	6, 6, 6, 6, 6, 6, 6, 6, 
 	6, 6, 6, 6, 6, 6, 6, 6, 
@@ -249,10 +249,10 @@ self._puffer_lexer_indicies = [
 ]
 
 class << self
-	attr_accessor :_puffer_lexer_trans_targs
-	private :_puffer_lexer_trans_targs, :_puffer_lexer_trans_targs=
+	attr_accessor :_hotcell_lexer_trans_targs
+	private :_hotcell_lexer_trans_targs, :_hotcell_lexer_trans_targs=
 end
-self._puffer_lexer_trans_targs = [
+self._hotcell_lexer_trans_targs = [
 	19, 19, 23, 24, 26, 0, 4, 26, 
 	5, 26, 31, 26, 7, 35, 8, 37, 
 	40, 37, 12, 37, 13, 37, 43, 37, 
@@ -268,10 +268,10 @@ self._puffer_lexer_trans_targs = [
 ]
 
 class << self
-	attr_accessor :_puffer_lexer_trans_actions
-	private :_puffer_lexer_trans_actions, :_puffer_lexer_trans_actions=
+	attr_accessor :_hotcell_lexer_trans_actions
+	private :_hotcell_lexer_trans_actions, :_hotcell_lexer_trans_actions=
 end
-self._puffer_lexer_trans_actions = [
+self._hotcell_lexer_trans_actions = [
 	1, 2, 3, 4, 5, 0, 0, 7, 
 	0, 8, 0, 9, 0, 0, 0, 10, 
 	11, 12, 0, 13, 0, 14, 0, 15, 
@@ -287,10 +287,10 @@ self._puffer_lexer_trans_actions = [
 ]
 
 class << self
-	attr_accessor :_puffer_lexer_to_state_actions
-	private :_puffer_lexer_to_state_actions, :_puffer_lexer_to_state_actions=
+	attr_accessor :_hotcell_lexer_to_state_actions
+	private :_hotcell_lexer_to_state_actions, :_hotcell_lexer_to_state_actions=
 end
-self._puffer_lexer_to_state_actions = [
+self._hotcell_lexer_to_state_actions = [
 	0, 0, 0, 0, 0, 0, 0, 0, 
 	0, 0, 0, 0, 0, 0, 0, 0, 
 	0, 0, 0, 18, 0, 0, 0, 23, 
@@ -301,10 +301,10 @@ self._puffer_lexer_to_state_actions = [
 ]
 
 class << self
-	attr_accessor :_puffer_lexer_from_state_actions
-	private :_puffer_lexer_from_state_actions, :_puffer_lexer_from_state_actions=
+	attr_accessor :_hotcell_lexer_from_state_actions
+	private :_hotcell_lexer_from_state_actions, :_hotcell_lexer_from_state_actions=
 end
-self._puffer_lexer_from_state_actions = [
+self._hotcell_lexer_from_state_actions = [
 	0, 0, 0, 0, 0, 0, 0, 0, 
 	0, 0, 0, 0, 0, 0, 0, 0, 
 	0, 0, 0, 19, 0, 0, 0, 19, 
@@ -315,10 +315,10 @@ self._puffer_lexer_from_state_actions = [
 ]
 
 class << self
-	attr_accessor :_puffer_lexer_eof_actions
-	private :_puffer_lexer_eof_actions, :_puffer_lexer_eof_actions=
+	attr_accessor :_hotcell_lexer_eof_actions
+	private :_hotcell_lexer_eof_actions, :_hotcell_lexer_eof_actions=
 end
-self._puffer_lexer_eof_actions = [
+self._hotcell_lexer_eof_actions = [
 	0, 0, 0, 0, 6, 0, 0, 0, 
 	0, 0, 0, 0, 6, 0, 0, 0, 
 	0, 0, 0, 0, 0, 0, 0, 0, 
@@ -329,10 +329,10 @@ self._puffer_lexer_eof_actions = [
 ]
 
 class << self
-	attr_accessor :_puffer_lexer_eof_trans
-	private :_puffer_lexer_eof_trans, :_puffer_lexer_eof_trans=
+	attr_accessor :_hotcell_lexer_eof_trans
+	private :_hotcell_lexer_eof_trans, :_hotcell_lexer_eof_trans=
 end
-self._puffer_lexer_eof_trans = [
+self._hotcell_lexer_eof_trans = [
 	0, 1, 3, 0, 0, 0, 10, 12, 
 	12, 0, 16, 0, 0, 0, 22, 24, 
 	24, 0, 28, 0, 32, 32, 34, 0, 
@@ -343,38 +343,38 @@ self._puffer_lexer_eof_trans = [
 ]
 
 class << self
-	attr_accessor :puffer_lexer_start
+	attr_accessor :hotcell_lexer_start
 end
-self.puffer_lexer_start = 19;
+self.hotcell_lexer_start = 19;
 class << self
-	attr_accessor :puffer_lexer_first_final
+	attr_accessor :hotcell_lexer_first_final
 end
-self.puffer_lexer_first_final = 19;
+self.hotcell_lexer_first_final = 19;
 class << self
-	attr_accessor :puffer_lexer_error
+	attr_accessor :hotcell_lexer_error
 end
-self.puffer_lexer_error = 0;
+self.hotcell_lexer_error = 0;
 
 class << self
-	attr_accessor :puffer_lexer_en_dstring
+	attr_accessor :hotcell_lexer_en_dstring
 end
-self.puffer_lexer_en_dstring = 23;
+self.hotcell_lexer_en_dstring = 23;
 class << self
-	attr_accessor :puffer_lexer_en_interpolation
+	attr_accessor :hotcell_lexer_en_interpolation
 end
-self.puffer_lexer_en_interpolation = 26;
+self.hotcell_lexer_en_interpolation = 26;
 class << self
-	attr_accessor :puffer_lexer_en_expression
+	attr_accessor :hotcell_lexer_en_expression
 end
-self.puffer_lexer_en_expression = 37;
+self.hotcell_lexer_en_expression = 37;
 class << self
-	attr_accessor :puffer_lexer_en_template_comment
+	attr_accessor :hotcell_lexer_en_template_comment
 end
-self.puffer_lexer_en_template_comment = 50;
+self.hotcell_lexer_en_template_comment = 50;
 class << self
-	attr_accessor :puffer_lexer_en_main
+	attr_accessor :hotcell_lexer_en_main
 end
-self.puffer_lexer_en_main = 19;
+self.hotcell_lexer_en_main = 19;
 
 
 # line 62 "lib/hotcell/lexerr.rl"
@@ -388,7 +388,7 @@ self.puffer_lexer_en_main = 19;
 begin
 	 @p ||= 0
 	pe ||=  @data.length
-	cs = puffer_lexer_start
+	cs = hotcell_lexer_start
 	top = 0
 	 @ts = nil
 	 @te = nil
@@ -424,7 +424,7 @@ begin
 	end
 	end
 	if _goto_level <= _resume
-	case _puffer_lexer_from_state_actions[cs] 
+	case _hotcell_lexer_from_state_actions[cs] 
 	when 19 then
 # line 1 "NONE"
 		begin
@@ -433,21 +433,21 @@ begin
 # line 434 "lib/hotcell/lexerr.rb"
 	end
 	_keys = cs << 1
-	_inds = _puffer_lexer_index_offsets[cs]
-	_slen = _puffer_lexer_key_spans[cs]
+	_inds = _hotcell_lexer_index_offsets[cs]
+	_slen = _hotcell_lexer_key_spans[cs]
 	_trans = if (   _slen > 0 && 
-			_puffer_lexer_trans_keys[_keys] <=  @data[ @p].ord && 
-			 @data[ @p].ord <= _puffer_lexer_trans_keys[_keys + 1] 
+			_hotcell_lexer_trans_keys[_keys] <=  @data[ @p].ord && 
+			 @data[ @p].ord <= _hotcell_lexer_trans_keys[_keys + 1] 
 		    ) then
-			_puffer_lexer_indicies[ _inds +  @data[ @p].ord - _puffer_lexer_trans_keys[_keys] ] 
+			_hotcell_lexer_indicies[ _inds +  @data[ @p].ord - _hotcell_lexer_trans_keys[_keys] ] 
 		 else 
-			_puffer_lexer_indicies[ _inds + _slen ]
+			_hotcell_lexer_indicies[ _inds + _slen ]
 		 end
 	end
 	if _goto_level <= _eof_trans
-	cs = _puffer_lexer_trans_targs[_trans]
-	if _puffer_lexer_trans_actions[_trans] != 0
-	case _puffer_lexer_trans_actions[_trans]
+	cs = _hotcell_lexer_trans_targs[_trans]
+	if _hotcell_lexer_trans_actions[_trans] != 0
+	case _hotcell_lexer_trans_actions[_trans]
 	when 11 then
 # line 1 "NONE"
 		begin
@@ -866,7 +866,7 @@ act = 16;		end
 	end
 	end
 	if _goto_level <= _again
-	case _puffer_lexer_to_state_actions[cs] 
+	case _hotcell_lexer_to_state_actions[cs] 
 	when 18 then
 # line 1 "NONE"
 		begin
@@ -894,12 +894,12 @@ act = 0
 	end
 	if _goto_level <= _test_eof
 	if  @p == eof
-	if _puffer_lexer_eof_trans[cs] > 0
-		_trans = _puffer_lexer_eof_trans[cs] - 1;
+	if _hotcell_lexer_eof_trans[cs] > 0
+		_trans = _hotcell_lexer_eof_trans[cs] - 1;
 		_goto_level = _eof_trans
 		next;
 	end
-	  case _puffer_lexer_eof_actions[cs]
+	  case _hotcell_lexer_eof_actions[cs]
 	when 6 then
 # line 46 "lib/hotcell/lexer.rl"
 		begin
@@ -920,7 +920,7 @@ end
 
     raise_unexpected_symbol unless @ts.nil?
 
-    if cs == puffer_lexer_en_dstring
+    if cs == hotcell_lexer_en_dstring
       @ts = @dstring_start
       raise_unterminated_string
     end

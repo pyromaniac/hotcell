@@ -1,5 +1,5 @@
 %%{
-  machine puffer_lexer;
+  machine hotcell_lexer;
 
   variable data @data;
   variable te @te;
@@ -75,7 +75,7 @@ Hotcell::Lexer.class_eval do
 
     raise_unexpected_symbol unless @ts.nil?
 
-    if cs == puffer_lexer_en_dstring
+    if cs == hotcell_lexer_en_dstring
       @ts = @dstring_start
       raise_unterminated_string
     end

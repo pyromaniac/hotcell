@@ -13,15 +13,15 @@ static VALUE cHotcellLexer;
 
 
 #line 16 "ext/lexerc/lexerc.c"
-static const int puffer_lexer_start = 19;
-static const int puffer_lexer_first_final = 19;
-static const int puffer_lexer_error = 0;
+static const int hotcell_lexer_start = 19;
+static const int hotcell_lexer_first_final = 19;
+static const int hotcell_lexer_error = 0;
 
-static const int puffer_lexer_en_dstring = 23;
-static const int puffer_lexer_en_interpolation = 26;
-static const int puffer_lexer_en_expression = 37;
-static const int puffer_lexer_en_template_comment = 50;
-static const int puffer_lexer_en_main = 19;
+static const int hotcell_lexer_en_dstring = 23;
+static const int hotcell_lexer_en_interpolation = 26;
+static const int hotcell_lexer_en_expression = 37;
+static const int hotcell_lexer_en_template_comment = 50;
+static const int hotcell_lexer_en_main = 19;
 
 
 #line 49 "ext/lexerc/lexerc.rl"
@@ -53,7 +53,7 @@ static VALUE tokenize(VALUE self) {
   
 #line 55 "ext/lexerc/lexerc.c"
 	{
-	cs = puffer_lexer_start;
+	cs = hotcell_lexer_start;
 	top = 0;
 	ts = 0;
 	te = 0;
@@ -1043,7 +1043,7 @@ case 18:
     raise_unexpected_symbol;
   }
 
-  if (cs == puffer_lexer_en_dstring) {
+  if (cs == hotcell_lexer_en_dstring) {
     ts = data + dstring_start;
     raise_unterminated_string;
   }

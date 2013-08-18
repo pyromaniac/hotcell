@@ -1,5 +1,5 @@
 %%{
-  machine puffer_lexer;
+  machine hotcell_lexer;
 
   plus = '+';
   minus = '-';
