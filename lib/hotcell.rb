@@ -1,4 +1,5 @@
 require 'active_support/all'
+require 'set'
 require 'hotcell/version'
 require 'hotcell/resolver'
 require 'hotcell/config'
