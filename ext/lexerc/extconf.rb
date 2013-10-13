@@ -1,3 +1,3 @@
 require 'mkmf'
 
-create_makefile('lexerc')
+create_makefile('hotcell/lexerc')
